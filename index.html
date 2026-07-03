@@ -30,7 +30,7 @@
             --md-sys-color-on-surface: #191C1A;
             --md-sys-color-on-surface-variant: #404943;
             
-            /* Border Radii (Expressive large curves) */
+            /* Border Radii */
             --md-sys-shape-corner-extra-large: 32px;
             --md-sys-shape-corner-large: 24px;
             --md-sys-shape-corner-full: 9999px;
@@ -46,9 +46,7 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, .brand {
-            font-family: 'Outfit', sans-serif;
-        }
+        h1, h2, h3, .brand { font-family: 'Outfit', sans-serif; }
 
         /* --- App Bar --- */
         .app-bar {
@@ -63,57 +61,28 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--md-sys-color-primary);
-        }
-
+        .brand-container { display: flex; align-items: center; gap: 12px; }
+        .brand { font-size: 24px; font-weight: 700; color: var(--md-sys-color-primary); }
         .badge-my {
             background-color: var(--md-sys-color-tertiary-container);
             color: var(--md-sys-color-on-tertiary-container);
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
             text-transform: uppercase;
-            text-align: center;
         }
 
         /* --- Buttons --- */
         .btn {
             font-family: 'Roboto', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-            padding: 0 24px;
-            height: 40px;
+            font-weight: 500; font-size: 14px;
+            padding: 0 24px; height: 40px;
             border-radius: var(--md-sys-shape-corner-full);
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            border: none; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.2s ease; white-space: nowrap;
         }
-
-        .btn-filled {
-            background-color: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-        }
+        .btn-filled { background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
         .btn-filled:hover { opacity: 0.9; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-
-        .btn-tonal {
-            background-color: var(--md-sys-color-secondary-container);
-            color: var(--md-sys-color-on-secondary-container);
-        }
+        .btn-tonal { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
         .btn-tonal:hover { background-color: #BDE0CE; }
 
         /* --- Hero Section --- */
@@ -121,103 +90,34 @@
             margin: 24px 32px;
             background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
             border-radius: var(--md-sys-shape-corner-extra-large);
-            padding: 64px 48px;
-            position: relative;
-            overflow: hidden;
+            padding: 64px 48px; position: relative; overflow: hidden;
         }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            max-width: 600px;
-        }
-
-        .hero-title {
-            font-size: 57px;
-            line-height: 64px;
-            color: var(--md-sys-color-on-primary-container);
-            margin-bottom: 16px;
-        }
-
-        .hero-desc {
-            font-size: 18px;
-            color: var(--md-sys-color-on-surface-variant);
-            margin-bottom: 32px;
-        }
+        .hero-title { font-size: 57px; line-height: 64px; color: var(--md-sys-color-on-primary-container); margin-bottom: 16px; }
+        .hero-desc { font-size: 18px; color: var(--md-sys-color-on-surface-variant); margin-bottom: 32px; max-width: 600px;}
 
         /* --- Channels Grid --- */
-        .section-title {
-            margin: 48px 32px 24px;
-            font-size: 32px;
-            color: var(--md-sys-color-on-background);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-            padding: 0 32px 64px;
-        }
-
+        .section-title { margin: 48px 32px 24px; font-size: 32px; color: var(--md-sys-color-on-background); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding: 0 32px 64px; }
         .card {
             background-color: var(--md-sys-color-surface-variant);
             border-radius: var(--md-sys-shape-corner-large);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            padding: 24px; display: flex; flex-direction: column; gap: 16px;
             transition: transform 0.2s ease, background-color 0.2s ease;
-            cursor: pointer;
-            position: relative;
+            cursor: pointer; position: relative;
         }
-
-        .card:hover {
-            transform: translateY(-4px);
-            background-color: var(--md-sys-color-secondary-container);
-        }
-
+        .card:hover { transform: translateY(-4px); background-color: var(--md-sys-color-secondary-container); }
         .card-icon {
-            width: 48px;
-            height: 48px;
-            background-color: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 48px; height: 48px; border-radius: 16px;
+            background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .card-title {
-            font-size: 24px;
-            color: var(--md-sys-color-on-surface);
-        }
-
-        .card-desc {
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 14px;
-            flex-grow: 1;
-        }
-
+        .card-title { font-size: 24px; color: var(--md-sys-color-on-surface); }
+        .card-desc { color: var(--md-sys-color-on-surface-variant); font-size: 14px; flex-grow: 1; }
         .live-indicator {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--md-sys-color-error);
+            position: absolute; top: 24px; right: 24px;
+            display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--md-sys-color-error);
         }
-        
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--md-sys-color-error);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
+        .live-dot { width: 8px; height: 8px; background-color: var(--md-sys-color-error); border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(186, 26, 26, 0); }
@@ -226,214 +126,98 @@
 
         /* --- Dialog (Modal) --- */
         .dialog-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000;
         }
-        
-        .dialog-backdrop.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        .dialog-backdrop.active { opacity: 1; pointer-events: all; }
         .dialog {
-            background-color: var(--md-sys-color-surface);
-            border-radius: var(--md-sys-shape-corner-extra-large);
-            padding: 32px;
-            width: 90%;
-            max-width: 400px;
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+            background-color: var(--md-sys-color-surface); border-radius: var(--md-sys-shape-corner-extra-large);
+            padding: 32px; width: 90%; max-width: 400px;
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
         }
-
-        .dialog-backdrop.active .dialog {
-            transform: scale(1);
-        }
-
-        .dialog-title {
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: var(--md-sys-color-on-background);
-        }
-
+        .dialog-backdrop.active .dialog { transform: scale(1); }
+        .dialog-title { font-size: 24px; margin-bottom: 24px; color: var(--md-sys-color-on-background); }
         .input-field {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--md-sys-color-on-surface-variant);
-            background: transparent;
-            font-size: 16px;
-            color: var(--md-sys-color-on-surface);
-            font-family: 'Roboto', sans-serif;
-            border-radius: 12px;
+            width: 100%; padding: 16px; margin-bottom: 16px;
+            border: 1px solid var(--md-sys-color-on-surface-variant); background: transparent;
+            font-size: 16px; border-radius: 12px;
         }
-
-        .input-field:focus {
-            outline: 2px solid var(--md-sys-color-primary);
-            border-color: transparent;
-        }
-
-        .checkbox-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
-            align-items: flex-start;
-        }
-
-        .checkbox-container input {
-            margin-top: 4px;
-            accent-color: var(--md-sys-color-primary);
-        }
-
-        .checkbox-container label {
-            font-size: 14px;
-            color: var(--md-sys-color-on-surface-variant);
-        }
-
-        .dialog-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
+        .input-field:focus { outline: 2px solid var(--md-sys-color-primary); border-color: transparent; }
+        .checkbox-container { display: flex; gap: 12px; margin-bottom: 32px; align-items: flex-start; }
+        .checkbox-container input { margin-top: 4px; accent-color: var(--md-sys-color-primary); }
+        .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
         /* --- Video Player Overlay --- */
         .player-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000000e6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000e6; display: flex; align-items: center; justify-content: center;
+            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-
-        .player-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        .player-modal.active { opacity: 1; pointer-events: all; }
         .player-container {
-            background-color: #191C1A;
-            width: 100%;
-            max-width: 1000px;
-            border-radius: var(--md-sys-shape-corner-extra-large);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transform: translateY(50px) scale(0.95);
-            transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+            background-color: #191C1A; width: 100%; max-width: 1000px;
+            border-radius: var(--md-sys-shape-corner-extra-large); overflow: hidden;
+            display: flex; flex-direction: column;
+            transform: translateY(50px) scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
         }
-
-        .player-modal.active .player-container {
-            transform: translateY(0) scale(1);
-        }
-
-        .player-header {
-            display: flex;
-            align-items: center;
-            padding: 16px 24px;
-            background: #111;
-            gap: 16px;
-        }
-
+        .player-modal.active .player-container { transform: translateY(0) scale(1); }
+        .player-header { display: flex; align-items: center; padding: 16px 24px; background: #111; gap: 16px; }
         .close-player-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            transition: background 0.2s;
+            background: none; border: none; color: #fff; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;
         }
+        .close-player-btn:hover { background: rgba(255,255,255,0.1); }
+        .player-channel-title { color: #fff; font-size: 20px; flex-grow: 1; }
+        .video-wrapper { width: 100%; aspect-ratio: 16 / 9; background: #000; display: flex; justify-content: center; align-items: center; }
+        
+        /* Updated video element CSS */
+        video { width: 100%; max-height: 100%; object-fit: contain; outline: none; }
+        
+        .player-footer { padding: 24px; background: #191C1A; color: #E3E3E3; }
 
-        .close-player-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .player-channel-title {
-            color: #fff;
-            font-size: 20px;
-            flex-grow: 1;
-        }
-
-        .video-wrapper {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            position: relative;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .player-footer {
-            padding: 24px;
-            background: #191C1A;
-            color: #E3E3E3;
-        }
-
-        /* --- Snackbar / Toast --- */
+        /* --- Fixed Snackbar / Toast --- */
         .snackbar {
             position: fixed;
-            bottom: -60px;
+            bottom: -100px; /* Start deeply hidden */
             left: 50%;
             transform: translateX(-50%);
             background-color: #313033;
             color: #F4EFF4;
             padding: 14px 24px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 12px;
             transition: bottom 0.4s cubic-bezier(0.2, 1, 0.3, 1);
             z-index: 3000;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            line-height: 1.4;
         }
         
         .snackbar.show {
-            bottom: 24px;
+            bottom: 32px;
         }
         
         /* --- Mobile Responsive Fixes --- */
         @media (max-width: 768px) {
             .app-bar { padding: 12px 16px; gap: 8px; }
-            .brand-container { gap: 8px; }
             .brand { font-size: 20px; }
-            
-            /* Hide the large text badge on mobile to fix the squished header */
-            .badge-my { display: none; }
-            
+            .badge-my { display: none; } /* Prevent squished mobile nav */
             .btn { padding: 0 16px; }
-            
             .hero-title { font-size: 40px; line-height: 48px; }
             .hero { padding: 40px 24px; margin: 16px; border-radius: 24px; }
             .section-title { margin: 32px 16px 16px; }
             .grid { padding: 0 16px 64px; }
             
-            /* Make video modal full screen on mobile */
-            .player-container {
-                border-radius: 0;
-                height: 100vh;
-                max-width: 100%;
-                justify-content: center;
+            .player-container { border-radius: 0; height: 100%; max-width: 100%; justify-content: flex-start; }
+            
+            /* Crucial fix to push the snackbar above mobile browser URL/Nav bars */
+            .snackbar.show {
+                bottom: 80px;
             }
         }
     </style>
@@ -445,7 +229,7 @@
         <div class="brand-container">
             <span class="material-symbols-rounded" style="color: var(--md-sys-color-primary); font-size: 32px;">sports_soccer</span>
             <div class="brand">SukanWC26</div>
-            <div class="badge-my">Malaysia Exclusive</div>
+            <div class="badge-my">MY Exclusive</div>
         </div>
         <button class="btn btn-filled" onclick="openSignup()">
             <span class="material-symbols-rounded">person_add</span>
@@ -469,7 +253,6 @@
 
     <!-- Channels Grid -->
     <div class="grid">
-        <!-- OKEY -->
         <div class="card" onclick="playChannel('OKEY')">
             <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
             <div class="card-icon"><span class="material-symbols-rounded">tv</span></div>
@@ -477,7 +260,6 @@
             <p class="card-desc">Your daily dose of local sports entertainment and exclusive WC group stage matches.</p>
         </div>
 
-        <!-- Sukan+ -->
         <div class="card" onclick="playChannel('Sukan+')">
             <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
             <div class="card-icon"><span class="material-symbols-rounded">sports_gymnastics</span></div>
@@ -485,7 +267,6 @@
             <p class="card-desc">Premium local commentary, pre-match analysis, and post-match breakdowns.</p>
         </div>
 
-        <!-- FIFA WC 1 -->
         <div class="card" onclick="playChannel('FIFA WC 1')">
             <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
             <div class="card-icon"><span class="material-symbols-rounded">stadium</span></div>
@@ -493,7 +274,6 @@
             <p class="card-desc">Main stadium coverage. The top priority channel for all knockout stage matches.</p>
         </div>
 
-        <!-- FIFA WC 2 -->
         <div class="card" onclick="playChannel('FIFA WC 2')">
             <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
             <div class="card-icon"><span class="material-symbols-rounded">stadium</span></div>
@@ -501,7 +281,6 @@
             <p class="card-desc">Alternative angles and parallel matches during the intense Group Stage deciders.</p>
         </div>
 
-        <!-- FIFA WC 3 -->
         <div class="card" onclick="playChannel('FIFA WC 3')">
             <div class="card-icon"><span class="material-symbols-rounded">replay</span></div>
             <h3 class="card-title">FIFA WC 3</h3>
@@ -520,7 +299,7 @@
                 
                 <div class="checkbox-container">
                     <input type="checkbox" id="myResident" required>
-                    <label for="myResident">I declare that I am currently residing in Malaysia. (Content restricted outside MY)</label>
+                    <label for="myResident">I declare that I am currently residing in Malaysia.</label>
                 </div>
 
                 <div class="dialog-actions">
@@ -545,9 +324,9 @@
             </div>
             
             <div class="video-wrapper">
-                <!-- Using a standard HTML5 Sample Video to simulate a live broadcast -->
-                <video id="streamVideo" controls controlsList="nodownload">
-                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                <!-- ADDED playsinline, preload="auto" and swapped to a highly reliable MP4 test file -->
+                <video id="streamVideo" controls playsinline preload="auto">
+                    <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
                     Your browser does not support HTML5 video.
                 </video>
             </div>
@@ -559,7 +338,7 @@
         </div>
     </div>
 
-    <!-- Snackbar for Geolocation Notification -->
+    <!-- Fixed Snackbar -->
     <div class="snackbar" id="geoSnackbar">
         <span class="material-symbols-rounded" style="color: #89F8C7;">location_on</span>
         <span>Location verified: Access granted for Malaysia.</span>
@@ -567,13 +346,13 @@
 
     <!-- Scripts -->
     <script>
-        // Simulate Geo-Location Check on Load
+        // Geolocate Simulation
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const snackbar = document.getElementById('geoSnackbar');
                 snackbar.classList.add('show');
                 
-                // Hide snackbar after 4 seconds
+                // Hides perfectly after 4 seconds
                 setTimeout(() => {
                     snackbar.classList.remove('show');
                 }, 4000);
@@ -582,20 +361,11 @@
 
         // Sign Up Modal Logic
         const signupModal = document.getElementById('signupModal');
-
-        function openSignup() {
-            signupModal.classList.add('active');
-        }
-
-        function closeSignup() {
-            signupModal.classList.remove('active');
-        }
-
-        // Close sign up modal when clicking outside
+        function openSignup() { signupModal.classList.add('active'); }
+        function closeSignup() { signupModal.classList.remove('active'); }
+        
         signupModal.addEventListener('click', (e) => {
-            if (e.target === signupModal) {
-                closeSignup();
-            }
+            if (e.target === signupModal) closeSignup();
         });
 
         function handleSignup(e) {
@@ -604,29 +374,30 @@
             closeSignup();
         }
 
-        // --- NEW: Video Player Logic ---
+        // Video Player Logic
         const videoModal = document.getElementById('videoModal');
         const streamVideo = document.getElementById('streamVideo');
         const channelTitle = document.getElementById('activeChannelTitle');
 
         function playChannel(channelName) {
-            // Set the dynamic title
             channelTitle.textContent = channelName;
-            
-            // Show the modal
             videoModal.classList.add('active');
-
-            // Play the video stream automatically
-            streamVideo.play().catch(error => {
-                console.log("Auto-play prevented by browser policy. User must click play.", error);
-            });
+            
+            streamVideo.currentTime = 0;
+            
+            // Adding a small delay helps mobile browsers render the modal before forcing the heavy video calculation
+            setTimeout(() => {
+                const playPromise = streamVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Auto-play prevented by browser policy (Standard on mobile). User must click play inside the video.", error);
+                    });
+                }
+            }, 300);
         }
 
         function closePlayer() {
-            // Hide the modal
             videoModal.classList.remove('active');
-
-            // Pause video and reset time
             streamVideo.pause();
             streamVideo.currentTime = 0;
         }
