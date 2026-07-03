@@ -60,6 +60,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .brand-container {
@@ -83,6 +84,7 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            text-align: center;
         }
 
         /* --- Buttons --- */
@@ -99,6 +101,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .btn-filled {
@@ -225,7 +228,7 @@
         .dialog-backdrop {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -244,7 +247,7 @@
             background-color: var(--md-sys-color-surface);
             border-radius: var(--md-sys-shape-corner-extra-large);
             padding: 32px;
-            width: 100%;
+            width: 90%;
             max-width: 400px;
             transform: scale(0.9);
             transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
@@ -265,7 +268,6 @@
             padding: 16px;
             margin-bottom: 16px;
             border: 1px solid var(--md-sys-color-on-surface-variant);
-            border-radius: 4px;
             background: transparent;
             font-size: 16px;
             color: var(--md-sys-color-on-surface);
@@ -301,6 +303,93 @@
             gap: 8px;
         }
 
+        /* --- Video Player Overlay --- */
+        .player-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .player-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .player-container {
+            background-color: #191C1A;
+            width: 100%;
+            max-width: 1000px;
+            border-radius: var(--md-sys-shape-corner-extra-large);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(50px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+        }
+
+        .player-modal.active .player-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            background: #111;
+            gap: 16px;
+        }
+
+        .close-player-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-player-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .player-channel-title {
+            color: #fff;
+            font-size: 20px;
+            flex-grow: 1;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-footer {
+            padding: 24px;
+            background: #191C1A;
+            color: #E3E3E3;
+        }
+
         /* --- Snackbar / Toast --- */
         .snackbar {
             position: fixed;
@@ -316,16 +405,36 @@
             align-items: center;
             gap: 12px;
             transition: bottom 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-            z-index: 2000;
+            z-index: 3000;
         }
         
         .snackbar.show {
             bottom: 24px;
         }
         
-        @media (max-width: 600px) {
+        /* --- Mobile Responsive Fixes --- */
+        @media (max-width: 768px) {
+            .app-bar { padding: 12px 16px; gap: 8px; }
+            .brand-container { gap: 8px; }
+            .brand { font-size: 20px; }
+            
+            /* Hide the large text badge on mobile to fix the squished header */
+            .badge-my { display: none; }
+            
+            .btn { padding: 0 16px; }
+            
             .hero-title { font-size: 40px; line-height: 48px; }
-            .hero { padding: 40px 24px; margin: 16px; }
+            .hero { padding: 40px 24px; margin: 16px; border-radius: 24px; }
+            .section-title { margin: 32px 16px 16px; }
+            .grid { padding: 0 16px 64px; }
+            
+            /* Make video modal full screen on mobile */
+            .player-container {
+                border-radius: 0;
+                height: 100vh;
+                max-width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -349,7 +458,7 @@
         <div class="hero-content">
             <h1 class="hero-title">Experience the Magic of 2026.</h1>
             <p class="hero-desc">Stream every pass, every goal, and every thrilling moment of the FIFA World Cup 2026™. Officially broadcasted for viewers in Malaysia.</p>
-            <button class="btn btn-tonal">
+            <button class="btn btn-tonal" onclick="playChannel('FIFA WC 1')">
                 <span class="material-symbols-rounded">play_arrow</span>
                 Start Watching Now
             </button>
@@ -422,6 +531,34 @@
         </div>
     </div>
 
+    <!-- Video Player Overlay -->
+    <div class="player-modal" id="videoModal">
+        <div class="player-container">
+            <div class="player-header">
+                <button class="close-player-btn" onclick="closePlayer()">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                </button>
+                <h3 class="player-channel-title" id="activeChannelTitle">Channel Name</h3>
+                <div class="live-indicator" style="position: relative; top: 0; right: 0;">
+                    <div class="live-dot"></div>LIVE
+                </div>
+            </div>
+            
+            <div class="video-wrapper">
+                <!-- Using a standard HTML5 Sample Video to simulate a live broadcast -->
+                <video id="streamVideo" controls controlsList="nodownload">
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>
+            
+            <div class="player-footer">
+                <h2 style="font-family: 'Outfit'; margin-bottom: 8px;">FIFA World Cup 2026™ Broadcast</h2>
+                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 8px;">High-definition stream. Signal source verified for Malaysia region.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Snackbar for Geolocation Notification -->
     <div class="snackbar" id="geoSnackbar">
         <span class="material-symbols-rounded" style="color: #89F8C7;">location_on</span>
@@ -443,20 +580,20 @@
             }, 1000);
         });
 
-        // Modal Logic
-        const modal = document.getElementById('signupModal');
+        // Sign Up Modal Logic
+        const signupModal = document.getElementById('signupModal');
 
         function openSignup() {
-            modal.classList.add('active');
+            signupModal.classList.add('active');
         }
 
         function closeSignup() {
-            modal.classList.remove('active');
+            signupModal.classList.remove('active');
         }
 
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
+        // Close sign up modal when clicking outside
+        signupModal.addEventListener('click', (e) => {
+            if (e.target === signupModal) {
                 closeSignup();
             }
         });
@@ -467,14 +604,31 @@
             closeSignup();
         }
 
-        // Channel Click Simulation
+        // --- NEW: Video Player Logic ---
+        const videoModal = document.getElementById('videoModal');
+        const streamVideo = document.getElementById('streamVideo');
+        const channelTitle = document.getElementById('activeChannelTitle');
+
         function playChannel(channelName) {
-            // Check if user clicked WC3 which is replays
-            if(channelName === 'FIFA WC 3') {
-                alert(`Tuning into ${channelName} for exclusive replays and highlights!`);
-            } else {
-                alert(`Connecting to Live Stream: ${channelName}... (Only accessible within Malaysia)`);
-            }
+            // Set the dynamic title
+            channelTitle.textContent = channelName;
+            
+            // Show the modal
+            videoModal.classList.add('active');
+
+            // Play the video stream automatically
+            streamVideo.play().catch(error => {
+                console.log("Auto-play prevented by browser policy. User must click play.", error);
+            });
+        }
+
+        function closePlayer() {
+            // Hide the modal
+            videoModal.classList.remove('active');
+
+            // Pause video and reset time
+            streamVideo.pause();
+            streamVideo.currentTime = 0;
         }
     </script>
 </body>
