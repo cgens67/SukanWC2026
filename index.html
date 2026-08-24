@@ -3,375 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FIFA World Cup 2026™ | Malaysia Live</title>
-    <!-- Google Fonts: Outfit (Expressive Display), Roboto (Body), Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+    <title>Markdown Code Extractor & Reader</title>
     
+    <!-- Marked.js to "translate" the markdown text -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
         :root {
-            /* MD3 Expressive Color Palette */
-            --md-sys-color-primary: #006C4C;
-            --md-sys-color-on-primary: #FFFFFF;
-            --md-sys-color-primary-container: #89F8C7;
-            --md-sys-color-on-primary-container: #002114;
-            --md-sys-color-secondary: #4C6357;
-            --md-sys-color-on-secondary: #FFFFFF;
-            --md-sys-color-secondary-container: #CEE9DB;
-            --md-sys-color-on-secondary-container: #092016;
-            --md-sys-color-tertiary: #3D6373;
-            --md-sys-color-tertiary-container: #C1E8FB;
-            --md-sys-color-on-tertiary-container: #001F29;
-            --md-sys-color-error: #BA1A1A;
-            --md-sys-color-background: #FBFDF9;
-            --md-sys-color-on-background: #191C1A;
-            --md-sys-color-surface: #FBFDF9;
-            --md-sys-color-surface-variant: #DBE5DD;
-            --md-sys-color-on-surface: #191C1A;
-            --md-sys-color-on-surface-variant: #404943;
-            
-            /* Border Radii */
-            --md-sys-shape-corner-extra-large: 32px;
-            --md-sys-shape-corner-large: 24px;
-            --md-sys-shape-corner-full: 9999px;
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --code-bg: #1e1e1e;
+            --code-header-bg: #2d2d2d;
+            --code-text: #d4d4d4;
+            --primary: #4CAF50;
+            --primary-hover: #45a049;
+            --warning: #f39c12;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--md-sys-color-background);
-            color: var(--md-sys-color-on-background);
-            line-height: 1.5;
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        h1, h2, h3, .brand { font-family: 'Outfit', sans-serif; }
-
-        /* --- App Bar --- */
-        .app-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 32px; background-color: var(--md-sys-color-surface);
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .brand-container { display: flex; align-items: center; gap: 12px; }
-        .brand { font-size: 24px; font-weight: 700; color: var(--md-sys-color-primary); }
-        .badge-my {
-            background-color: var(--md-sys-color-tertiary-container);
-            color: var(--md-sys-color-on-tertiary-container);
-            padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* --- Buttons --- */
-        .btn {
-            font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 14px;
-            padding: 0 24px; height: 40px; border-radius: var(--md-sys-shape-corner-full);
-            border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-            transition: all 0.2s ease; white-space: nowrap;
-        }
-        .btn-filled { background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
-        .btn-filled:hover { opacity: 0.9; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .btn-tonal { background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container); }
-        .btn-tonal:hover { background-color: #BDE0CE; }
-
-        /* --- Hero Section --- */
-        .hero {
-            margin: 24px 32px;
-            background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-secondary-container));
-            border-radius: var(--md-sys-shape-corner-extra-large);
-            padding: 64px 48px; position: relative; overflow: hidden;
-        }
-        .hero-title { font-size: 57px; line-height: 64px; color: var(--md-sys-color-on-primary-container); margin-bottom: 16px; }
-        .hero-desc { font-size: 18px; color: var(--md-sys-color-on-surface-variant); margin-bottom: 32px; max-width: 600px;}
-
-        /* --- Channels Grid --- */
-        .section-title { margin: 48px 32px 24px; font-size: 32px; color: var(--md-sys-color-on-background); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding: 0 32px 64px; }
-        .card {
-            background-color: var(--md-sys-color-surface-variant);
-            border-radius: var(--md-sys-shape-corner-large);
-            padding: 24px; display: flex; flex-direction: column; gap: 16px;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            cursor: pointer; position: relative;
-        }
-        .card:hover { transform: translateY(-4px); background-color: var(--md-sys-color-secondary-container); }
-        .card-icon {
-            width: 48px; height: 48px; border-radius: 16px;
-            background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .card-title { font-size: 24px; color: var(--md-sys-color-on-surface); }
-        .card-desc { color: var(--md-sys-color-on-surface-variant); font-size: 14px; flex-grow: 1; }
-        .live-indicator {
-            position: absolute; top: 24px; right: 24px;
-            display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--md-sys-color-error);
-        }
-        .live-dot { width: 8px; height: 8px; background-color: var(--md-sys-color-error); border-radius: 50%; animation: pulse 1.5s infinite; }
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(186, 26, 26, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(186, 26, 26, 0); }
-        }
-
-        /* --- Dialog (Modal) --- */
-        .dialog-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 1000;
-        }
-        .dialog-backdrop.active { opacity: 1; pointer-events: all; }
-        .dialog {
-            background-color: var(--md-sys-color-surface); border-radius: var(--md-sys-shape-corner-extra-large);
-            padding: 32px; width: 90%; max-width: 400px;
-            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-        .dialog-backdrop.active .dialog { transform: scale(1); }
-        .dialog-title { font-size: 24px; margin-bottom: 24px; color: var(--md-sys-color-on-background); }
-        .input-field {
-            width: 100%; padding: 16px; margin-bottom: 16px;
-            border: 1px solid var(--md-sys-color-on-surface-variant); background: transparent;
-            font-size: 16px; border-radius: 12px;
-        }
-        .input-field:focus { outline: 2px solid var(--md-sys-color-primary); border-color: transparent; }
-        .checkbox-container { display: flex; gap: 12px; margin-bottom: 32px; align-items: flex-start; }
-        .checkbox-container input { margin-top: 4px; accent-color: var(--md-sys-color-primary); }
-        .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
-
-        /* --- Video Player Overlay --- */
-        .player-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000000e6; display: flex; align-items: center; justify-content: center;
-            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        .player-modal.active { opacity: 1; pointer-events: all; }
-        .player-container {
-            background-color: #191C1A; width: 100%; max-width: 1000px;
-            border-radius: var(--md-sys-shape-corner-extra-large); overflow: hidden;
-            display: flex; flex-direction: column;
-            transform: translateY(50px) scale(0.95); transition: transform 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-        .player-modal.active .player-container { transform: translateY(0) scale(1); }
-        .player-header { display: flex; align-items: center; padding: 16px 24px; background: #111; gap: 16px; }
-        .close-player-btn {
-            background: none; border: none; color: #fff; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;
-        }
-        .close-player-btn:hover { background: rgba(255,255,255,0.1); }
-        .player-channel-title { color: #fff; font-size: 20px; flex-grow: 1; }
-        
-        /* Iframe container */
-        .video-wrapper { 
-            width: 100%; 
-            aspect-ratio: 16 / 9; 
-            background: #000; 
-            position: relative;
+        h1 {
+            margin-top: 0;
+            margin-bottom: 5px;
         }
         
-        .player-footer { padding: 24px; background: #191C1A; color: #E3E3E3; }
-
-        /* --- Fixed Snackbar / Toast --- */
-        .snackbar {
-            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-            background-color: #313033; color: #F4EFF4; padding: 14px 24px; border-radius: 12px;
-            font-size: 14px; display: flex; align-items: center; gap: 12px;
-            transition: bottom 0.4s cubic-bezier(0.2, 1, 0.3, 1); z-index: 3000;
-            width: 90%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); line-height: 1.4;
+        p.subtitle {
+            margin-bottom: 20px;
+            color: #555;
         }
-        .snackbar.show { bottom: 32px; }
-        
-        /* --- Mobile Responsive Fixes --- */
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            height: 85vh;
+        }
+
+        .pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .pane-header {
+            background: #e0e0e0;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Paste Button Styling */
+        .paste-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .paste-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        }
+
+        .paste-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .paste-btn.manual-paste {
+            background-color: var(--warning);
+        }
+
+        textarea {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+
+        textarea:focus {
+            box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.5);
+        }
+
+        #output {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fdfdfd;
+        }
+
+        /* Normal Markdown Text Styles */
+        .markdown-text {
+            line-height: 1.6;
+            font-size: 15px;
+            color: #222;
+        }
+        .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4 { margin-top: 1.2em; margin-bottom: 0.5em; color: #111; }
+        .markdown-text p { margin-top: 0; margin-bottom: 1em; }
+        .markdown-text ul, .markdown-text ol { margin-bottom: 1em; padding-left: 20px; }
+        .markdown-text code {
+            background-color: #e8e8eb;
+            color: #d63384;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+        }
+
+        /* Code Block Styles */
+        .code-container {
+            margin-bottom: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--code-header-bg);
+            padding: 8px 12px;
+            color: #9cdcfe;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background-color: transparent;
+            color: white;
+            border: 1px solid #777;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover { background-color: #555; border-color: #aaa; }
+        .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: white; }
+
+        /* Smooth Animation CSS */
+        .code-collapse-wrapper {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 1;
+        }
+
+        .code-collapse-wrapper.minimized {
+            grid-template-rows: 0fr;
+            opacity: 0.2;
+        }
+
+        .code-collapse-inner {
+            min-height: 0;
+            overflow: hidden; 
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            margin: 0;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 14px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
-            .app-bar { padding: 12px 16px; gap: 8px; }
-            .brand { font-size: 20px; }
-            .badge-my { display: none; }
-            .btn { padding: 0 16px; }
-            .hero-title { font-size: 40px; line-height: 48px; }
-            .hero { padding: 40px 24px; margin: 16px; border-radius: 24px; }
-            .section-title { margin: 32px 16px 16px; }
-            .grid { padding: 0 16px 64px; }
-            
-            .player-container { border-radius: 0; height: 100%; max-width: 100%; justify-content: flex-start; }
-            .snackbar.show { bottom: 80px; }
+            .container { flex-direction: column; height: auto; }
+            .pane { height: 50vh; }
         }
     </style>
 </head>
 <body>
 
-    <!-- App Bar -->
-    <header class="app-bar">
-        <div class="brand-container">
-            <span class="material-symbols-rounded" style="color: var(--md-sys-color-primary); font-size: 32px;">sports_soccer</span>
-            <div class="brand">SukanWC26</div>
-            <div class="badge-my">MY Exclusive</div>
-        </div>
-        <button class="btn btn-filled" onclick="openSignup()">
-            <span class="material-symbols-rounded">person_add</span>
-            Sign Up
-        </button>
-    </header>
+    <h1>Markdown Code Extractor & Reader</h1>
+    <p class="subtitle">Read fully formatted text, minimize long code blocks, and copy easily.</p>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Experience the Magic of 2026.</h1>
-            <p class="hero-desc">Stream every pass, every goal, and every thrilling moment of the FIFA World Cup 2026™. Officially broadcasted for viewers in Malaysia.</p>
-            <button class="btn btn-tonal" onclick="playChannel('FIFA WC 1')">
-                <span class="material-symbols-rounded">play_arrow</span>
-                Start Watching Now
-            </button>
-        </div>
-    </section>
-
-    <h2 class="section-title">Live Channels</h2>
-
-    <!-- Channels Grid -->
-    <div class="grid">
-        <div class="card" onclick="playChannel('OKEY')">
-            <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
-            <div class="card-icon"><span class="material-symbols-rounded">tv</span></div>
-            <h3 class="card-title">OKEY</h3>
-            <p class="card-desc">Your daily dose of local sports entertainment and exclusive WC group stage matches.</p>
-        </div>
-
-        <div class="card" onclick="playChannel('Sukan+')">
-            <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
-            <div class="card-icon"><span class="material-symbols-rounded">sports_gymnastics</span></div>
-            <h3 class="card-title">Sukan+</h3>
-            <p class="card-desc">Premium local commentary, pre-match analysis, and post-match breakdowns.</p>
-        </div>
-
-        <div class="card" onclick="playChannel('FIFA WC 1')">
-            <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
-            <div class="card-icon"><span class="material-symbols-rounded">stadium</span></div>
-            <h3 class="card-title">FIFA WC 1</h3>
-            <p class="card-desc">Main stadium coverage. The top priority channel for all knockout stage matches.</p>
-        </div>
-
-        <div class="card" onclick="playChannel('FIFA WC 2')">
-            <div class="live-indicator"><div class="live-dot"></div>LIVE</div>
-            <div class="card-icon"><span class="material-symbols-rounded">stadium</span></div>
-            <h3 class="card-title">FIFA WC 2</h3>
-            <p class="card-desc">Alternative angles and parallel matches during the intense Group Stage deciders.</p>
-        </div>
-
-        <div class="card" onclick="playChannel('FIFA WC 3')">
-            <div class="card-icon"><span class="material-symbols-rounded">replay</span></div>
-            <h3 class="card-title">FIFA WC 3</h3>
-            <p class="card-desc">24/7 Replays, highlights, classic moments, and behind-the-scenes exclusive footage.</p>
-        </div>
-    </div>
-
-    <!-- Sign Up Modal -->
-    <div class="dialog-backdrop" id="signupModal">
-        <div class="dialog">
-            <h2 class="dialog-title">Create Account</h2>
-            <form onsubmit="handleSignup(event)">
-                <input type="text" class="input-field" placeholder="Full Name" required>
-                <input type="email" class="input-field" placeholder="Email Address" required>
-                <input type="password" class="input-field" placeholder="Password" required>
-                
-                <div class="checkbox-container">
-                    <input type="checkbox" id="myResident" required>
-                    <label for="myResident">I declare that I am currently residing in Malaysia.</label>
-                </div>
-
-                <div class="dialog-actions">
-                    <button type="button" class="btn" style="color: var(--md-sys-color-primary);" onclick="closeSignup()">Cancel</button>
-                    <button type="submit" class="btn btn-filled">Create Account</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Video Player Overlay -->
-    <div class="player-modal" id="videoModal">
-        <div class="player-container">
-            <div class="player-header">
-                <button class="close-player-btn" onclick="closePlayer()">
-                    <span class="material-symbols-rounded">arrow_back</span>
-                </button>
-                <h3 class="player-channel-title" id="activeChannelTitle">Channel Name</h3>
-                <div class="live-indicator" style="position: relative; top: 0; right: 0;">
-                    <div class="live-dot"></div>LIVE
-                </div>
+    <div class="container">
+        <!-- Input Area -->
+        <div class="pane">
+            <div class="pane-header">
+                <span>Raw Text / Markdown</span>
+                <button id="btn-paste" class="paste-btn">Paste</button>
             </div>
-            
-            <div class="video-wrapper" id="iframeContainer">
-                <!-- Football Iframe injected via Javascript -->
-            </div>
-            
-            <div class="player-footer">
-                <h2 style="font-family: 'Outfit'; margin-bottom: 8px;">FIFA World Cup 2026™ Broadcast</h2>
-                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 8px;">High-definition stream. Signal source verified for Malaysia region.</p>
+            <textarea id="markdown-input" placeholder="Paste your markdown here..."></textarea>
+        </div>
+
+        <!-- Output Area -->
+        <div class="pane">
+            <div class="pane-header">Formatted View</div>
+            <div id="output">
+                <div class="empty-state">Waiting for text...</div>
             </div>
         </div>
     </div>
 
-    <!-- Fixed Snackbar -->
-    <div class="snackbar" id="geoSnackbar">
-        <span class="material-symbols-rounded" style="color: #89F8C7;">location_on</span>
-        <span>Location verified: Access granted for Malaysia.</span>
-    </div>
-
-    <!-- Scripts -->
     <script>
-        // Geolocate Simulation
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const snackbar = document.getElementById('geoSnackbar');
-                snackbar.classList.add('show');
+        const inputArea = document.getElementById('markdown-input');
+        const outputArea = document.getElementById('output');
+        const pasteBtn = document.getElementById('btn-paste');
+
+        // Paste functionality with smart fallback
+        pasteBtn.addEventListener('click', async () => {
+            try {
+                // Check if the browser allows clipboard read (Fails on local file://)
+                if (navigator.clipboard && navigator.clipboard.readText) {
+                    const text = await navigator.clipboard.readText();
+                    inputArea.value = text;
+                    
+                    inputArea.dispatchEvent(new Event('input'));
+                    
+                    const originalText = pasteBtn.innerHTML;
+                    pasteBtn.innerHTML = 'Pasted!';
+                    setTimeout(() => {
+                        pasteBtn.innerHTML = originalText;
+                    }, 1500);
+                } else {
+                    // Throw error to trigger the fallback below
+                    throw new Error("Clipboard API blocked due to local file security.");
+                }
+            } catch (err) {
+                // FALLBACK: If clipboard is blocked, focus the textarea and tell the user to paste manually
+                inputArea.focus();
+                
+                const originalText = pasteBtn.innerHTML;
+                pasteBtn.innerHTML = 'Press Ctrl+V to paste';
+                pasteBtn.classList.add('manual-paste');
                 
                 setTimeout(() => {
-                    snackbar.classList.remove('show');
-                }, 4000);
-            }, 1000);
+                    pasteBtn.innerHTML = originalText;
+                    pasteBtn.classList.remove('manual-paste');
+                }, 3000);
+            }
         });
 
-        // Sign Up Modal Logic
-        const signupModal = document.getElementById('signupModal');
-        function openSignup() { signupModal.classList.add('active'); }
-        function closeSignup() { signupModal.classList.remove('active'); }
-        
-        signupModal.addEventListener('click', (e) => {
-            if (e.target === signupModal) closeSignup();
-        });
+        const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
 
-        function handleSignup(e) {
-            e.preventDefault();
-            alert('Account successfully created! Enjoy the World Cup 2026.');
-            closeSignup();
-        }
-
-        // --- THE FIX: Replaced Costa Rica with an actual 4K EA FC 24 Football Match ---
-        const videoModal = document.getElementById('videoModal');
-        const channelTitle = document.getElementById('activeChannelTitle');
-        const iframeContainer = document.getElementById('iframeContainer');
-
-        function playChannel(channelName) {
-            channelTitle.textContent = channelName;
-            videoModal.classList.add('active');
+        inputArea.addEventListener('input', () => {
+            let text = inputArea.value;
+            outputArea.innerHTML = ''; 
             
-            // Replaced the ID with 'mH5zWzNDIQI' -> A hyper-realistic full EA FC 24 Football match (Man City vs Arsenal). 
-            // Gaming clips bypass strict copyright/geo-blocks and actually look like a football broadcast!
-            iframeContainer.innerHTML = `
-                <iframe 
-                    width="100%" 
-                    height="100%" 
-                    src="https://www.youtube.com/embed/mH5zWzNDIQI?autoplay=1&mute=1&playsinline=1" 
-                    title="Live Stream Broadcast" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen
-                    style="position: absolute; top: 0; left: 0;">
-                </iframe>
-            `;
-        }
+            if (!text.trim()) {
+                outputArea.innerHTML = '<div class="empty-state">Waiting for text...</div>';
+                return;
+            }
 
-        function closePlayer() {
-            videoModal.classList.remove('active');
-            iframeContainer.innerHTML = '';
-        }
+            text = text.replace(/^--- (START|END) OF FILE.*(?:\r\n|\r|\n)?/gmi, '');
+
+            let match;
+            let lastIndex = 0;
+
+            while ((match = codeBlockRegex.exec(text)) !== null) {
+                
+                // 1. Render Normal Text BEFORE
+                const beforeText = text.substring(lastIndex, match.index);
+                if (beforeText.trim() !== '') {
+                    const textNode = document.createElement('div');
+                    textNode.className = 'markdown-text';
+                    textNode.innerHTML = marked.parse(beforeText); 
+                    outputArea.appendChild(textNode);
+                }
+
+                // 2. Build Code Block Elements
+                const language = match[1].trim() || 'plaintext';
+                const codeContent = match[2];
+
+                const container = document.createElement('div');
+                container.className = 'code-container';
+
+                const header = document.createElement('div');
+                header.className = 'code-header';
+
+                const langSpan = document.createElement('span');
+                langSpan.textContent = language;
+
+                const btnGroup = document.createElement('div');
+                btnGroup.className = 'button-group';
+
+                const minimizeBtn = document.createElement('button');
+                minimizeBtn.className = 'action-btn';
+                minimizeBtn.textContent = 'Minimize';
+                
+                const collapseWrapper = document.createElement('div');
+                collapseWrapper.className = 'code-collapse-wrapper';
+                
+                const collapseInner = document.createElement('div');
+                collapseInner.className = 'code-collapse-inner';
+
+                const pre = document.createElement('pre');
+                pre.textContent = codeContent;
+
+                // Minimize Toggle Logic
+                let isMinimized = false;
+                minimizeBtn.addEventListener('click', () => {
+                    isMinimized = !isMinimized;
+                    if (isMinimized) {
+                        collapseWrapper.classList.add('minimized');
+                        minimizeBtn.textContent = 'Expand';
+                    } else {
+                        collapseWrapper.classList.remove('minimized');
+                        minimizeBtn.textContent = 'Minimize';
+                    }
+                });
+
+                // Copy Button Logic
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'action-btn';
+                copyBtn.textContent = 'Copy Code';
+
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(codeContent).then(() => {
+                        copyBtn.textContent = 'Copied!';
+                        copyBtn.classList.add('copied');
+                        setTimeout(() => {
+                            copyBtn.textContent = 'Copy Code';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    });
+                });
+
+                // Assemble elements
+                btnGroup.appendChild(minimizeBtn);
+                btnGroup.appendChild(copyBtn);
+
+                header.appendChild(langSpan);
+                header.appendChild(btnGroup); 
+                
+                collapseInner.appendChild(pre);
+                collapseWrapper.appendChild(collapseInner);
+
+                container.appendChild(header);
+                container.appendChild(collapseWrapper);
+                
+                outputArea.appendChild(container);
+
+                lastIndex = match.index + match[0].length;
+            }
+
+            // 3. Render Normal Text AFTER
+            const remainingText = text.substring(lastIndex);
+            if (remainingText.trim() !== '') {
+                const textNode = document.createElement('div');
+                textNode.className = 'markdown-text';
+                textNode.innerHTML = marked.parse(remainingText);
+                outputArea.appendChild(textNode);
+            }
+        });
     </script>
 </body>
 </html>
