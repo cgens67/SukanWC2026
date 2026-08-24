@@ -17,7 +17,6 @@
             --code-text: #d4d4d4;
             --primary: #4CAF50;
             --primary-hover: #45a049;
-            --warning: #f39c12;
         }
 
         body {
@@ -69,9 +68,13 @@
             align-items: center;
         }
 
-        /* Paste Button Styling */
-        .paste-btn {
-            background-color: var(--primary);
+        /* Top Header Buttons (Paste & Clear) */
+        .header-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .header-btn {
             color: white;
             border: none;
             border-radius: 4px;
@@ -83,19 +86,30 @@
             transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .paste-btn:hover {
-            background-color: var(--primary-hover);
+        .header-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 3px 6px rgba(0,0,0,0.15);
         }
 
-        .paste-btn:active {
+        .header-btn:active {
             transform: translateY(1px);
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .paste-btn.manual-paste {
-            background-color: var(--warning);
+        .paste-btn {
+            background-color: var(--primary);
+        }
+
+        .paste-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .clear-btn {
+            background-color: #757575;
+        }
+
+        .clear-btn:hover {
+            background-color: #616161;
         }
 
         textarea {
@@ -106,10 +120,6 @@
             font-size: 14px;
             resize: none;
             outline: none;
-        }
-
-        textarea:focus {
-            box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.5);
         }
 
         #output {
@@ -192,7 +202,7 @@
 
         .code-collapse-inner {
             min-height: 0;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         pre {
@@ -228,7 +238,10 @@
         <div class="pane">
             <div class="pane-header">
                 <span>Raw Text / Markdown</span>
-                <button id="btn-paste" class="paste-btn">Paste</button>
+                <div class="header-btn-group">
+                    <button id="btn-clear" class="header-btn clear-btn">Clear</button>
+                    <button id="btn-paste" class="header-btn paste-btn">Paste</button>
+                </div>
             </div>
             <textarea id="markdown-input" placeholder="Paste your markdown here..."></textarea>
         </div>
@@ -246,39 +259,30 @@
         const inputArea = document.getElementById('markdown-input');
         const outputArea = document.getElementById('output');
         const pasteBtn = document.getElementById('btn-paste');
+        const clearBtn = document.getElementById('btn-clear');
 
-        // Paste functionality with smart fallback
+        // Paste functionality
         pasteBtn.addEventListener('click', async () => {
             try {
-                // Check if the browser allows clipboard read (Fails on local file://)
-                if (navigator.clipboard && navigator.clipboard.readText) {
-                    const text = await navigator.clipboard.readText();
-                    inputArea.value = text;
-                    
-                    inputArea.dispatchEvent(new Event('input'));
-                    
-                    const originalText = pasteBtn.innerHTML;
-                    pasteBtn.innerHTML = 'Pasted!';
-                    setTimeout(() => {
-                        pasteBtn.innerHTML = originalText;
-                    }, 1500);
-                } else {
-                    // Throw error to trigger the fallback below
-                    throw new Error("Clipboard API blocked due to local file security.");
-                }
-            } catch (err) {
-                // FALLBACK: If clipboard is blocked, focus the textarea and tell the user to paste manually
-                inputArea.focus();
+                const text = await navigator.clipboard.readText();
+                inputArea.value = text;
+                inputArea.dispatchEvent(new Event('input'));
                 
                 const originalText = pasteBtn.innerHTML;
-                pasteBtn.innerHTML = 'Press Ctrl+V to paste';
-                pasteBtn.classList.add('manual-paste');
-                
+                pasteBtn.innerHTML = 'Pasted!';
                 setTimeout(() => {
                     pasteBtn.innerHTML = originalText;
-                    pasteBtn.classList.remove('manual-paste');
-                }, 3000);
+                }, 1500);
+            } catch (err) {
+                alert('Could not paste automatically. Please click the text box and press Ctrl+V / Cmd+V.');
+                console.error('Failed to read clipboard: ', err);
             }
+        });
+
+        // Clear functionality
+        clearBtn.addEventListener('click', () => {
+            inputArea.value = '';
+            inputArea.dispatchEvent(new Event('input')); // Triggers the UI to reset to the empty state
         });
 
         const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
