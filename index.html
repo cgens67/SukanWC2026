@@ -19,6 +19,10 @@
             --primary-hover: #45a049;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
@@ -28,6 +32,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
         h1 {
@@ -56,6 +61,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             overflow: hidden;
+            min-width: 0; /* Prevents children from expanding the pane */
         }
 
         .pane-header {
@@ -126,7 +132,10 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            overflow-x: hidden; /* HARD LOCK: Prevents the pane from shifting left/right */
             background: #fdfdfd;
+            min-width: 0;
+            width: 100%;
         }
 
         /* Normal Markdown Text Styles */
@@ -134,10 +143,14 @@
             line-height: 1.6;
             font-size: 15px;
             color: #222;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
         .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4 { margin-top: 1.2em; margin-bottom: 0.5em; color: #111; }
         .markdown-text p { margin-top: 0; margin-bottom: 1em; }
         .markdown-text ul, .markdown-text ol { margin-bottom: 1em; padding-left: 20px; }
+        
+        /* Pink inline code badges */
         .markdown-text code {
             background-color: #e8e8eb;
             color: #d63384;
@@ -145,6 +158,8 @@
             border-radius: 4px;
             font-family: Consolas, Monaco, monospace;
             font-size: 0.9em;
+            word-break: break-all; /* Allows long file paths to wrap cleanly */
+            overflow-wrap: anywhere;
         }
 
         /* Code Block Styles */
@@ -155,6 +170,8 @@
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             border: 1px solid #444;
+            max-width: 100%;
+            min-width: 0;
         }
 
         .code-header {
@@ -196,7 +213,7 @@
             display: flex;
             gap: 8px;
             flex-shrink: 0;
-            margin-left: auto; /* Aligns to the right even when wrapped */
+            margin-left: auto;
         }
 
         .action-btn {
@@ -216,6 +233,8 @@
         .code-collapse-wrapper {
             display: grid;
             grid-template-rows: 1fr;
+            min-width: 0;
+            max-width: 100%;
             transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
                         opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 1;
@@ -228,6 +247,8 @@
 
         .code-collapse-inner {
             min-height: 0;
+            min-width: 0;
+            max-width: 100%;
             overflow: hidden;
         }
 
@@ -236,7 +257,8 @@
             color: var(--code-text);
             margin: 0;
             padding: 15px;
-            overflow-x: auto;
+            overflow-x: auto; /* Only code itself will scroll horizontally */
+            max-width: 100%;
             font-size: 14px;
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
         }
@@ -248,9 +270,22 @@
             font-style: italic;
         }
 
+        /* Mobile specific adjustments */
         @media (max-width: 768px) {
-            .container { flex-direction: column; height: auto; }
-            .pane { height: 50vh; }
+            body {
+                padding: 10px;
+            }
+            .container { 
+                flex-direction: column; 
+                height: auto; 
+                gap: 15px;
+            }
+            .pane { 
+                height: 50vh; 
+            }
+            #output {
+                padding: 12px; /* Gives more screen room on small phones */
+            }
         }
     </style>
 </head>
