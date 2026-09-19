@@ -282,7 +282,7 @@
         // Clear functionality
         clearBtn.addEventListener('click', () => {
             inputArea.value = '';
-            inputArea.dispatchEvent(new Event('input')); // Triggers the UI to reset to the empty state
+            inputArea.dispatchEvent(new Event('input')); 
         });
 
         const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
@@ -295,8 +295,6 @@
                 outputArea.innerHTML = '<div class="empty-state">Waiting for text...</div>';
                 return;
             }
-
-            text = text.replace(/^--- (START|END) OF FILE.*(?:\r\n|\r|\n)?/gmi, '');
 
             let match;
             let lastIndex = 0;
@@ -314,7 +312,21 @@
 
                 // 2. Build Code Block Elements
                 const language = match[1].trim() || 'plaintext';
-                const codeContent = match[2];
+                let codeContent = match[2];
+                let fileName = '';
+
+                // Extract filename if "--- START OF FILE ..." is inside the code block
+                const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n/;
+                const startMatch = codeContent.match(startRegex);
+                if (startMatch) {
+                    fileName = startMatch[1].trim();
+                    // Remove the START tag from the code
+                    codeContent = codeContent.replace(startRegex, '');
+                }
+
+                // Strip the "--- END OF FILE ---" tag from the code if it exists
+                const endRegex = /(?:\n|^)\s*--- END OF FILE ---\s*$/;
+                codeContent = codeContent.replace(endRegex, '');
 
                 const container = document.createElement('div');
                 container.className = 'code-container';
@@ -323,7 +335,12 @@
                 header.className = 'code-header';
 
                 const langSpan = document.createElement('span');
-                langSpan.textContent = language;
+                if (fileName) {
+                    // Inject file name beautifully if we found one
+                    langSpan.innerHTML = `<strong style="color: #fff;">${fileName}</strong> <span style="opacity: 0.7; font-size: 0.9em; margin-left: 8px;">(${language})</span>`;
+                } else {
+                    langSpan.textContent = language;
+                }
 
                 const btnGroup = document.createElement('div');
                 btnGroup.className = 'button-group';
