@@ -166,36 +166,37 @@
             color: #9cdcfe;
             font-size: 12px;
             font-family: monospace;
-            gap: 12px;
+            gap: 10px;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
         }
 
         .code-header-title {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            min-width: 0; /* Crucial for allowing text to truncate inside a flexbox */
+            flex: 1 1 200px;
+            min-width: 0;
+            line-height: 1.4;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .file-name {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             color: #fff;
             font-weight: bold;
+            word-break: break-word;
+            overflow-wrap: anywhere; /* Allows breaking at slashes without cutting off */
         }
 
         .lang-label {
-            white-space: nowrap;
-            flex-shrink: 0; /* Prevents the language from shrinking */
             opacity: 0.7;
             font-size: 0.9em;
-            margin-left: 8px;
+            margin-left: 6px;
+            white-space: nowrap;
         }
 
         .button-group {
             display: flex;
             gap: 8px;
-            flex-shrink: 0; /* Prevents buttons from being pushed out of bounds */
+            flex-shrink: 0;
+            margin-left: auto; /* Aligns buttons to the right side */
         }
 
         .action-btn {
@@ -247,9 +248,20 @@
             font-style: italic;
         }
 
+        /* Responsive styling for mobile devices */
         @media (max-width: 768px) {
             .container { flex-direction: column; height: auto; }
             .pane { height: 50vh; }
+            
+            /* Stacks the full path cleanly on top and the buttons below */
+            .code-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .button-group {
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -345,7 +357,6 @@
                 const startMatch = codeContent.match(startRegex);
                 if (startMatch) {
                     fileName = startMatch[1].trim();
-                    // Remove the START tag from the code
                     codeContent = codeContent.replace(startRegex, '');
                 }
 
@@ -363,8 +374,7 @@
                 langSpan.className = 'code-header-title';
                 
                 if (fileName) {
-                    langSpan.title = fileName; // Adds a hover tooltip to view the whole path
-                    langSpan.innerHTML = `<span class="file-name">${fileName}</span><span class="lang-label">(${language})</span>`;
+                    langSpan.innerHTML = `<span class="file-name">${fileName}</span> <span class="lang-label">(${language})</span>`;
                 } else {
                     langSpan.innerHTML = `<span class="lang-label" style="margin-left: 0;">${language}</span>`;
                 }
