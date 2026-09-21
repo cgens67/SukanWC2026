@@ -13,7 +13,7 @@
 
     <!-- Prism.js Syntax Highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
     <style>
@@ -36,9 +36,7 @@
             --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -54,96 +52,48 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        h1 {
-            margin-top: 0;
-            margin-bottom: 6px;
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        
-        p.subtitle {
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: #64748b;
-            text-align: center;
-            font-size: 0.95rem;
-        }
+        h1 { margin-top: 0; margin-bottom: 6px; font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
+        p.subtitle { margin-top: 0; margin-bottom: 16px; color: #64748b; text-align: center; font-size: 0.95rem; }
 
         /* --- Drag & Drop Overlay --- */
         #drop-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(16, 185, 129, 0.12);
             backdrop-filter: blur(4px);
             border: 3px dashed var(--primary);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.25s var(--ease-spring);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0; transition: opacity 0.25s var(--ease-spring);
         }
-        #drop-overlay.active {
-            opacity: 1;
-        }
+        #drop-overlay.active { opacity: 1; }
         #drop-overlay span {
-            background: white;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-hover);
+            background: white; padding: 16px 32px; border-radius: 12px;
+            font-size: 1.2rem; font-weight: 600; color: var(--primary-hover);
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         /* --- Tab Bar --- */
         .tab-bar-container {
-            width: 100%;
-            max-width: 1400px;
-            display: flex;
-            align-items: center;
-            background: var(--tab-bar-bg);
-            border: 1px solid var(--tab-border);
-            border-bottom: none;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            padding: 8px 10px 0 10px;
-            overflow-x: auto;
+            width: 100%; max-width: 1400px; display: flex; align-items: center;
+            background: var(--tab-bar-bg); border: 1px solid var(--tab-border);
+            border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px;
+            padding: 8px 10px 0 10px; overflow-x: auto;
         }
 
         .tab-list {
-            display: flex;
-            align-items: flex-end;
-            gap: 6px;
-            flex-grow: 1;
-            overflow-x: auto;
-            scrollbar-width: none;
+            display: flex; align-items: flex-end; gap: 6px; flex-grow: 1;
+            overflow-x: auto; scrollbar-width: none;
         }
         .tab-list::-webkit-scrollbar { display: none; }
 
         .tab-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--tab-bg);
-            padding: 8px 16px;
-            border: 1px solid var(--tab-border);
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            font-size: 13px;
-            cursor: pointer;
-            user-select: none;
-            color: #475569;
-            max-width: 200px;
-            position: relative;
-            transform-origin: bottom center;
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--tab-bg); padding: 8px 16px;
+            border: 1px solid var(--tab-border); border-bottom: none;
+            border-radius: 8px 8px 0 0; font-size: 13px; cursor: pointer;
+            user-select: none; color: #475569; max-width: 200px;
+            position: relative; transform-origin: bottom center;
             animation: tabPop 0.3s var(--ease-bounce) forwards;
-            transition: 
-                background 0.25s var(--ease-spring), 
-                color 0.25s var(--ease-spring), 
-                transform 0.2s var(--ease-spring);
+            transition: background 0.25s var(--ease-spring), color 0.25s var(--ease-spring), transform 0.2s var(--ease-spring);
         }
 
         @keyframes tabPop {
@@ -151,251 +101,113 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .tab-item:hover {
-            background: #e9ecf2;
-            color: #0f172a;
-            transform: translateY(-1px);
-        }
-
-        .tab-item.active {
-            background: var(--tab-active-bg);
-            color: #0f172a;
-            font-weight: 600;
-        }
-
+        .tab-item:hover { background: #e9ecf2; color: #0f172a; transform: translateY(-1px); }
+        .tab-item.active { background: var(--tab-active-bg); color: #0f172a; font-weight: 600; }
         .tab-item.active::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 3px;
-            background: var(--primary);
-            border-radius: 8px 8px 0 0;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--primary); border-radius: 8px 8px 0 0;
         }
 
-        .tab-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            outline: none;
-        }
+        .tab-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; }
 
         .tab-close {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            cursor: pointer;
-            color: #94a3b8;
-            padding: 0;
-            transition: all 0.2s var(--ease-bounce);
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; border-radius: 50%; border: none;
+            background: transparent; font-size: 13px; cursor: pointer;
+            color: #94a3b8; padding: 0; transition: all 0.2s var(--ease-bounce);
         }
-
-        .tab-close:hover {
-            background: #cbd5e1;
-            color: #0f172a;
-            transform: rotate(90deg) scale(1.1);
-        }
+        .tab-close:hover { background: #cbd5e1; color: #0f172a; transform: rotate(90deg) scale(1.1); }
 
         .tab-add-btn {
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            font-weight: 500;
-            color: #64748b;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            margin-bottom: 2px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.25s var(--ease-bounce);
+            background: transparent; border: none; font-size: 20px; font-weight: 500;
+            color: #64748b; cursor: pointer; width: 32px; height: 32px;
+            margin-bottom: 2px; border-radius: 6px; display: flex;
+            align-items: center; justify-content: center; transition: all 0.25s var(--ease-bounce);
         }
-
-        .tab-add-btn:hover {
-            background: #d3d7e0;
-            color: #0f172a;
-            transform: scale(1.15) rotate(90deg);
-        }
+        .tab-add-btn:hover { background: #d3d7e0; color: #0f172a; transform: scale(1.15) rotate(90deg); }
 
         /* --- Main Layout --- */
         .container {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 1400px;
-            height: 78vh;
-            border-top: 1px solid var(--tab-border);
+            display: flex; gap: 20px; width: 100%; max-width: 1400px;
+            height: 78vh; border-top: 1px solid var(--tab-border);
         }
 
         .pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            border-radius: 0 0 12px 12px;
-            box-shadow: var(--pane-shadow);
-            overflow: hidden;
-            min-width: 0;
-            border: 1px solid var(--tab-border);
-            border-top: none;
+            flex: 1; display: flex; flex-direction: column; background: white;
+            border-radius: 0 0 12px 12px; box-shadow: var(--pane-shadow);
+            overflow: hidden; min-width: 0; border: 1px solid var(--tab-border); border-top: none;
         }
 
         .pane-header {
-            background: #f8fafc;
-            padding: 10px 16px;
-            font-weight: 600;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
+            background: #f8fafc; padding: 10px 16px; font-weight: 600;
+            border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between;
+            align-items: center; font-size: 0.9rem;
         }
 
-        .header-btn-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-btn-group { display: flex; align-items: center; gap: 8px; }
 
         .header-btn {
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            color: white; border: none; border-radius: 6px; padding: 6px 12px;
+            cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex;
+            align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.06);
             transition: all 0.2s var(--ease-spring);
         }
-
-        .header-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-        }
-
-        .header-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-        }
+        .header-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
+        .header-btn:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
         .paste-btn { background-color: var(--primary); }
         .paste-btn:hover { background-color: var(--primary-hover); }
-
         .clear-btn { background-color: #64748b; }
         .clear-btn:hover { background-color: #475569; }
-
         .export-btn { background-color: var(--accent); }
         .export-btn:hover { background-color: var(--accent-hover); }
-
         .toggle-all-btn { background-color: #475569; color: white; }
         .toggle-all-btn:hover { background-color: #334155; }
 
         .sync-toggle-label {
-            font-size: 11.5px;
-            font-weight: 500;
-            color: #64748b;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            user-select: none;
-            margin-right: 6px;
+            font-size: 11.5px; font-weight: 500; color: #64748b; display: flex;
+            align-items: center; gap: 5px; cursor: pointer; user-select: none; margin-right: 6px;
         }
         .sync-toggle-label input { cursor: pointer; }
 
         textarea {
-            flex: 1;
-            border: none;
-            padding: 18px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13.5px;
-            line-height: 1.6;
-            resize: none;
-            outline: none;
-            color: #1e293b;
-            background: #ffffff;
+            flex: 1; border: none; padding: 18px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13.5px; line-height: 1.6; resize: none; outline: none;
+            color: #1e293b; background: #ffffff;
         }
 
         #output {
-            flex: 1;
-            padding: 22px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: #ffffff;
-            min-width: 0;
-            width: 100%;
+            flex: 1; padding: 22px; overflow-y: auto; overflow-x: hidden;
+            background: #ffffff; min-width: 0; width: 100%;
         }
 
-        .content-fade {
-            animation: viewFadeSlide 0.3s var(--ease-spring) forwards;
-        }
-
+        .content-fade { animation: viewFadeSlide 0.3s var(--ease-spring) forwards; }
         @keyframes viewFadeSlide {
             0% { opacity: 0; transform: translateY(6px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         /* --- Markdown Elements --- */
-        .markdown-text {
-            line-height: 1.7;
-            font-size: 15px;
-            color: #334155;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-        .markdown-text h1, .markdown-text h2, .markdown-text h3 {
-            color: #0f172a;
-            letter-spacing: -0.015em;
-            margin-top: 1.2em;
-            margin-bottom: 0.4em;
-        }
+        .markdown-text { line-height: 1.7; font-size: 15px; color: #334155; word-break: break-word; overflow-wrap: break-word; }
+        .markdown-text h1, .markdown-text h2, .markdown-text h3 { color: #0f172a; letter-spacing: -0.015em; margin-top: 1.2em; margin-bottom: 0.4em; }
         .markdown-text code {
-            background-color: #f1f5f9;
-            color: #e11d48;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: Consolas, Monaco, monospace;
-            font-size: 0.88em;
-            border: 1px solid #e2e8f0;
+            background-color: #f1f5f9; color: #e11d48; padding: 2px 5px;
+            border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 0.88em; border: 1px solid #e2e8f0;
         }
 
         /* --- Code Containers --- */
         .code-container {
-            margin: 16px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-            border: 1px solid #2f3549;
-            background: var(--code-bg);
-            transition: box-shadow 0.3s var(--ease-spring);
+            margin: 16px 0; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12); border: 1px solid #2f3549;
+            background: var(--code-bg); transition: box-shadow 0.3s var(--ease-spring);
         }
-
-        .code-container:hover {
-            box-shadow: 0 8px 22px rgba(0,0,0,0.18);
-        }
+        .code-container:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
 
         .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--code-header-bg);
-            padding: 8px 14px;
-            color: #81a1c1;
-            font-size: 12px;
-            font-family: monospace;
-            gap: 10px;
-            flex-wrap: wrap;
-            border-bottom: 1px solid #202224;
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: var(--code-header-bg); padding: 8px 14px;
+            color: #81a1c1; font-size: 12px; font-family: monospace;
+            gap: 10px; flex-wrap: wrap; border-bottom: 1px solid #202224;
         }
 
         .code-header-title { flex: 1 1 auto; min-width: 0; word-break: break-word; }
@@ -405,65 +217,46 @@
         .button-group { display: flex; gap: 8px; flex-shrink: 0; margin-left: auto; }
 
         .action-btn {
-            background-color: rgba(255, 255, 255, 0.06);
-            color: #d8dee9;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 5px;
-            padding: 4px 10px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            background-color: rgba(255, 255, 255, 0.06); color: #d8dee9;
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 5px;
+            padding: 4px 10px; cursor: pointer; font-size: 12px; font-weight: 500;
             transition: all 0.2s var(--ease-spring);
         }
-
-        .action-btn:hover { 
-            background-color: rgba(255, 255, 255, 0.18); 
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #fff;
-            transform: translateY(-1px);
-        }
-
+        .action-btn:hover { background-color: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.3); color: #fff; transform: translateY(-1px); }
         .action-btn:active { transform: translateY(1px); }
         .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
 
-        /* PERFORMANCE FIX: Explicit JS Height Animation */
+        /* NATIVE CSS GRID PHYSICS (RESTORED & BUG-FREE) */
         .code-collapse-wrapper {
-            overflow: hidden; /* Replaced Grid with simple hidden overflow */
-            transition: height 0.4s var(--ease-spring), opacity 0.3s ease;
-            will-change: height, opacity;
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.4s var(--ease-spring), opacity 0.3s ease;
             opacity: 1;
         }
+
         .code-collapse-wrapper.minimized {
+            grid-template-rows: 0fr;
             opacity: 0;
-            /* Height is handled exactly by JS so browser doesn't have to calculate layout */
+        }
+
+        .code-collapse-inner {
+            min-height: 0;
+            overflow: hidden; /* CRITICAL: Prevents text from spilling out when collapsed */
         }
 
         pre[class*="language-"] {
-            margin: 0 !important;
-            padding: 16px !important;
-            border-radius: 0 !important;
-            background-color: var(--code-bg) !important;
-            font-size: 13.5px !important;
-            line-height: 1.55 !important;
-            box-shadow: none !important;
+            margin: 0 !important; padding: 16px !important; border-radius: 0 !important;
+            background-color: var(--code-bg) !important; font-size: 13.5px !important;
+            line-height: 1.55 !important; box-shadow: none !important;
         }
-
-        code[class*="language-"] {
-            font-family: 'Consolas', 'Monaco', monospace !important;
-            text-shadow: none !important;
-        }
+        code[class*="language-"] { font-family: 'Consolas', 'Monaco', monospace !important; text-shadow: none !important; }
 
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.25); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
 
-        .empty-state {
-            text-align: center;
-            color: #94a3b8;
-            margin-top: 60px;
-            font-style: italic;
-        }
+        .empty-state { text-align: center; color: #94a3b8; margin-top: 60px; font-style: italic; }
 
         @media (max-width: 768px) {
             body { padding: 10px; }
@@ -487,7 +280,6 @@
     </div>
 
     <div class="container">
-        <!-- Editor Pane -->
         <div class="pane">
             <div class="pane-header">
                 <span id="editor-tab-indicator">Raw Text / Markdown</span>
@@ -499,7 +291,6 @@
             <textarea id="markdown-input" placeholder="Paste your markdown here or drop files..."></textarea>
         </div>
 
-        <!-- Rendered View Pane -->
         <div class="pane">
             <div class="pane-header">
                 <span>Formatted View</span>
@@ -579,9 +370,7 @@
                     titleSpan.contentEditable = 'false';
                     tab.title = titleSpan.textContent.trim() || 'Untitled';
                     titleSpan.textContent = tab.title;
-                    if (tab.id === activeTabId) {
-                        editorTabIndicator.textContent = tab.title;
-                    }
+                    if (tab.id === activeTabId) editorTabIndicator.textContent = tab.title;
                     saveState();
                 };
 
@@ -665,6 +454,12 @@
         let activeBlockTogglers = [];
 
         function renderMarkdown(text, triggerTransition = false) {
+            // FIX: Prevent typing from resetting scroll position!
+            const prevScroll = outputArea.scrollTop;
+            
+            // Check if we are currently scrolled to the very bottom of the input editor
+            const isAtBottom = Math.abs(inputArea.scrollHeight - inputArea.scrollTop - inputArea.clientHeight) < 15;
+
             outputArea.innerHTML = ''; 
             activeBlockTogglers = [];
             
@@ -726,10 +521,12 @@
                 minimizeBtn.className = 'action-btn';
                 minimizeBtn.textContent = 'Minimize';
                 
+                // RESTORED CSS GRID STRUCTURE
                 const collapseWrapper = document.createElement('div');
                 collapseWrapper.className = 'code-collapse-wrapper';
-                // Initialize height allowing it to adapt normally
-                collapseWrapper.style.height = 'auto';
+                
+                const collapseInner = document.createElement('div');
+                collapseInner.className = 'code-collapse-inner';
 
                 const pre = document.createElement('pre');
                 pre.className = `language-${language}`;
@@ -739,36 +536,16 @@
                 code.textContent = codeContent;
 
                 pre.appendChild(code);
-                collapseWrapper.appendChild(pre);
+                collapseInner.appendChild(pre);
+                collapseWrapper.appendChild(collapseInner);
 
-                // --- Performance Fixed Minimize Toggle ---
+                // Simple Class-based Toggle for Native Smooth Grid Animation
                 let isMinimized = false;
                 const toggleBlock = (forceState) => {
                     const nextState = typeof forceState === 'boolean' ? forceState : !isMinimized;
-                    if (nextState === isMinimized) return; // Prevent double-triggering
+                    if (nextState === isMinimized) return;
                     isMinimized = nextState;
-
-                    if (isMinimized) {
-                        // explicitly set current height to allow CSS transition to grab it
-                        collapseWrapper.style.height = collapseWrapper.scrollHeight + 'px';
-                        
-                        // force browser layout engine to recognize the height before shrinking
-                        void collapseWrapper.offsetHeight;
-                        
-                        // Shrink to 0
-                        collapseWrapper.style.height = '0px';
-                        collapseWrapper.classList.add('minimized');
-                    } else {
-                        // Expanding
-                        collapseWrapper.classList.remove('minimized');
-                        collapseWrapper.style.height = collapseWrapper.scrollHeight + 'px';
-                        
-                        // Reset to 'auto' after animation finishes to allow responsive resizing
-                        setTimeout(() => {
-                            if (!isMinimized) collapseWrapper.style.height = 'auto';
-                        }, 400); // Wait for the 0.4s CSS transition
-                    }
-                    
+                    collapseWrapper.classList.toggle('minimized', isMinimized);
                     minimizeBtn.textContent = isMinimized ? 'Expand' : 'Minimize';
                 };
 
@@ -809,13 +586,20 @@
                 outputArea.appendChild(textNode);
             }
 
-            // Sync the collapsed state for newly rendered blocks if we hit "Collapse All" earlier
             if (allCollapsedState) {
                 activeBlockTogglers.forEach(fn => fn(true));
             }
 
-            // Run Prism Syntax Highlighting safely once
             Prism.highlightAllUnder(outputArea);
+
+            // FIX: Restore View Scroll Perfectly
+            if (!triggerTransition) {
+                if (isAtBottom && syncScrollChk.checked) {
+                    outputArea.scrollTop = outputArea.scrollHeight;
+                } else {
+                    outputArea.scrollTop = prevScroll;
+                }
+            }
         }
 
         toggleAllBtn.addEventListener('click', () => {
@@ -865,7 +649,7 @@
             }
         });
 
-        // --- Scrolling Logic ---
+        // --- Synchronized Scrolling logic ---
         let isSyncingInput = false;
         let isSyncingOutput = false;
 
@@ -887,8 +671,7 @@
 
         // --- Drag & Drop ---
         window.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropOverlay.classList.add('active');
+            e.preventDefault(); dropOverlay.classList.add('active');
         });
 
         window.addEventListener('dragleave', (e) => {
@@ -896,9 +679,7 @@
         });
 
         window.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropOverlay.classList.remove('active');
-
+            e.preventDefault(); dropOverlay.classList.remove('active');
             const files = Array.from(e.dataTransfer.files);
             if (!files.length) return;
 
@@ -910,9 +691,7 @@
                     if (currentTab && !currentTab.content.trim()) {
                         currentTab.title = file.name;
                         currentTab.content = content;
-                        saveState();
-                        renderTabs();
-                        renderMarkdown(content, true);
+                        saveState(); renderTabs(); renderMarkdown(content, true);
                     } else {
                         addTab(file.name, content);
                     }
@@ -940,8 +719,7 @@
             inputArea.dispatchEvent(new Event('input')); 
         });
 
-        // PERFORMANCE FIX: Keystroke Debouncing
-        // Prevents the massive syntax highlighting lag when continuously typing
+        // FIX: The Debouncer (Keeps typing totally lag-free)
         let renderTimeout;
         inputArea.addEventListener('input', () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
@@ -953,7 +731,7 @@
             clearTimeout(renderTimeout);
             renderTimeout = setTimeout(() => {
                 renderMarkdown(inputArea.value);
-            }, 250); // Waits 250ms after you stop typing to render the colors
+            }, 250); 
         });
 
         renderTabs();
