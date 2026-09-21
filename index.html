@@ -226,22 +226,21 @@
         .action-btn:active { transform: translateY(1px); }
         .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
 
-        /* NATIVE CSS GRID PHYSICS */
+        /* ZERO-LAG ACCORDION HACK (ABSOLUTE POSITIONING) */
         .code-collapse-wrapper {
-            display: grid;
-            grid-template-rows: 1fr;
-            transition: grid-template-rows 0.4s var(--ease-spring), opacity 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transition: height 0.4s var(--ease-spring), opacity 0.3s ease;
+            will-change: height, opacity;
             opacity: 1;
         }
 
         .code-collapse-wrapper.minimized {
-            grid-template-rows: 0fr;
-            opacity: 0;
+            opacity: 0.3; /* Fades out smoothly when closed */
         }
 
         .code-collapse-inner {
-            min-height: 0;
-            overflow: hidden; /* Prevents text from spilling out when collapsed */
+            width: 100%;
         }
 
         pre[class*="language-"] {
@@ -548,16 +547,73 @@
                 collapseInner.appendChild(pre);
                 collapseWrapper.appendChild(collapseInner);
 
+                // ZERO-LAG HARDWARE ACCELERATED ACCORDION HACK
                 let isMinimized = false;
-                const toggleBlock = (forceState) => {
+                let transitionTimeout;
+
+                // Setup Initial Default View state
+                collapseWrapper.style.height = 'auto';
+                collapseInner.style.position = 'relative';
+
+                const toggleBlock = (forceState, instant = false) => {
                     const nextState = typeof forceState === 'boolean' ? forceState : !isMinimized;
                     if (nextState === isMinimized) return;
                     isMinimized = nextState;
-                    collapseWrapper.classList.toggle('minimized', isMinimized);
+
+                    clearTimeout(transitionTimeout);
+                    collapseWrapper.style.transition = instant ? 'none' : 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+
+                    if (isMinimized) {
+                        // 1. Lock the height explicitly before modifying the inner content flow
+                        const currentHeight = collapseWrapper.scrollHeight;
+                        collapseWrapper.style.height = currentHeight + 'px';
+                        
+                        // 2. Take heavy content out of layout flow (prevents browser recalculating thousands of spans!)
+                        collapseInner.style.position = 'absolute';
+                        collapseInner.style.top = '0';
+                        collapseInner.style.left = '0';
+                        collapseInner.style.right = '0';
+                        
+                        if (instant) {
+                            collapseWrapper.style.height = '0px';
+                            collapseWrapper.classList.add('minimized');
+                            requestAnimationFrame(() => {
+                                collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+                            });
+                        } else {
+                            // 3. Force reflow so browser registers the explicit locked height
+                            void collapseWrapper.offsetHeight; 
+                            
+                            // 4. Shrink the wrapper (the inner absolute content gets effortlessly cropped)
+                            collapseWrapper.style.height = '0px';
+                            collapseWrapper.classList.add('minimized');
+                        }
+                    } else {
+                        // Expanding
+                        collapseWrapper.classList.remove('minimized');
+                        const targetHeight = collapseInner.scrollHeight;
+                        collapseWrapper.style.height = targetHeight + 'px';
+                        
+                        if (instant) {
+                            collapseInner.style.position = 'relative';
+                            collapseWrapper.style.height = 'auto';
+                            requestAnimationFrame(() => {
+                                collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+                            });
+                        } else {
+                            // Wait for the CSS transition to finish before snapping it back into normal flow
+                            transitionTimeout = setTimeout(() => {
+                                if (!isMinimized) {
+                                    collapseInner.style.position = 'relative';
+                                    collapseWrapper.style.height = 'auto';
+                                }
+                            }, 400); 
+                        }
+                    }
                     minimizeBtn.textContent = isMinimized ? 'Expand' : 'Minimize';
                 };
 
-                minimizeBtn.addEventListener('click', () => toggleBlock());
+                minimizeBtn.addEventListener('click', () => toggleBlock(null, false));
                 activeBlockTogglers.push(toggleBlock);
 
                 const copyBtn = document.createElement('button');
@@ -600,8 +656,9 @@
                 outputArea.appendChild(textNode);
             }
 
+            // If global 'Collapse All' is active, initialize newly drawn blocks as instantly collapsed
             if (allCollapsedState) {
-                activeBlockTogglers.forEach(fn => fn(true));
+                activeBlockTogglers.forEach(fn => fn(true, true));
             }
 
             Prism.highlightAllUnder(outputArea);
@@ -617,7 +674,7 @@
 
         toggleAllBtn.addEventListener('click', () => {
             allCollapsedState = !allCollapsedState;
-            activeBlockTogglers.forEach(fn => fn(allCollapsedState));
+            activeBlockTogglers.forEach(fn => fn(allCollapsedState, false));
             toggleAllBtn.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
         });
 
