@@ -226,7 +226,7 @@
         .action-btn:active { transform: translateY(1px); }
         .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
 
-        /* NATIVE CSS GRID PHYSICS (RESTORED & BUG-FREE) */
+        /* NATIVE CSS GRID PHYSICS */
         .code-collapse-wrapper {
             display: grid;
             grid-template-rows: 1fr;
@@ -241,7 +241,7 @@
 
         .code-collapse-inner {
             min-height: 0;
-            overflow: hidden; /* CRITICAL: Prevents text from spilling out when collapsed */
+            overflow: hidden; 
         }
 
         pre[class*="language-"] {
@@ -450,14 +450,16 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
+        // FIX: The Markdown-compliant strict parser.
+        // It requires closing backticks to be strictly on a new line and match the opening sequence.
+        // This completely prevents it from accidentally picking up inline backticks inside the code!
+        const codeBlockRegex = /^([ \t]*)(`{3,})([^\n]*)\n([\s\S]*?)(?:\n[ \t]*\2[^\n]*|^[ \t]*\2[^\n]*|$)/gm;
         let activeBlockTogglers = [];
 
         function renderMarkdown(text, triggerTransition = false) {
-            // FIX: Prevent typing from resetting scroll position!
             const prevScroll = outputArea.scrollTop;
             
-            // Check if we are currently scrolled to the very bottom of the input editor
+            // Auto-scroll logic if user is typing at the very bottom
             const isAtBottom = Math.abs(inputArea.scrollHeight - inputArea.scrollTop - inputArea.clientHeight) < 15;
 
             outputArea.innerHTML = ''; 
@@ -487,9 +489,9 @@
                     outputArea.appendChild(textNode);
                 }
 
-                const rawLang = match[1].trim();
+                const rawLang = match[3].trim();
                 const language = rawLang || 'plaintext';
-                let codeContent = match[2];
+                let codeContent = match[4];
                 let fileName = '';
 
                 const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
@@ -521,7 +523,6 @@
                 minimizeBtn.className = 'action-btn';
                 minimizeBtn.textContent = 'Minimize';
                 
-                // RESTORED CSS GRID STRUCTURE
                 const collapseWrapper = document.createElement('div');
                 collapseWrapper.className = 'code-collapse-wrapper';
                 
@@ -539,7 +540,6 @@
                 collapseInner.appendChild(pre);
                 collapseWrapper.appendChild(collapseInner);
 
-                // Simple Class-based Toggle for Native Smooth Grid Animation
                 let isMinimized = false;
                 const toggleBlock = (forceState) => {
                     const nextState = typeof forceState === 'boolean' ? forceState : !isMinimized;
@@ -592,7 +592,6 @@
 
             Prism.highlightAllUnder(outputArea);
 
-            // FIX: Restore View Scroll Perfectly
             if (!triggerTransition) {
                 if (isAtBottom && syncScrollChk.checked) {
                     outputArea.scrollTop = outputArea.scrollHeight;
@@ -620,7 +619,7 @@
             codeBlockRegex.lastIndex = 0;
 
             while ((match = codeBlockRegex.exec(text)) !== null) {
-                let codeContent = match[2];
+                let codeContent = match[4]; // Updated to reference correct capture group
                 const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
                 const startMatch = codeContent.match(startRegex);
                 
@@ -719,7 +718,7 @@
             inputArea.dispatchEvent(new Event('input')); 
         });
 
-        // FIX: The Debouncer (Keeps typing totally lag-free)
+        // Typing Lag Debouncer 
         let renderTimeout;
         inputArea.addEventListener('input', () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
