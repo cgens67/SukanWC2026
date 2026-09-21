@@ -241,7 +241,7 @@
 
         .code-collapse-inner {
             min-height: 0;
-            overflow: hidden; 
+            overflow: hidden; /* Prevents text from spilling out when collapsed */
         }
 
         pre[class*="language-"] {
@@ -450,16 +450,11 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        // FIX: The Markdown-compliant strict parser.
-        // It requires closing backticks to be strictly on a new line and match the opening sequence.
-        // This completely prevents it from accidentally picking up inline backticks inside the code!
-        const codeBlockRegex = /^([ \t]*)(`{3,})([^\n]*)\n([\s\S]*?)(?:\n[ \t]*\2[^\n]*|^[ \t]*\2[^\n]*|$)/gm;
+        const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
         let activeBlockTogglers = [];
 
         function renderMarkdown(text, triggerTransition = false) {
             const prevScroll = outputArea.scrollTop;
-            
-            // Auto-scroll logic if user is typing at the very bottom
             const isAtBottom = Math.abs(inputArea.scrollHeight - inputArea.scrollTop - inputArea.clientHeight) < 15;
 
             outputArea.innerHTML = ''; 
@@ -479,9 +474,21 @@
             let match;
             let lastIndex = 0;
             codeBlockRegex.lastIndex = 0;
+            let activeFileName = '';
 
             while ((match = codeBlockRegex.exec(text)) !== null) {
-                const beforeText = text.substring(lastIndex, match.index);
+                let beforeText = text.substring(lastIndex, match.index);
+                
+                // 1. EXTRACT External START OF FILE markers
+                const startMatches = [...beforeText.matchAll(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g)];
+                if (startMatches.length > 0) {
+                    activeFileName = startMatches[startMatches.length - 1][1].trim();
+                }
+
+                // 2. Hide markers from the rendered markdown reading view
+                beforeText = beforeText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
+                beforeText = beforeText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
+
                 if (beforeText.trim() !== '') {
                     const textNode = document.createElement('div');
                     textNode.className = 'markdown-text';
@@ -489,19 +496,20 @@
                     outputArea.appendChild(textNode);
                 }
 
-                const rawLang = match[3].trim();
+                const rawLang = match[1].trim();
                 const language = rawLang || 'plaintext';
-                let codeContent = match[4];
-                let fileName = '';
+                let codeContent = match[2];
+                let fileName = activeFileName;
 
-                const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
+                // 3. EXTRACT Internal START OF FILE markers (Inside the code block)
+                const startRegex = /^\s*-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}\s*\n?/;
                 const startMatch = codeContent.match(startRegex);
                 if (startMatch) {
                     fileName = startMatch[1].trim();
                     codeContent = codeContent.replace(startRegex, '');
                 }
 
-                const endRegexAll = /(?:\r?\n|^)\s*--- END OF FILE ---\s*(?=\r?\n|$)/g;
+                const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE\s*-{3,}(?=\r?\n|$)/g;
                 codeContent = codeContent.replace(endRegexAll, '').trimEnd(); 
 
                 const container = document.createElement('div');
@@ -575,10 +583,16 @@
                 container.appendChild(collapseWrapper);
                 outputArea.appendChild(container);
 
+                activeFileName = ''; // Reset for next file
                 lastIndex = match.index + match[0].length;
             }
 
-            const remainingText = text.substring(lastIndex);
+            let remainingText = text.substring(lastIndex);
+            
+            // Clean trailing markers
+            remainingText = remainingText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
+            remainingText = remainingText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
+            
             if (remainingText.trim() !== '') {
                 const textNode = document.createElement('div');
                 textNode.className = 'markdown-text';
@@ -617,18 +631,36 @@
             let extractedCount = 0;
             let match;
             codeBlockRegex.lastIndex = 0;
+            let lastExportIndex = 0;
+            let activeFileName = '';
 
             while ((match = codeBlockRegex.exec(text)) !== null) {
-                let codeContent = match[4]; // Updated to reference correct capture group
-                const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
+                let codeContent = match[2];
+                
+                let beforeText = text.substring(lastExportIndex, match.index);
+                const startMatches = [...beforeText.matchAll(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g)];
+                if (startMatches.length > 0) {
+                    activeFileName = startMatches[startMatches.length - 1][1].trim();
+                }
+
+                let fileName = activeFileName;
+
+                const startRegex = /^\s*-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}\s*\n?/;
                 const startMatch = codeContent.match(startRegex);
                 
                 if (startMatch) {
-                    const fileName = startMatch[1].trim();
-                    codeContent = codeContent.replace(startRegex, '').replace(/(?:\r?\n|^)\s*--- END OF FILE ---\s*(?=\r?\n|$)/g, '').trimEnd();
+                    fileName = startMatch[1].trim();
+                    codeContent = codeContent.replace(startRegex, '');
+                }
+
+                if (fileName) {
+                    codeContent = codeContent.replace(/(?:\r?\n|^)\s*-{3,}\s*END OF FILE\s*-{3,}(?=\r?\n|$)/g, '').trimEnd();
                     zip.file(fileName, codeContent);
                     extractedCount++;
                 }
+                
+                activeFileName = '';
+                lastExportIndex = match.index + match[0].length;
             }
 
             if (extractedCount > 0) {
@@ -718,7 +750,6 @@
             inputArea.dispatchEvent(new Event('input')); 
         });
 
-        // Typing Lag Debouncer 
         let renderTimeout;
         inputArea.addEventListener('input', () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
