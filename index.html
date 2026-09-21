@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Code Extractor & Reader</title>
     
-    <!-- Marked.js -->
+    <!-- Marked.js for Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- JSZip for exporting extracted files with folder structures -->
+    <!-- JSZip for exporting extracted files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-    <!-- Prism.js Syntax Highlighting (Tomorrow Theme) -->
+    <!-- Prism.js Syntax Highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
@@ -31,6 +31,7 @@
             --tab-bg: #d3d7e0;
             --tab-active-bg: #ffffff;
             --tab-border: #cbd0db;
+            --pane-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
             --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
             --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -76,13 +77,13 @@
             background: rgba(16, 185, 129, 0.12);
             backdrop-filter: blur(4px);
             border: 3px dashed var(--primary);
-            z-index: 99999;
+            z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.25s var(--ease-spring);
         }
         #drop-overlay.active {
             opacity: 1;
@@ -138,18 +139,22 @@
             max-width: 200px;
             position: relative;
             transform-origin: bottom center;
-            animation: tabPop 0.25s var(--ease-bounce) forwards;
-            transition: background 0.2s ease, color 0.2s ease;
+            animation: tabPop 0.3s var(--ease-bounce) forwards;
+            transition: 
+                background 0.25s var(--ease-spring), 
+                color 0.25s var(--ease-spring), 
+                transform 0.2s var(--ease-spring);
         }
 
         @keyframes tabPop {
-            0% { opacity: 0; transform: scale(0.9) translateY(6px); }
+            0% { opacity: 0; transform: scale(0.85) translateY(10px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .tab-item:hover {
             background: #e9ecf2;
             color: #0f172a;
+            transform: translateY(-1px);
         }
 
         .tab-item.active {
@@ -186,13 +191,13 @@
             cursor: pointer;
             color: #94a3b8;
             padding: 0;
-            transition: all 0.2s ease;
+            transition: all 0.2s var(--ease-bounce);
         }
 
         .tab-close:hover {
             background: #cbd5e1;
             color: #0f172a;
-            transform: scale(1.1);
+            transform: rotate(90deg) scale(1.1);
         }
 
         .tab-add-btn {
@@ -209,16 +214,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s var(--ease-bounce), background 0.2s ease;
+            transition: all 0.25s var(--ease-bounce);
         }
 
         .tab-add-btn:hover {
             background: #d3d7e0;
             color: #0f172a;
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(90deg);
         }
 
-        /* --- Workspace Container --- */
+        /* --- Main Layout --- */
         .container {
             display: flex;
             gap: 20px;
@@ -234,7 +239,7 @@
             flex-direction: column;
             background: white;
             border-radius: 0 0 12px 12px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--pane-shadow);
             overflow: hidden;
             min-width: 0;
             border: 1px solid var(--tab-border);
@@ -250,7 +255,6 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.9rem;
-            position: relative;
         }
 
         .header-btn-group {
@@ -270,14 +274,18 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            transition: transform 0.15s ease, background 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s var(--ease-spring);
         }
 
         .header-btn:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
+
         .header-btn:active {
             transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
         }
 
         .paste-btn { background-color: var(--primary); }
@@ -286,62 +294,11 @@
         .clear-btn { background-color: #64748b; }
         .clear-btn:hover { background-color: #475569; }
 
-        .toggle-all-btn { background-color: #475569; }
+        .export-btn { background-color: var(--accent); }
+        .export-btn:hover { background-color: var(--accent-hover); }
+
+        .toggle-all-btn { background-color: #475569; color: white; }
         .toggle-all-btn:hover { background-color: #334155; }
-
-        /* --- Export Dropdown Menu --- */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .export-btn {
-            background-color: var(--accent);
-        }
-        .export-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: calc(100% + 5px);
-            background-color: #ffffff;
-            min-width: 200px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            z-index: 1000;
-            overflow: hidden;
-            animation: menuFade 0.18s var(--ease-spring);
-        }
-
-        @keyframes menuFade {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dropdown-content.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 10px 14px;
-            font-size: 12.5px;
-            font-weight: 500;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .dropdown-item:hover {
-            background-color: #f1f5f9;
-            color: #0f172a;
-        }
 
         .sync-toggle-label {
             font-size: 11.5px;
@@ -354,6 +311,7 @@
             user-select: none;
             margin-right: 6px;
         }
+        .sync-toggle-label input { cursor: pointer; }
 
         textarea {
             flex: 1;
@@ -378,19 +336,29 @@
             width: 100%;
         }
 
+        .content-fade {
+            animation: viewFadeSlide 0.3s var(--ease-spring) forwards;
+        }
+
+        @keyframes viewFadeSlide {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Markdown Elements --- */
         .markdown-text {
             line-height: 1.7;
             font-size: 15px;
             color: #334155;
             word-break: break-word;
+            overflow-wrap: break-word;
         }
-
         .markdown-text h1, .markdown-text h2, .markdown-text h3 {
             color: #0f172a;
+            letter-spacing: -0.015em;
             margin-top: 1.2em;
             margin-bottom: 0.4em;
         }
-
         .markdown-text code {
             background-color: #f1f5f9;
             color: #e11d48;
@@ -401,14 +369,19 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* --- High Performance Code Block Styling --- */
+        /* --- Code Containers --- */
         .code-container {
             margin: 16px 0;
             border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
             border: 1px solid #2f3549;
             background: var(--code-bg);
-            contain: layout style;
-            transform: translateZ(0); /* Hardware composite isolation */
+            transition: box-shadow 0.3s var(--ease-spring);
+        }
+
+        .code-container:hover {
+            box-shadow: 0 8px 22px rgba(0,0,0,0.18);
         }
 
         .code-header {
@@ -423,36 +396,16 @@
             gap: 10px;
             flex-wrap: wrap;
             border-bottom: 1px solid #202224;
-            user-select: none;
         }
 
-        .code-header-title {
-            flex: 1 1 auto;
-            min-width: 0;
-            word-break: break-word;
-        }
-
-        .file-name {
-            color: #ebcb8b;
-            font-weight: bold;
-        }
-
-        .lang-label {
-            opacity: 0.65;
-            font-size: 0.9em;
-            margin-left: 6px;
-            white-space: nowrap;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-            margin-left: auto;
-        }
+        .code-header-title { flex: 1 1 auto; min-width: 0; word-break: break-word; }
+        .file-name { color: #ebcb8b; font-weight: bold; }
+        .lang-label { opacity: 0.65; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
+        
+        .button-group { display: flex; gap: 8px; flex-shrink: 0; margin-left: auto; }
 
         .action-btn {
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.06);
             color: #d8dee9;
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 5px;
@@ -460,41 +413,29 @@
             cursor: pointer;
             font-size: 12px;
             font-weight: 500;
-            transition: background 0.15s ease, transform 0.1s ease;
+            transition: all 0.2s var(--ease-spring);
         }
 
         .action-btn:hover { 
-            background-color: rgba(255, 255, 255, 0.2); 
+            background-color: rgba(255, 255, 255, 0.18); 
+            border-color: rgba(255, 255, 255, 0.3);
             color: #fff;
+            transform: translateY(-1px);
         }
 
-        .action-btn.copied { 
-            background-color: var(--primary) !important; 
-            border-color: var(--primary) !important; 
-            color: #ffffff !important; 
-        }
+        .action-btn:active { transform: translateY(1px); }
+        .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
 
-        /* --- ZERO-LAG GPU-ACCELERATED ACCORDION --- */
+        /* PERFORMANCE FIX: Explicit JS Height Animation */
         .code-collapse-wrapper {
-            display: grid;
-            grid-template-rows: 1fr;
-            transition: grid-template-rows 0.3s cubic-bezier(0.2, 0, 0, 1);
-            contain: content;
+            overflow: hidden; /* Replaced Grid with simple hidden overflow */
+            transition: height 0.4s var(--ease-spring), opacity 0.3s ease;
+            will-change: height, opacity;
+            opacity: 1;
         }
-
         .code-collapse-wrapper.minimized {
-            grid-template-rows: 0fr;
-        }
-
-        .code-collapse-inner {
-            min-height: 0;
-            overflow: hidden;
-            transform: translateZ(0);
-        }
-
-        /* Prevent browser from rendering hidden tokens when collapsed */
-        .code-collapse-wrapper.minimized .code-collapse-inner {
-            visibility: hidden;
+            opacity: 0;
+            /* Height is handled exactly by JS so browser doesn't have to calculate layout */
         }
 
         pre[class*="language-"] {
@@ -535,20 +476,16 @@
 </head>
 <body>
 
-    <div id="drop-overlay">
-        <span>Drop File Here to Open in New Tab</span>
-    </div>
+    <div id="drop-overlay"><span>Drop Markdown / Code File Here</span></div>
 
     <h1>Markdown Code Extractor & Reader</h1>
-    <p class="subtitle">Extract files, collapse blocks instantly without lag, and export projects with folder structures.</p>
+    <p class="subtitle">Organize docs into tabs, collapse codeblocks, strip markers, and export files.</p>
 
-    <!-- Tab Bar -->
     <div class="tab-bar-container">
         <div class="tab-list" id="tab-list"></div>
         <button class="tab-add-btn" id="btn-add-tab" title="New Tab">+</button>
     </div>
 
-    <!-- Main Workspace -->
     <div class="container">
         <!-- Editor Pane -->
         <div class="pane">
@@ -559,10 +496,10 @@
                     <button id="btn-paste" class="header-btn paste-btn">Paste</button>
                 </div>
             </div>
-            <textarea id="markdown-input" placeholder="Paste markdown here or drop files..."></textarea>
+            <textarea id="markdown-input" placeholder="Paste your markdown here or drop files..."></textarea>
         </div>
 
-        <!-- Formatted Output Pane -->
+        <!-- Rendered View Pane -->
         <div class="pane">
             <div class="pane-header">
                 <span>Formatted View</span>
@@ -571,16 +508,7 @@
                         <input type="checkbox" id="sync-scroll-chk" checked> Sync Scroll
                     </label>
                     <button id="btn-toggle-all" class="header-btn toggle-all-btn">Collapse All</button>
-                    
-                    <!-- Export Dropdown -->
-                    <div class="dropdown">
-                        <button id="btn-export-menu" class="header-btn export-btn">Export ▾</button>
-                        <div id="export-dropdown" class="dropdown-content">
-                            <div class="dropdown-item" id="opt-export-md">📄 Export as Markdown (.md)</div>
-                            <div class="dropdown-item" id="opt-export-txt">📝 Export as Plain Text (.txt)</div>
-                            <div class="dropdown-item" id="opt-export-zip">📦 Export as Code Archive (.zip)</div>
-                        </div>
-                    </div>
+                    <button id="btn-export" class="header-btn export-btn">Export</button>
                 </div>
             </div>
             <div id="output">
@@ -596,7 +524,6 @@
         let activeTabId = null;
         let allCollapsedState = false;
 
-        // Restore tabs
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             try {
@@ -624,34 +551,14 @@
         const outputArea = document.getElementById('output');
         const pasteBtn = document.getElementById('btn-paste');
         const clearBtn = document.getElementById('btn-clear');
+        const exportBtn = document.getElementById('btn-export');
         const toggleAllBtn = document.getElementById('btn-toggle-all');
         const syncScrollChk = document.getElementById('sync-scroll-chk');
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
 
-        // Dropdown elements
-        const exportMenuBtn = document.getElementById('btn-export-menu');
-        const exportDropdown = document.getElementById('export-dropdown');
-        const exportMdOpt = document.getElementById('opt-export-md');
-        const exportTxtOpt = document.getElementById('opt-export-txt');
-        const exportZipOpt = document.getElementById('opt-export-zip');
-
-        // Export Dropdown toggling
-        exportMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            exportDropdown.classList.toggle('show');
-        });
-
-        window.addEventListener('click', () => {
-            if (exportDropdown.classList.contains('show')) {
-                exportDropdown.classList.remove('show');
-            }
-        });
-
-        // --- Tabs Rendering ---
         function renderTabs() {
             tabListEl.innerHTML = '';
-
             tabs.forEach(tab => {
                 const tabEl = document.createElement('div');
                 tabEl.className = `tab-item ${tab.id === activeTabId ? 'active' : ''}`;
@@ -680,10 +587,7 @@
 
                 titleSpan.addEventListener('blur', saveTitle);
                 titleSpan.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        titleSpan.blur();
-                    }
+                    if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
                 });
 
                 tabEl.addEventListener('click', () => {
@@ -695,15 +599,11 @@
                 closeBtn.innerHTML = '&times;';
                 closeBtn.title = 'Close tab';
                 closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
+                    e.stopPropagation(); closeTab(tab.id);
                 });
 
                 tabEl.appendChild(titleSpan);
-                if (tabs.length > 1) {
-                    tabEl.appendChild(closeBtn);
-                }
-
+                if (tabs.length > 1) tabEl.appendChild(closeBtn);
                 tabListEl.appendChild(tabEl);
             });
 
@@ -723,7 +623,7 @@
             toggleAllBtn.textContent = 'Collapse All';
             saveState();
             renderTabs();
-            renderMarkdown(inputArea.value);
+            renderMarkdown(inputArea.value, true);
         }
 
         function addTab(initialTitle, initialContent = '') {
@@ -731,11 +631,7 @@
             if (currentTab) currentTab.content = inputArea.value;
 
             const newId = Date.now().toString();
-            const newTab = {
-                id: newId,
-                title: initialTitle || `Document ${tabs.length + 1}`,
-                content: initialContent
-            };
+            const newTab = { id: newId, title: initialTitle || `Document ${tabs.length + 1}`, content: initialContent };
 
             tabs.push(newTab);
             activeTabId = newId;
@@ -743,13 +639,12 @@
             toggleAllBtn.textContent = 'Collapse All';
             saveState();
             renderTabs();
-            renderMarkdown(initialContent);
+            renderMarkdown(initialContent, true);
             inputArea.focus();
         }
 
         function closeTab(id) {
             if (tabs.length <= 1) return;
-
             const indexToRemove = tabs.findIndex(t => t.id === id);
             tabs = tabs.filter(t => t.id !== id);
 
@@ -761,38 +656,23 @@
             saveState();
             renderTabs();
             const activeTab = tabs.find(t => t.id === activeTabId);
-            renderMarkdown(activeTab ? activeTab.content : '');
+            renderMarkdown(activeTab ? activeTab.content : '', true);
         }
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        // --- Clean String Parser Helper ---
-        function cleanCodeBlock(rawCode) {
-            let code = rawCode;
-            let fileName = '';
-
-            // Extract filename from START tags
-            const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
-            const startMatch = code.match(startRegex);
-            if (startMatch) {
-                fileName = startMatch[1].trim();
-                code = code.replace(startRegex, '');
-            }
-
-            // Strip ALL variations of "--- END OF FILE ---"
-            const endRegex = /(?:\r?\n|^)\s*--- END OF FILE ---\s*(?=\r?\n|$)/g;
-            code = code.replace(endRegex, '');
-
-            return { fileName, codeContent: code.trimEnd() };
-        }
-
-        // --- Fast Parser & Render Engine ---
         const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
         let activeBlockTogglers = [];
 
-        function renderMarkdown(text) {
+        function renderMarkdown(text, triggerTransition = false) {
             outputArea.innerHTML = ''; 
             activeBlockTogglers = [];
+            
+            if (triggerTransition) {
+                outputArea.classList.remove('content-fade');
+                void outputArea.offsetWidth;
+                outputArea.classList.add('content-fade');
+            }
 
             if (!text.trim()) {
                 outputArea.innerHTML = '<div class="empty-state">Waiting for text...</div>';
@@ -803,20 +683,29 @@
             let lastIndex = 0;
             codeBlockRegex.lastIndex = 0;
 
-            const fragment = document.createDocumentFragment();
-
             while ((match = codeBlockRegex.exec(text)) !== null) {
                 const beforeText = text.substring(lastIndex, match.index);
                 if (beforeText.trim() !== '') {
                     const textNode = document.createElement('div');
                     textNode.className = 'markdown-text';
                     textNode.innerHTML = marked.parse(beforeText); 
-                    fragment.appendChild(textNode);
+                    outputArea.appendChild(textNode);
                 }
 
                 const rawLang = match[1].trim();
                 const language = rawLang || 'plaintext';
-                const { fileName, codeContent } = cleanCodeBlock(match[2]);
+                let codeContent = match[2];
+                let fileName = '';
+
+                const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
+                const startMatch = codeContent.match(startRegex);
+                if (startMatch) {
+                    fileName = startMatch[1].trim();
+                    codeContent = codeContent.replace(startRegex, '');
+                }
+
+                const endRegexAll = /(?:\r?\n|^)\s*--- END OF FILE ---\s*(?=\r?\n|$)/g;
+                codeContent = codeContent.replace(endRegexAll, '').trimEnd(); 
 
                 const container = document.createElement('div');
                 container.className = 'code-container';
@@ -839,9 +728,8 @@
                 
                 const collapseWrapper = document.createElement('div');
                 collapseWrapper.className = 'code-collapse-wrapper';
-                
-                const collapseInner = document.createElement('div');
-                collapseInner.className = 'code-collapse-inner';
+                // Initialize height allowing it to adapt normally
+                collapseWrapper.style.height = 'auto';
 
                 const pre = document.createElement('pre');
                 pre.className = `language-${language}`;
@@ -851,36 +739,54 @@
                 code.textContent = codeContent;
 
                 pre.appendChild(code);
+                collapseWrapper.appendChild(pre);
 
-                // Lag-Free Accordion Toggle
+                // --- Performance Fixed Minimize Toggle ---
                 let isMinimized = false;
                 const toggleBlock = (forceState) => {
-                    isMinimized = typeof forceState === 'boolean' ? forceState : !isMinimized;
+                    const nextState = typeof forceState === 'boolean' ? forceState : !isMinimized;
+                    if (nextState === isMinimized) return; // Prevent double-triggering
+                    isMinimized = nextState;
+
                     if (isMinimized) {
+                        // explicitly set current height to allow CSS transition to grab it
+                        collapseWrapper.style.height = collapseWrapper.scrollHeight + 'px';
+                        
+                        // force browser layout engine to recognize the height before shrinking
+                        void collapseWrapper.offsetHeight;
+                        
+                        // Shrink to 0
+                        collapseWrapper.style.height = '0px';
                         collapseWrapper.classList.add('minimized');
-                        minimizeBtn.textContent = 'Expand';
                     } else {
+                        // Expanding
                         collapseWrapper.classList.remove('minimized');
-                        minimizeBtn.textContent = 'Minimize';
+                        collapseWrapper.style.height = collapseWrapper.scrollHeight + 'px';
+                        
+                        // Reset to 'auto' after animation finishes to allow responsive resizing
+                        setTimeout(() => {
+                            if (!isMinimized) collapseWrapper.style.height = 'auto';
+                        }, 400); // Wait for the 0.4s CSS transition
                     }
+                    
+                    minimizeBtn.textContent = isMinimized ? 'Expand' : 'Minimize';
                 };
 
                 minimizeBtn.addEventListener('click', () => toggleBlock());
                 activeBlockTogglers.push(toggleBlock);
 
-                // Copy Action
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'action-btn';
-                copyBtn.textContent = 'Copy';
+                copyBtn.textContent = 'Copy Code';
 
                 copyBtn.addEventListener('click', () => {
                     navigator.clipboard.writeText(codeContent).then(() => {
                         copyBtn.textContent = 'Copied!';
                         copyBtn.classList.add('copied');
                         setTimeout(() => {
-                            copyBtn.textContent = 'Copy';
+                            copyBtn.textContent = 'Copy Code';
                             copyBtn.classList.remove('copied');
-                        }, 1600);
+                        }, 1800);
                     });
                 });
 
@@ -888,12 +794,10 @@
                 btnGroup.appendChild(copyBtn);
                 header.appendChild(langSpan);
                 header.appendChild(btnGroup); 
-                collapseInner.appendChild(pre);
-                collapseWrapper.appendChild(collapseInner);
                 container.appendChild(header);
                 container.appendChild(collapseWrapper);
-                
-                fragment.appendChild(container);
+                outputArea.appendChild(container);
+
                 lastIndex = match.index + match[0].length;
             }
 
@@ -902,63 +806,29 @@
                 const textNode = document.createElement('div');
                 textNode.className = 'markdown-text';
                 textNode.innerHTML = marked.parse(remainingText);
-                fragment.appendChild(textNode);
+                outputArea.appendChild(textNode);
             }
 
-            outputArea.appendChild(fragment);
+            // Sync the collapsed state for newly rendered blocks if we hit "Collapse All" earlier
+            if (allCollapsedState) {
+                activeBlockTogglers.forEach(fn => fn(true));
+            }
+
+            // Run Prism Syntax Highlighting safely once
             Prism.highlightAllUnder(outputArea);
         }
 
-        // --- Collapse / Expand All ---
         toggleAllBtn.addEventListener('click', () => {
             allCollapsedState = !allCollapsedState;
-            activeBlockTogglers.forEach(toggle => toggle(allCollapsedState));
+            activeBlockTogglers.forEach(fn => fn(allCollapsedState));
             toggleAllBtn.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
         });
 
-        // --- Export Functions ---
-        function getSafeFilename(extension) {
+        exportBtn.addEventListener('click', async () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
-            const baseName = (currentTab ? currentTab.title : 'document')
-                .replace(/[^a-z0-9_\-\.]/gi, '_')
-                .replace(/_+/g, '_');
-            return `${baseName}.${extension}`;
-        }
-
-        function downloadBlob(blob, filename) {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(a.href);
-        }
-
-        // 1. Export as Markdown (.md)
-        exportMdOpt.addEventListener('click', () => {
             const text = inputArea.value;
-            if (!text.trim()) return alert('Document is empty!');
-            const blob = new Blob([text], { type: 'text/markdown;charset=utf-8;' });
-            downloadBlob(blob, getSafeFilename('md'));
-        });
 
-        // 2. Export as Plain Text (.txt)
-        exportTxtOpt.addEventListener('click', () => {
-            const text = inputArea.value;
-            if (!text.trim()) return alert('Document is empty!');
-            
-            // Clean markdown tokens into readable plain text
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = marked.parse(text);
-            const plainText = tempDiv.textContent || tempDiv.innerText || '';
-
-            const blob = new Blob([plainText], { type: 'text/plain;charset=utf-8;' });
-            downloadBlob(blob, getSafeFilename('txt'));
-        });
-
-        // 3. Export as Zip (.zip with subfolders)
-        exportZipOpt.addEventListener('click', async () => {
-            const text = inputArea.value;
-            if (!text.trim()) return alert('Document is empty!');
+            if (!text.trim()) { alert('Document is empty!'); return; }
 
             const zip = new JSZip();
             let extractedCount = 0;
@@ -966,25 +836,36 @@
             codeBlockRegex.lastIndex = 0;
 
             while ((match = codeBlockRegex.exec(text)) !== null) {
-                const { fileName, codeContent } = cleanCodeBlock(match[2]);
-                if (fileName) {
-                    // Normalizes path so nested paths like 'src/components/Nav.tsx' make real folders
-                    const cleanPath = fileName.replace(/^[\/\\]+/, '');
-                    zip.file(cleanPath, codeContent);
+                let codeContent = match[2];
+                const startRegex = /^\s*--- START OF FILE (.*?) ---\s*\n?/;
+                const startMatch = codeContent.match(startRegex);
+                
+                if (startMatch) {
+                    const fileName = startMatch[1].trim();
+                    codeContent = codeContent.replace(startRegex, '').replace(/(?:\r?\n|^)\s*--- END OF FILE ---\s*(?=\r?\n|$)/g, '').trimEnd();
+                    zip.file(fileName, codeContent);
                     extractedCount++;
                 }
             }
 
-            if (extractedCount === 0) {
-                alert('No structured files with "--- START OF FILE <filename> ---" tags were found to build a zip.');
-                return;
+            if (extractedCount > 0) {
+                const content = await zip.generateAsync({ type: 'blob' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(content);
+                a.download = `${(currentTab ? currentTab.title : 'workspace').replace(/[^a-z0-9_-]/gi, '_')}_files.zip`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            } else {
+                const blob = new Blob([text], { type: 'text/markdown;charset=utf-8;' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `${(currentTab ? currentTab.title : 'document').replace(/[^a-z0-9_-]/gi, '_')}.md`;
+                a.click();
+                URL.revokeObjectURL(a.href);
             }
-
-            const content = await zip.generateAsync({ type: 'blob' });
-            downloadBlob(content, getSafeFilename('zip'));
         });
 
-        // --- Synchronized Split-Scrolling ---
+        // --- Scrolling Logic ---
         let isSyncingInput = false;
         let isSyncingOutput = false;
 
@@ -1031,7 +912,7 @@
                         currentTab.content = content;
                         saveState();
                         renderTabs();
-                        renderMarkdown(content);
+                        renderMarkdown(content, true);
                     } else {
                         addTab(file.name, content);
                     }
@@ -1040,7 +921,6 @@
             });
         });
 
-        // --- Clipboard & Input ---
         pasteBtn.addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
@@ -1051,7 +931,7 @@
                 pasteBtn.innerHTML = 'Pasted!';
                 setTimeout(() => { pasteBtn.innerHTML = originalText; }, 1500);
             } catch (err) {
-                alert('Please allow clipboard access or press Ctrl+V / Cmd+V directly.');
+                alert('Please allow clipboard access or use Ctrl+V / Cmd+V directly.');
             }
         });
 
@@ -1060,7 +940,8 @@
             inputArea.dispatchEvent(new Event('input')); 
         });
 
-        // Debounced Render on Input (Eliminates typing lag)
+        // PERFORMANCE FIX: Keystroke Debouncing
+        // Prevents the massive syntax highlighting lag when continuously typing
         let renderTimeout;
         inputArea.addEventListener('input', () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
@@ -1068,13 +949,13 @@
                 currentTab.content = inputArea.value;
                 saveState();
             }
+            
             clearTimeout(renderTimeout);
             renderTimeout = setTimeout(() => {
                 renderMarkdown(inputArea.value);
-            }, 60);
+            }, 250); // Waits 250ms after you stop typing to render the colors
         });
 
-        // Init
         renderTabs();
         renderMarkdown(inputArea.value);
     </script>
