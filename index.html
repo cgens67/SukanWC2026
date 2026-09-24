@@ -14,6 +14,7 @@
     <!-- Prism.js Syntax Highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
     <style>
@@ -243,12 +244,18 @@
             width: 100%;
         }
 
-        pre[class*="language-"] {
+        /* Enhanced to support missing syntax highlighting fallback gracefully */
+        .code-collapse-inner pre {
             margin: 0 !important; padding: 16px !important; border-radius: 0 !important;
             background-color: var(--code-bg) !important; font-size: 13.5px !important;
-            line-height: 1.55 !important; box-shadow: none !important;
+            line-height: 1.55 !important; box-shadow: none !important; overflow: auto !important;
         }
-        code[class*="language-"] { font-family: 'Consolas', 'Monaco', monospace !important; text-shadow: none !important; }
+        .code-collapse-inner code { 
+            font-family: 'Consolas', 'Monaco', monospace !important; text-shadow: none !important; 
+        }
+        .code-collapse-inner pre.language-none code.language-none {
+            color: var(--code-text);
+        }
 
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -294,6 +301,10 @@
             <div class="pane-header">
                 <span>Formatted View</span>
                 <div class="header-btn-group">
+                    <!-- NEW TOGGLE: Syntax Highlighting -->
+                    <label class="sync-toggle-label" title="Enable/Disable Syntax Highlighting (Disabling fixes lag on massive files)">
+                        <input type="checkbox" id="syntax-highlight-chk" checked> Syntax Highlighting
+                    </label>
                     <label class="sync-toggle-label" title="Synchronize editor & view scrolling">
                         <input type="checkbox" id="sync-scroll-chk" checked> Sync Scroll
                     </label>
@@ -344,8 +355,14 @@
         const exportBtn = document.getElementById('btn-export');
         const toggleAllBtn = document.getElementById('btn-toggle-all');
         const syncScrollChk = document.getElementById('sync-scroll-chk');
+        const syntaxHighlightChk = document.getElementById('syntax-highlight-chk');
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
+
+        // Re-render when syntax highlighting is toggled
+        syntaxHighlightChk.addEventListener('change', () => {
+            renderMarkdown(inputArea.value, false);
+        });
 
         function renderTabs() {
             tabListEl.innerHTML = '';
@@ -449,8 +466,24 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        const codeBlockRegex = /```([^\n]*)\n([\s\S]*?)(?:```|$)/g;
+        // Unified Parser regex that catches Markdown block quotes OR Raw 'START OF FILE' markers seamlessly
+        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*\r?\n([\s\S]*?)(?:\r?\n-{3,}\s*END OF FILE[ \t]*-{3,}|(?=\r?\n-{3,}\s*START OF FILE)|$))/g;
+
         let activeBlockTogglers = [];
+
+        function getLanguageFromFilename(filename) {
+            const extMatch = filename.match(/\.([a-zA-Z0-9]+)$/);
+            if (!extMatch) return 'plaintext';
+            const ext = extMatch[1].toLowerCase();
+            const map = {
+                'js': 'javascript', 'jsx': 'javascript', 'ts': 'typescript', 'tsx': 'typescript',
+                'html': 'html', 'css': 'css', 'json': 'json', 'md': 'markdown', 'py': 'python', 
+                'java': 'java', 'kt': 'kotlin', 'cpp': 'cpp', 'c': 'c', 'cs': 'csharp', 
+                'go': 'go', 'rs': 'rust', 'rb': 'ruby', 'php': 'php', 'sh': 'bash', 
+                'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml', 'sql': 'sql', 'vue': 'vue'
+            };
+            return map[ext] || ext;
+        }
 
         function renderMarkdown(text, triggerTransition = false) {
             const prevScroll = outputArea.scrollTop;
@@ -472,19 +505,12 @@
 
             let match;
             let lastIndex = 0;
-            codeBlockRegex.lastIndex = 0;
-            let activeFileName = '';
+            tokenRegex.lastIndex = 0;
 
-            while ((match = codeBlockRegex.exec(text)) !== null) {
+            while ((match = tokenRegex.exec(text)) !== null) {
                 let beforeText = text.substring(lastIndex, match.index);
                 
-                // 1. EXTRACT External START OF FILE markers
-                const startMatches = [...beforeText.matchAll(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g)];
-                if (startMatches.length > 0) {
-                    activeFileName = startMatches[startMatches.length - 1][1].trim();
-                }
-
-                // 2. Hide markers from the rendered markdown reading view
+                // Extra cleanup for lingering artifacts in outside text
                 beforeText = beforeText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
                 beforeText = beforeText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
 
@@ -495,21 +521,46 @@
                     outputArea.appendChild(textNode);
                 }
 
-                const rawLang = match[1].trim();
-                const language = rawLang || 'plaintext';
-                let codeContent = match[2];
-                let fileName = activeFileName;
+                let language = 'plaintext';
+                let fileName = '';
+                let codeContent = '';
 
-                // 3. EXTRACT Internal START OF FILE markers (Inside the code block)
-                const startRegex = /^\s*-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}\s*\n?/;
-                const startMatch = codeContent.match(startRegex);
-                if (startMatch) {
-                    fileName = startMatch[1].trim();
-                    codeContent = codeContent.replace(startRegex, '');
+                // Handle standard markdown code blocks (```)
+                if (match[1] !== undefined) {
+                    language = match[1].trim() || 'plaintext';
+                    codeContent = match[2];
+                    
+                    const startRegex = /(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*(?:\r?\n|$)/;
+                    const startMatch = codeContent.match(startRegex);
+                    if (startMatch) {
+                        fileName = startMatch[1].trim();
+                        codeContent = codeContent.replace(startRegex, '');
+                    }
+                    
+                    const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE[ \t]*-{3,}(?=\r?\n|$)/g;
+                    codeContent = codeContent.replace(endRegexAll, '').trimEnd();
+                } 
+                // Handle raw --- START OF FILE --- markers natively (Without markdown blocks)
+                else if (match[3] !== undefined) {
+                    fileName = match[3].trim();
+                    codeContent = match[4];
+                    language = getLanguageFromFilename(fileName);
+
+                    // Clean if AI mistakenly wrapped it in backticks while using the marker
+                    const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
+                    if (cleanCodeMatch) {
+                        codeContent = cleanCodeMatch[1];
+                    }
+                    codeContent = codeContent.trimEnd();
                 }
 
-                const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE\s*-{3,}(?=\r?\n|$)/g;
-                codeContent = codeContent.replace(endRegexAll, '').trimEnd(); 
+                // Discard Empty Metadata Headers (Like "Paste September 24...")
+                if (!codeContent.trim() && !fileName.toLowerCase().includes('.')) {
+                    if (!codeContent.trim()) {
+                        lastIndex = match.index + match[0].length;
+                        continue;
+                    }
+                }
 
                 const container = document.createElement('div');
                 container.className = 'code-container';
@@ -537,10 +588,17 @@
                 collapseInner.className = 'code-collapse-inner';
 
                 const pre = document.createElement('pre');
-                pre.className = `language-${language}`;
-                
                 const code = document.createElement('code');
-                code.className = `language-${language}`;
+
+                // Toggle logic for Syntax Highlighting vs No-Highlighting
+                if (syntaxHighlightChk.checked) {
+                    pre.className = `language-${language}`;
+                    code.className = `language-${language}`;
+                } else {
+                    pre.className = `language-none`;
+                    code.className = `language-none`;
+                }
+                
                 code.textContent = codeContent;
 
                 pre.appendChild(code);
@@ -550,8 +608,6 @@
                 // ZERO-LAG HARDWARE ACCELERATED ACCORDION HACK
                 let isMinimized = false;
                 let transitionTimeout;
-
-                // Setup Initial Default View state
                 collapseWrapper.style.height = 'auto';
                 collapseInner.style.position = 'relative';
 
@@ -564,11 +620,8 @@
                     collapseWrapper.style.transition = instant ? 'none' : 'height 0.4s var(--ease-spring), opacity 0.3s ease';
 
                     if (isMinimized) {
-                        // 1. Lock the height explicitly before modifying the inner content flow
                         const currentHeight = collapseWrapper.scrollHeight;
                         collapseWrapper.style.height = currentHeight + 'px';
-                        
-                        // 2. Take heavy content out of layout flow (prevents browser recalculating thousands of spans!)
                         collapseInner.style.position = 'absolute';
                         collapseInner.style.top = '0';
                         collapseInner.style.left = '0';
@@ -581,15 +634,11 @@
                                 collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
                             });
                         } else {
-                            // 3. Force reflow so browser registers the explicit locked height
                             void collapseWrapper.offsetHeight; 
-                            
-                            // 4. Shrink the wrapper (the inner absolute content gets effortlessly cropped)
                             collapseWrapper.style.height = '0px';
                             collapseWrapper.classList.add('minimized');
                         }
                     } else {
-                        // Expanding
                         collapseWrapper.classList.remove('minimized');
                         const targetHeight = collapseInner.scrollHeight;
                         collapseWrapper.style.height = targetHeight + 'px';
@@ -601,7 +650,6 @@
                                 collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
                             });
                         } else {
-                            // Wait for the CSS transition to finish before snapping it back into normal flow
                             transitionTimeout = setTimeout(() => {
                                 if (!isMinimized) {
                                     collapseInner.style.position = 'relative';
@@ -639,13 +687,10 @@
                 container.appendChild(collapseWrapper);
                 outputArea.appendChild(container);
 
-                activeFileName = ''; // Reset for next file
                 lastIndex = match.index + match[0].length;
             }
 
             let remainingText = text.substring(lastIndex);
-            
-            // Clean trailing markers
             remainingText = remainingText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
             remainingText = remainingText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
             
@@ -656,12 +701,14 @@
                 outputArea.appendChild(textNode);
             }
 
-            // If global 'Collapse All' is active, initialize newly drawn blocks as instantly collapsed
             if (allCollapsedState) {
                 activeBlockTogglers.forEach(fn => fn(true, true));
             }
 
-            Prism.highlightAllUnder(outputArea);
+            // Only fire Prism highlighting if the toggle is checked.
+            if (syntaxHighlightChk.checked) {
+                Prism.highlightAllUnder(outputArea);
+            }
 
             if (!triggerTransition) {
                 if (isAtBottom && syncScrollChk.checked) {
@@ -687,37 +734,36 @@
             const zip = new JSZip();
             let extractedCount = 0;
             let match;
-            codeBlockRegex.lastIndex = 0;
-            let lastExportIndex = 0;
-            let activeFileName = '';
+            tokenRegex.lastIndex = 0;
 
-            while ((match = codeBlockRegex.exec(text)) !== null) {
-                let codeContent = match[2];
-                
-                let beforeText = text.substring(lastExportIndex, match.index);
-                const startMatches = [...beforeText.matchAll(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g)];
-                if (startMatches.length > 0) {
-                    activeFileName = startMatches[startMatches.length - 1][1].trim();
+            while ((match = tokenRegex.exec(text)) !== null) {
+                let fileName = '';
+                let codeContent = '';
+
+                if (match[1] !== undefined) {
+                    codeContent = match[2];
+                    const startRegex = /(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*(?:\r?\n|$)/;
+                    const startMatch = codeContent.match(startRegex);
+                    if (startMatch) {
+                        fileName = startMatch[1].trim();
+                        codeContent = codeContent.replace(startRegex, '');
+                    }
+                    const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE[ \t]*-{3,}(?=\r?\n|$)/g;
+                    codeContent = codeContent.replace(endRegexAll, '').trimEnd();
+                } else if (match[3] !== undefined) {
+                    fileName = match[3].trim();
+                    codeContent = match[4];
+                    const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
+                    if (cleanCodeMatch) {
+                        codeContent = cleanCodeMatch[1];
+                    }
+                    codeContent = codeContent.trimEnd();
                 }
 
-                let fileName = activeFileName;
-
-                const startRegex = /^\s*-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}\s*\n?/;
-                const startMatch = codeContent.match(startRegex);
-                
-                if (startMatch) {
-                    fileName = startMatch[1].trim();
-                    codeContent = codeContent.replace(startRegex, '');
-                }
-
-                if (fileName) {
-                    codeContent = codeContent.replace(/(?:\r?\n|^)\s*-{3,}\s*END OF FILE\s*-{3,}(?=\r?\n|$)/g, '').trimEnd();
+                if (fileName && codeContent.trim()) {
                     zip.file(fileName, codeContent);
                     extractedCount++;
                 }
-                
-                activeFileName = '';
-                lastExportIndex = match.index + match[0].length;
             }
 
             if (extractedCount > 0) {
