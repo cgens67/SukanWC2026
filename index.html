@@ -227,7 +227,7 @@
         .action-btn:active { transform: translateY(1px); }
         .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
 
-        /* ZERO-LAG ACCORDION HACK (ABSOLUTE POSITIONING) */
+        /* ZERO-LAG ACCORDION HACK */
         .code-collapse-wrapper {
             position: relative;
             overflow: hidden;
@@ -237,14 +237,13 @@
         }
 
         .code-collapse-wrapper.minimized {
-            opacity: 0.3; /* Fades out smoothly when closed */
+            opacity: 0.3;
         }
 
         .code-collapse-inner {
             width: 100%;
         }
 
-        /* Enhanced to support missing syntax highlighting fallback gracefully */
         .code-collapse-inner pre {
             margin: 0 !important; padding: 16px !important; border-radius: 0 !important;
             background-color: var(--code-bg) !important; font-size: 13.5px !important;
@@ -301,7 +300,6 @@
             <div class="pane-header">
                 <span>Formatted View</span>
                 <div class="header-btn-group">
-                    <!-- NEW TOGGLE: Syntax Highlighting -->
                     <label class="sync-toggle-label" title="Enable/Disable Syntax Highlighting (Disabling fixes lag on massive files)">
                         <input type="checkbox" id="syntax-highlight-chk" checked> Syntax Highlighting
                     </label>
@@ -359,7 +357,6 @@
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
 
-        // Re-render when syntax highlighting is toggled
         syntaxHighlightChk.addEventListener('change', () => {
             renderMarkdown(inputArea.value, false);
         });
@@ -466,8 +463,8 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        // Unified Parser regex that catches Markdown block quotes OR Raw 'START OF FILE' markers seamlessly
-        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*\r?\n([\s\S]*?)(?:\r?\n-{3,}\s*END OF FILE[ \t]*-{3,}|(?=\r?\n-{3,}\s*START OF FILE)|$))/g;
+        // Supports 2+ dashes (e.g., -- or ---) and handles raw markers or codeblocks
+        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*\r?\n([\s\S]*?)(?:\r?\n-{2,}\s*END OF FILE[ \t]*-{2,}|(?=\r?\n-{2,}\s*START OF FILE)|$))/g;
 
         let activeBlockTogglers = [];
 
@@ -483,6 +480,11 @@
                 'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml', 'sql': 'sql', 'vue': 'vue'
             };
             return map[ext] || ext;
+        }
+
+        // Strips leading and trailing blank lines / spacing after START OF FILE markers
+        function cleanCodeBlockContent(content) {
+            return content.replace(/^\s*[\r\n]+/, '').trimEnd();
         }
 
         function renderMarkdown(text, triggerTransition = false) {
@@ -510,9 +512,9 @@
             while ((match = tokenRegex.exec(text)) !== null) {
                 let beforeText = text.substring(lastIndex, match.index);
                 
-                // Extra cleanup for lingering artifacts in outside text
-                beforeText = beforeText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
-                beforeText = beforeText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
+                // Cleanup lingering markers outside blocks
+                beforeText = beforeText.replace(/-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}/g, '');
+                beforeText = beforeText.replace(/-{2,}\s*END OF FILE\s*-{2,}/g, '');
 
                 if (beforeText.trim() !== '') {
                     const textNode = document.createElement('div');
@@ -525,36 +527,34 @@
                 let fileName = '';
                 let codeContent = '';
 
-                // Handle standard markdown code blocks (```)
+                // Standard markdown code blocks (```)
                 if (match[1] !== undefined) {
                     language = match[1].trim() || 'plaintext';
                     codeContent = match[2];
                     
-                    const startRegex = /(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*(?:\r?\n|$)/;
+                    const startRegex = /(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\r?\n|$)/;
                     const startMatch = codeContent.match(startRegex);
                     if (startMatch) {
                         fileName = startMatch[1].trim();
                         codeContent = codeContent.replace(startRegex, '');
                     }
                     
-                    const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE[ \t]*-{3,}(?=\r?\n|$)/g;
-                    codeContent = codeContent.replace(endRegexAll, '').trimEnd();
+                    const endRegexAll = /(?:\r?\n|^)\s*-{2,}\s*END OF FILE[ \t]*-{2,}(?=\r?\n|$)/g;
+                    codeContent = cleanCodeBlockContent(codeContent.replace(endRegexAll, ''));
                 } 
-                // Handle raw --- START OF FILE --- markers natively (Without markdown blocks)
+                // Raw START OF FILE markers
                 else if (match[3] !== undefined) {
                     fileName = match[3].trim();
                     codeContent = match[4];
                     language = getLanguageFromFilename(fileName);
 
-                    // Clean if AI mistakenly wrapped it in backticks while using the marker
                     const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
                     if (cleanCodeMatch) {
                         codeContent = cleanCodeMatch[1];
                     }
-                    codeContent = codeContent.trimEnd();
+                    codeContent = cleanCodeBlockContent(codeContent);
                 }
 
-                // Discard Empty Metadata Headers (Like "Paste September 24...")
                 if (!codeContent.trim() && !fileName.toLowerCase().includes('.')) {
                     if (!codeContent.trim()) {
                         lastIndex = match.index + match[0].length;
@@ -590,7 +590,6 @@
                 const pre = document.createElement('pre');
                 const code = document.createElement('code');
 
-                // Toggle logic for Syntax Highlighting vs No-Highlighting
                 if (syntaxHighlightChk.checked) {
                     pre.className = `language-${language}`;
                     code.className = `language-${language}`;
@@ -605,7 +604,6 @@
                 collapseInner.appendChild(pre);
                 collapseWrapper.appendChild(collapseInner);
 
-                // ZERO-LAG HARDWARE ACCELERATED ACCORDION HACK
                 let isMinimized = false;
                 let transitionTimeout;
                 collapseWrapper.style.height = 'auto';
@@ -691,8 +689,8 @@
             }
 
             let remainingText = text.substring(lastIndex);
-            remainingText = remainingText.replace(/-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}/g, '');
-            remainingText = remainingText.replace(/-{3,}\s*END OF FILE\s*-{3,}/g, '');
+            remainingText = remainingText.replace(/-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}/g, '');
+            remainingText = remainingText.replace(/-{2,}\s*END OF FILE\s*-{2,}/g, '');
             
             if (remainingText.trim() !== '') {
                 const textNode = document.createElement('div');
@@ -705,7 +703,6 @@
                 activeBlockTogglers.forEach(fn => fn(true, true));
             }
 
-            // Only fire Prism highlighting if the toggle is checked.
             if (syntaxHighlightChk.checked) {
                 Prism.highlightAllUnder(outputArea);
             }
@@ -742,14 +739,14 @@
 
                 if (match[1] !== undefined) {
                     codeContent = match[2];
-                    const startRegex = /(?:^|\n)-{3,}\s*START OF FILE\s+(.*?)\s*-{3,}[ \t]*(?:\r?\n|$)/;
+                    const startRegex = /(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\r?\n|$)/;
                     const startMatch = codeContent.match(startRegex);
                     if (startMatch) {
                         fileName = startMatch[1].trim();
                         codeContent = codeContent.replace(startRegex, '');
                     }
-                    const endRegexAll = /(?:\r?\n|^)\s*-{3,}\s*END OF FILE[ \t]*-{3,}(?=\r?\n|$)/g;
-                    codeContent = codeContent.replace(endRegexAll, '').trimEnd();
+                    const endRegexAll = /(?:\r?\n|^)\s*-{2,}\s*END OF FILE[ \t]*-{2,}(?=\r?\n|$)/g;
+                    codeContent = cleanCodeBlockContent(codeContent.replace(endRegexAll, ''));
                 } else if (match[3] !== undefined) {
                     fileName = match[3].trim();
                     codeContent = match[4];
@@ -757,7 +754,7 @@
                     if (cleanCodeMatch) {
                         codeContent = cleanCodeMatch[1];
                     }
-                    codeContent = codeContent.trimEnd();
+                    codeContent = cleanCodeBlockContent(codeContent);
                 }
 
                 if (fileName && codeContent.trim()) {
