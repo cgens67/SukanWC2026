@@ -463,8 +463,9 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        // Supports 2+ dashes (e.g., -- or ---) and handles raw markers or codeblocks
-        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*\r?\n([\s\S]*?)(?:\r?\n-{2,}\s*END OF FILE[ \t]*-{2,}|(?=\r?\n-{2,}\s*START OF FILE)|$))/g;
+        // Universal parser regex: matches markdown triple-backtick blocks OR raw START OF FILE markers
+        // Allows comments (//, #, /*, <!--), 2+ dashes, and text/filenames after START/END OF FILE
+        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
 
         let activeBlockTogglers = [];
 
@@ -482,9 +483,14 @@
             return map[ext] || ext;
         }
 
-        // Strips leading and trailing blank lines / spacing after START OF FILE markers
+        // Strips all END OF FILE variants (with/without filenames or comment wrappers)
+        // and strips gaps / empty lines directly after START OF FILE
         function cleanCodeBlockContent(content) {
-            return content.replace(/^\s*[\r\n]+/, '').trimEnd();
+            const endRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*END OF FILE.*$/gim;
+            return content
+                .replace(endRegex, '')
+                .replace(/^\s*[\r\n]+/, '')
+                .trimEnd();
         }
 
         function renderMarkdown(text, triggerTransition = false) {
@@ -509,12 +515,13 @@
             let lastIndex = 0;
             tokenRegex.lastIndex = 0;
 
+            const markerCleanupRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*(?:START OF FILE|END OF FILE).*?(?:\r?\n|$)/gim;
+
             while ((match = tokenRegex.exec(text)) !== null) {
                 let beforeText = text.substring(lastIndex, match.index);
                 
                 // Cleanup lingering markers outside blocks
-                beforeText = beforeText.replace(/-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}/g, '');
-                beforeText = beforeText.replace(/-{2,}\s*END OF FILE\s*-{2,}/g, '');
+                beforeText = beforeText.replace(markerCleanupRegex, '\n');
 
                 if (beforeText.trim() !== '') {
                     const textNode = document.createElement('div');
@@ -532,15 +539,14 @@
                     language = match[1].trim() || 'plaintext';
                     codeContent = match[2];
                     
-                    const startRegex = /(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\r?\n|$)/;
+                    const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
                     const startMatch = codeContent.match(startRegex);
                     if (startMatch) {
                         fileName = startMatch[1].trim();
                         codeContent = codeContent.replace(startRegex, '');
                     }
                     
-                    const endRegexAll = /(?:\r?\n|^)\s*-{2,}\s*END OF FILE[ \t]*-{2,}(?=\r?\n|$)/g;
-                    codeContent = cleanCodeBlockContent(codeContent.replace(endRegexAll, ''));
+                    codeContent = cleanCodeBlockContent(codeContent);
                 } 
                 // Raw START OF FILE markers
                 else if (match[3] !== undefined) {
@@ -689,8 +695,7 @@
             }
 
             let remainingText = text.substring(lastIndex);
-            remainingText = remainingText.replace(/-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}/g, '');
-            remainingText = remainingText.replace(/-{2,}\s*END OF FILE\s*-{2,}/g, '');
+            remainingText = remainingText.replace(markerCleanupRegex, '\n');
             
             if (remainingText.trim() !== '') {
                 const textNode = document.createElement('div');
@@ -739,14 +744,13 @@
 
                 if (match[1] !== undefined) {
                     codeContent = match[2];
-                    const startRegex = /(?:^|\n)-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\r?\n|$)/;
+                    const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
                     const startMatch = codeContent.match(startRegex);
                     if (startMatch) {
                         fileName = startMatch[1].trim();
                         codeContent = codeContent.replace(startRegex, '');
                     }
-                    const endRegexAll = /(?:\r?\n|^)\s*-{2,}\s*END OF FILE[ \t]*-{2,}(?=\r?\n|$)/g;
-                    codeContent = cleanCodeBlockContent(codeContent.replace(endRegexAll, ''));
+                    codeContent = cleanCodeBlockContent(codeContent);
                 } else if (match[3] !== undefined) {
                     fileName = match[3].trim();
                     codeContent = match[4];
