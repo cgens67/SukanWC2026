@@ -15,20 +15,21 @@
             --m3-on-primary: #ffffff;
             --m3-primary-container: #cbe6ff;
             --m3-on-primary-container: #001e30;
-            --m3-surface: #f8f9ff;
-            --m3-surface-container: #edf1f9;
-            --m3-surface-container-high: #e2e6ee;
+            --m3-surface: #f4f6fa;
+            --m3-surface-container: #ffffff;
+            --m3-surface-container-high: #edf2f9;
             --m3-on-surface: #1a1b1f;
-            --m3-on-surface-variant: #44474f;
+            --m3-on-surface-variant: #5f6368;
             --m3-outline: #74777f;
             --m3-error: #ba1a1a;
-            --m3-success: #198754;
+            --m3-success: #00c853;
+            --m3-success-dark: #16a34a;
             --radius-md: 16px;
             --radius-lg: 20px;
-            --radius-xl: 24px;
+            --radius-xl: 26px;
             --radius-pill: 9999px;
             --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
-            --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --bounce: cubic-bezier(0.34, 1.35, 0.64, 1);
         }
 
         * {
@@ -44,7 +45,7 @@
             color: var(--m3-on-surface);
             min-height: 100vh;
             padding: 12px;
-            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            padding-bottom: calc(30px + env(safe-area-inset-bottom));
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
@@ -53,10 +54,10 @@
             body { padding: 24px; }
         }
 
-        /* HEADER & APP BAR */
+        /* HEADER */
         header {
             max-width: 1400px;
-            margin: 0 auto 16px auto;
+            margin: 0 auto 12px auto;
             background: linear-gradient(145deg, #d8ebff, #c2e2ff);
             color: var(--m3-on-primary-container);
             padding: 18px 16px;
@@ -64,13 +65,12 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
-            box-shadow: 0 4px 24px rgba(0, 100, 148, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 100, 148, 0.08);
             position: relative;
-            overflow: hidden;
         }
 
         @media (min-width: 768px) {
-            header { padding: 28px 32px; margin-bottom: 24px; gap: 20px; }
+            header { padding: 28px 32px; margin-bottom: 20px; gap: 18px; }
         }
 
         .header-top {
@@ -78,12 +78,6 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-        }
-
-        .brand-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
         }
 
         h1 {
@@ -106,7 +100,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(8px);
             padding: 6px 12px;
             border-radius: var(--radius-pill);
@@ -115,17 +109,16 @@
             color: var(--m3-primary);
             border: 1px solid rgba(0, 100, 148, 0.15);
             flex-shrink: 0;
+            cursor: pointer;
             transition: transform 0.2s var(--spring);
         }
 
-        .live-indicator:active {
-            transform: scale(0.96);
-        }
+        .live-indicator:active { transform: scale(0.95); }
 
         .pulse-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--m3-success);
+            background-color: var(--m3-success-dark);
             border-radius: 50%;
             position: relative;
         }
@@ -135,7 +128,7 @@
             position: absolute;
             inset: -2px;
             border-radius: 50%;
-            border: 2px solid var(--m3-success);
+            border: 2px solid var(--m3-success-dark);
             animation: ripple 1.8s infinite var(--spring);
         }
 
@@ -144,7 +137,7 @@
             100% { transform: scale(2.4); opacity: 0; }
         }
 
-        /* SCROLLABLE HORIZONTAL TABS (TOUCH OPTIMIZED) */
+        /* HORIZONTAL TABS */
         .tab-scroll-wrapper {
             position: relative;
             margin: 0 -16px;
@@ -171,7 +164,7 @@
         .tab-btn {
             background: rgba(255, 255, 255, 0.7);
             border: 1.5px solid rgba(0, 100, 148, 0.08);
-            padding: 9px 16px;
+            padding: 8px 16px;
             border-radius: var(--radius-pill);
             font-weight: 700;
             font-size: 0.82rem;
@@ -183,20 +176,16 @@
             gap: 6px;
             flex-shrink: 0;
             scroll-snap-align: start;
-            transition: all 0.25s var(--spring);
-            user-select: none;
+            transition: all 0.2s var(--spring);
         }
 
-        .tab-btn:active {
-            transform: scale(0.94);
-        }
+        .tab-btn:active { transform: scale(0.95); }
 
         .tab-btn.active {
             background: var(--m3-primary);
             color: var(--m3-on-primary);
             border-color: var(--m3-primary);
-            box-shadow: 0 4px 14px rgba(0, 100, 148, 0.25);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 100, 148, 0.25);
         }
 
         /* SEARCH & FILTER CONTROLS */
@@ -225,7 +214,7 @@
 
         .search-bar {
             width: 100%;
-            background: var(--m3-surface);
+            background: #ffffff;
             border: 2px solid transparent;
             padding: 12px 40px 12px 42px;
             border-radius: var(--radius-pill);
@@ -233,19 +222,17 @@
             color: var(--m3-on-surface);
             outline: none;
             transition: all 0.25s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
 
         .search-bar:focus {
             border-color: var(--m3-primary);
             box-shadow: 0 0 0 4px rgba(0, 100, 148, 0.15);
-            background: #ffffff;
         }
 
         .clear-btn {
             position: absolute;
             right: 12px;
-            background: rgba(0, 0, 0, 0.07);
+            background: rgba(0, 0, 0, 0.08);
             border: none;
             width: 24px;
             height: 24px;
@@ -255,15 +242,12 @@
             justify-content: center;
             cursor: pointer;
             color: var(--m3-on-surface-variant);
-            font-size: 16px;
-            transition: all 0.2s ease;
         }
 
         .clear-btn.visible { display: flex; }
-        .clear-btn:active { transform: scale(0.85); background: rgba(0,0,0,0.15); }
 
         .filter-select {
-            background: var(--m3-surface);
+            background: #ffffff;
             border: 2px solid transparent;
             padding: 12px 18px;
             border-radius: var(--radius-pill);
@@ -272,7 +256,6 @@
             color: var(--m3-primary);
             outline: none;
             cursor: pointer;
-            transition: all 0.25s ease;
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006494'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -284,15 +267,29 @@
 
         @media (min-width: 640px) { .filter-select { max-width: 200px; } }
 
-        .filter-select:focus {
-            border-color: var(--m3-primary);
-            box-shadow: 0 0 0 4px rgba(0, 100, 148, 0.15);
-        }
-
-        /* DIRECTORY CARDS GRID */
-        main {
+        /* SCROLL CONTAINER WITH FADE OUT */
+        .content-scroll-container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            /* Scroll fade-out mask on top and bottom edges */
+            -webkit-mask-image: linear-gradient(to bottom, 
+                transparent 0px, 
+                black 14px, 
+                black calc(100% - 24px), 
+                transparent 100%
+            );
+            mask-image: linear-gradient(to bottom, 
+                transparent 0px, 
+                black 14px, 
+                black calc(100% - 24px), 
+                transparent 100%
+            );
+            padding: 10px 0 20px 0;
+        }
+
+        /* GRID */
+        main {
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
@@ -306,30 +303,52 @@
             main { grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
         }
 
-        /* CARD COMPONENT */
+        /* DIRECTORY CARD */
         .card {
             background: var(--m3-surface-container);
             border-radius: var(--radius-lg);
-            padding: 12px 14px;
+            padding: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             border: 1px solid rgba(116, 119, 127, 0.08);
-            position: relative;
-            overflow: hidden;
-            user-select: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            cursor: pointer;
             transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring), background-color 0.2s ease;
+            position: relative;
+        }
+
+        /* Only applied during initial staggered entrance */
+        .card.stagger-in {
             animation: cardEntrance 0.35s var(--bounce) backwards;
         }
 
-        @media (min-width: 768px) {
-            .card { padding: 16px; gap: 14px; }
+        /* Pulsing ring animation for live updated cards */
+        .card.card-updated {
+            animation: pulseUpdated 1.4s ease-out;
+        }
+
+        @keyframes pulseUpdated {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7);
+                background-color: #e8f9ed;
+                transform: scale(0.98);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(0, 200, 83, 0);
+                background-color: #f1fbf4;
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+                background-color: var(--m3-surface-container);
+                transform: scale(1);
+            }
         }
 
         .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0, 100, 148, 0.08);
-            background: var(--m3-surface-container-high);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 100, 148, 0.08);
         }
 
         .card:active {
@@ -337,14 +356,8 @@
         }
 
         @keyframes cardEntrance {
-            from {
-                opacity: 0;
-                transform: translateY(14px) scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(14px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .avatar {
@@ -361,11 +374,6 @@
             flex-shrink: 0;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 0 0 1px rgba(0, 100, 148, 0.1);
-        }
-
-        @media (min-width: 768px) {
-            .avatar { width: 64px; height: 64px; border-radius: var(--radius-md); font-size: 1.2rem; }
         }
 
         .avatar img {
@@ -373,12 +381,10 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 0.35s ease;
+            transition: opacity 0.3s ease;
         }
 
-        .avatar img.loaded {
-            opacity: 1;
-        }
+        .avatar img.loaded { opacity: 1; }
 
         .card-info {
             display: flex;
@@ -390,12 +396,11 @@
 
         .card-title {
             font-weight: 700;
-            font-size: 0.92rem;
+            font-size: 0.94rem;
             color: var(--m3-on-surface);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.2;
         }
 
         .card-meta {
@@ -412,18 +417,17 @@
             font-weight: 800;
             padding: 3px 8px;
             border-radius: 6px;
-            letter-spacing: 0.03em;
             text-transform: uppercase;
         }
 
         .subtext {
             font-size: 0.75rem;
             color: var(--m3-on-surface-variant);
-            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-family: ui-monospace, monospace;
             font-weight: 600;
         }
 
-        /* SKELETON SHIMMER LOADING */
+        /* SKELETON LOADERS */
         .skeleton-card {
             background: var(--m3-surface-container);
             border-radius: var(--radius-lg);
@@ -440,13 +444,11 @@
             position: absolute;
             inset: 0;
             transform: translateX(-100%);
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
             animation: shimmer 1.3s infinite;
         }
 
-        @keyframes shimmer {
-            100% { transform: translateX(100%); }
-        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
 
         .skeleton-avatar {
             width: 54px;
@@ -456,43 +458,235 @@
             flex-shrink: 0;
         }
 
-        .skeleton-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 1;
-        }
-
         .skeleton-line {
             height: 12px;
             border-radius: 6px;
             background: var(--m3-surface-container-high);
         }
 
-        .skeleton-line.short { width: 50%; }
+        /* BOTTOM SHEET STYLING (MATCHING SCREENSHOT) */
+        .sheet-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
 
-        /* EMPTY & ERROR STATES */
-        .status-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 50px 20px;
-            font-size: 0.95rem;
-            color: var(--m3-on-surface-variant);
+        .sheet-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            max-width: 520px;
+            margin: 0 auto;
+            background: #f7f9fc;
+            border-radius: 32px 32px 0 0;
+            padding: 12px 20px calc(24px + env(safe-area-inset-bottom)) 20px;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+            transform: translateY(100%);
+            transition: transform 0.35s var(--bounce);
+            z-index: 1001;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .bottom-sheet.open {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 44px;
+            height: 4.5px;
+            background: #d1d5db;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+
+        .sheet-top-actions {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .icon-circle-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.06);
+            background: #ffffff;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease;
+        }
+
+        .icon-circle-btn:active { transform: scale(0.92); }
+
+        .sheet-avatar-wrapper {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .sheet-avatar {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            border: 3.5px solid #22c55e;
+            padding: 2.5px;
+            background: #ffffff;
+            box-shadow: 0 4px 16px rgba(34, 197, 94, 0.18);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sheet-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sheet-avatar-placeholder {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--m3-primary);
+        }
+
+        /* Name pill card */
+        .sheet-name-card {
+            background: #eef2f6;
+            border-radius: 16px;
+            padding: 10px 24px;
+            text-align: center;
+            width: 85%;
+            margin-bottom: 18px;
+        }
+
+        .sheet-name-en {
+            font-size: 1.12rem;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .sheet-name-cn {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-top: 3px;
+            font-weight: 600;
+        }
+
+        /* Details list card */
+        .sheet-details-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .sheet-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .sheet-row:last-child { border-bottom: none; }
+
+        .sheet-label {
+            font-size: 0.9rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .sheet-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sheet-val.highlight-green {
+            color: #16a34a;
+            font-weight: 800;
+        }
+
+        .sheet-status-arrow {
+            color: #16a34a;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        /* Bottom navigation controls */
+        .sheet-nav-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
             gap: 12px;
-            animation: fadeIn 0.4s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            flex-shrink: 0;
+            transition: transform 0.15s ease;
         }
 
-        .status-icon {
-            font-size: 48px;
-            color: var(--m3-outline);
+        .nav-btn:active { transform: scale(0.92); }
+
+        .done-btn {
+            flex: 1;
+            height: 50px;
+            background: #00c853;
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 200, 83, 0.3);
+            transition: transform 0.15s ease, background-color 0.2s ease;
+        }
+
+        .done-btn:active {
+            transform: scale(0.97);
+            background: #00b047;
         }
     </style>
 </head>
@@ -500,11 +694,11 @@
 
     <header>
         <div class="header-top">
-            <div class="brand-container">
+            <div>
                 <h1>SMJK Katholik Melaka</h1>
                 <span class="subtitle">Live Directory & Attendance Hub</span>
             </div>
-            <div class="live-indicator" id="liveBadge" title="Tap to refresh records">
+            <div class="live-indicator" id="liveBadge" title="Tap to sync now">
                 <div class="pulse-dot"></div>
                 <span id="syncStatus">Auto-Syncing</span>
             </div>
@@ -544,9 +738,67 @@
         </div>
     </header>
 
-    <main id="cardGrid">
-        <!-- Render Skeleton States by default -->
-    </main>
+    <!-- CONTENT WRAPPER WITH FADEOUT -->
+    <div class="content-scroll-container">
+        <main id="cardGrid"></main>
+    </div>
+
+    <!-- BOTTOM SHEET COMPONENT (EXACT MATCH FOR SCREENSHOT) -->
+    <div class="sheet-backdrop" id="sheetBackdrop"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle"></div>
+        
+        <div class="sheet-top-actions">
+            <button class="icon-circle-btn" id="shareSheetBtn" aria-label="Share">
+                <span class="material-symbols-rounded" style="font-size: 20px;">ios_share</span>
+            </button>
+            <button class="icon-circle-btn" id="starSheetBtn" aria-label="Favorite">
+                <span class="material-symbols-rounded" style="font-size: 22px;">star</span>
+            </button>
+        </div>
+
+        <div class="sheet-avatar-wrapper">
+            <div class="sheet-avatar" id="sheetAvatarContainer">
+                <!-- Avatar image inserted dynamically -->
+            </div>
+        </div>
+
+        <div class="sheet-name-card">
+            <div class="sheet-name-en" id="sheetNameEn">-</div>
+            <div class="sheet-name-cn" id="sheetNameCn"></div>
+        </div>
+
+        <div class="sheet-details-card">
+            <div class="sheet-row">
+                <span class="sheet-label">Current Class</span>
+                <span class="sheet-val highlight-green" id="sheetCurrentClass">-</span>
+            </div>
+            <div class="sheet-row">
+                <span class="sheet-label" id="sheetPrevYearLabel">2025 Class</span>
+                <span class="sheet-val" id="sheetPrevClass">-</span>
+            </div>
+            <div class="sheet-row">
+                <span class="sheet-label">Status</span>
+                <span class="sheet-val">
+                    <span class="material-symbols-rounded sheet-status-arrow" id="sheetStatusIcon">arrow_upward</span>
+                </span>
+            </div>
+            <div class="sheet-row">
+                <span class="sheet-label">Primary School</span>
+                <span class="sheet-val" id="sheetPrimarySchool">-</span>
+            </div>
+        </div>
+
+        <div class="sheet-nav-bar">
+            <button class="nav-btn" id="prevStudentBtn" aria-label="Previous">
+                <span class="material-symbols-rounded">chevron_left</span>
+            </button>
+            <button class="done-btn" id="doneSheetBtn">Done</button>
+            <button class="nav-btn" id="nextStudentBtn" aria-label="Next">
+                <span class="material-symbols-rounded">chevron_right</span>
+            </button>
+        </div>
+    </div>
 
     <script>
         const endpointMap = {
@@ -558,8 +810,10 @@
         };
 
         let currentDataset = [];
+        let currentlyDisplayedRecords = [];
         let activeCategory = 'students';
         let pollTimer = null;
+        let selectedRecordIndex = -1;
 
         const grid = document.getElementById('cardGrid');
         const searchInput = document.getElementById('searchInput');
@@ -569,16 +823,28 @@
         const syncStatus = document.getElementById('syncStatus');
         const liveBadge = document.getElementById('liveBadge');
 
-        // Render Shimmer Skeleton Placeholders during Loading
+        // Bottom Sheet elements
+        const sheetBackdrop = document.getElementById('sheetBackdrop');
+        const bottomSheet = document.getElementById('bottomSheet');
+        const doneSheetBtn = document.getElementById('doneSheetBtn');
+        const prevStudentBtn = document.getElementById('prevStudentBtn');
+        const nextStudentBtn = document.getElementById('nextStudentBtn');
+        const sheetAvatarContainer = document.getElementById('sheetAvatarContainer');
+        const sheetNameEn = document.getElementById('sheetNameEn');
+        const sheetNameCn = document.getElementById('sheetNameCn');
+        const sheetCurrentClass = document.getElementById('sheetCurrentClass');
+        const sheetPrevClass = document.getElementById('sheetPrevClass');
+        const sheetPrimarySchool = document.getElementById('sheetPrimarySchool');
+
         function renderSkeletons() {
             let html = '';
             for (let i = 0; i < 9; i++) {
                 html += `
                     <div class="skeleton-card">
                         <div class="skeleton-avatar"></div>
-                        <div class="skeleton-info">
-                            <div class="skeleton-line" style="width: 75%;"></div>
-                            <div class="skeleton-line short"></div>
+                        <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 45%;"></div>
                         </div>
                     </div>
                 `;
@@ -589,7 +855,7 @@
         async function fetchDirectoryData(targetUrl) {
             const gatewayUrl = `/api/proxy?target=${encodeURIComponent(targetUrl)}`;
             const response = await fetch(gatewayUrl);
-            if (!response.ok) throw new Error(`Gateway response status: ${response.status}`);
+            if (!response.ok) throw new Error(`Gateway status: ${response.status}`);
             return await response.json();
         }
 
@@ -610,35 +876,74 @@
                     payload = payload.data || payload.records || Object.values(payload).find(v => Array.isArray(v)) || [];
                 }
 
-                currentDataset = Array.isArray(payload) ? payload : [];
+                const freshDataset = Array.isArray(payload) ? payload : [];
                 
-                if (!isBackgroundRefresh) {
+                if (isBackgroundRefresh) {
+                    // SMART DIFF: Only update and animate records that actually changed
+                    handleIncrementalUpdate(freshDataset);
+                } else {
+                    currentDataset = freshDataset;
                     buildFilterOptions(category);
+                    applySearchFilter(true); // initial render with stagger
                 }
-                
-                applySearchFilter();
 
                 syncStatus.textContent = "Synced";
-                setTimeout(() => { syncStatus.textContent = "Auto-Syncing"; }, 2500);
+                setTimeout(() => { syncStatus.textContent = "Auto-Syncing"; }, 2000);
             } catch (err) {
                 console.error(err);
                 if (!isBackgroundRefresh) {
                     grid.innerHTML = `
-                        <div class="status-state" style="color: var(--m3-error);">
-                            <span class="material-symbols-rounded status-icon" style="color: var(--m3-error);">cloud_off</span>
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--m3-error);">
                             <b>Unable to sync live records</b>
-                            <span style="font-size: 0.82rem; color: var(--m3-on-surface-variant); max-width: 320px;">
-                                Please check network reachability or verify Vercel reverse proxy rewrite endpoints.
-                            </span>
                         </div>
                     `;
                 }
             }
         }
 
+        function getRecordKey(entry) {
+            return String(entry.id || entry.student_id || entry.staff_id || entry.name || '');
+        }
+
+        function getProfilePicUrl(entry) {
+            const recordId = entry.id || entry.student_id || entry.staff_id || '';
+            if (entry.picture) {
+                return entry.picture.startsWith('http') ? entry.picture : `http://cdn.owonico.link${entry.picture}`;
+            } else if (activeCategory === 'students' && recordId) {
+                return `http://cdn.owonico.link/files/sems/meb2099/student/${recordId}.jpg`;
+            }
+            return '';
+        }
+
         function generateInitials(textName) {
             if (!textName) return 'SM';
             return textName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+        }
+
+        /* INCREMENTAL DIFF TO PREVENT RE-ANIMATING UNCHANGED CARDS */
+        function handleIncrementalUpdate(freshDataset) {
+            const oldMap = new Map();
+            currentDataset.forEach(item => oldMap.set(getRecordKey(item), JSON.stringify(item)));
+
+            const changedIds = new Set();
+            freshDataset.forEach(newItem => {
+                const key = getRecordKey(newItem);
+                const oldSerialized = oldMap.get(key);
+                if (!oldSerialized || oldSerialized !== JSON.stringify(newItem)) {
+                    changedIds.add(key);
+                }
+            });
+
+            currentDataset = freshDataset;
+            applySearchFilter(false, changedIds);
+
+            // If the modal is currently open on a record that updated, refresh the modal view
+            if (selectedRecordIndex >= 0 && currentlyDisplayedRecords[selectedRecordIndex]) {
+                const curKey = getRecordKey(currentlyDisplayedRecords[selectedRecordIndex]);
+                if (changedIds.has(curKey)) {
+                    populateBottomSheet(currentlyDisplayedRecords[selectedRecordIndex]);
+                }
+            }
         }
 
         function buildFilterOptions(category) {
@@ -663,63 +968,95 @@
             }
         }
 
-        function renderDirectoryCards(records) {
-            grid.innerHTML = '';
+        function createCardElement(entry, index, isInitialStagger) {
+            const cardNode = document.createElement('div');
+            cardNode.className = 'card' + (isInitialStagger ? ' stagger-in' : '');
+            if (isInitialStagger) {
+                cardNode.style.animationDelay = `${Math.min(index * 24, 340)}ms`;
+            }
+            cardNode.setAttribute('data-id', getRecordKey(entry));
+
+            const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
+            const recordId = entry.id || entry.student_id || entry.staff_id || '';
+            const badgeLabel = entry.class || entry.section || entry.role || '';
+            const profileImgUrl = getProfilePicUrl(entry);
+
+            cardNode.innerHTML = `
+                <div class="avatar">
+                    <span>${generateInitials(fullName)}</span>
+                    ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()">` : ''}
+                </div>
+                <div class="card-info">
+                    <div class="card-title" title="${fullName}">${fullName}</div>
+                    <div class="card-meta">
+                        ${badgeLabel ? `<span class="pill">${badgeLabel}</span>` : ''}
+                        <span class="subtext">${recordId}</span>
+                    </div>
+                </div>
+            `;
+
+            cardNode.addEventListener('click', () => {
+                openBottomSheet(index);
+            });
+
+            return cardNode;
+        }
+
+        function renderDirectoryCards(records, isInitial = false, changedKeys = new Set()) {
+            currentlyDisplayedRecords = records;
 
             if (records.length === 0) {
-                grid.innerHTML = `
-                    <div class="status-state">
-                        <span class="material-symbols-rounded status-icon">person_search</span>
-                        <b>No records found</b>
-                        <span style="font-size: 0.8rem;">Try checking spelling or resetting your filters.</span>
-                    </div>
-                `;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:#6b7280;">No records found.</div>`;
                 return;
             }
 
+            if (isInitial) {
+                grid.innerHTML = '';
+                const fragment = document.createDocumentFragment();
+                records.forEach((entry, idx) => {
+                    fragment.appendChild(createCardElement(entry, idx, true));
+                });
+                grid.appendChild(fragment);
+                return;
+            }
+
+            // In-place DOM update for background polling
+            const existingNodes = new Map();
+            grid.querySelectorAll('.card').forEach(node => {
+                existingNodes.set(node.getAttribute('data-id'), node);
+            });
+
+            grid.innerHTML = '';
             const fragment = document.createDocumentFragment();
 
             records.forEach((entry, idx) => {
-                const cardNode = document.createElement('div');
-                cardNode.className = 'card';
-                // Dynamic staggered animation delay capped for mobile smoothness
-                cardNode.style.animationDelay = `${Math.min(idx * 28, 380)}ms`;
+                const key = getRecordKey(entry);
+                let node = existingNodes.get(key);
 
-                const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
-                const recordId = entry.id || entry.student_id || entry.staff_id || '';
-                const badgeLabel = entry.class || entry.section || entry.role || '';
-                
-                let profileImgUrl = '';
-                if (entry.picture) {
-                    profileImgUrl = entry.picture.startsWith('http') ? entry.picture : `http://cdn.owonico.link${entry.picture}`;
-                } else if (activeCategory === 'students' && recordId) {
-                    profileImgUrl = `http://cdn.owonico.link/files/sems/meb2099/student/${recordId}.jpg`;
+                if (!node) {
+                    // New element added
+                    node = createCardElement(entry, idx, true);
+                } else {
+                    // Update index listener
+                    node.onclick = () => openBottomSheet(idx);
+                    
+                    // If changed, trigger pulse highlight
+                    if (changedKeys.has(key)) {
+                        node.classList.remove('card-updated');
+                        void node.offsetWidth; // Force CSS reflow
+                        node.classList.add('card-updated');
+                    }
                 }
-
-                cardNode.innerHTML = `
-                    <div class="avatar">
-                        <span>${generateInitials(fullName)}</span>
-                        ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()">` : ''}
-                    </div>
-                    <div class="card-info">
-                        <div class="card-title" title="${fullName}">${fullName}</div>
-                        <div class="card-meta">
-                            ${badgeLabel ? `<span class="pill">${badgeLabel}</span>` : ''}
-                            <span class="subtext">${recordId}</span>
-                        </div>
-                    </div>
-                `;
-                fragment.appendChild(cardNode);
+                fragment.appendChild(node);
             });
 
             grid.appendChild(fragment);
         }
 
-        function applySearchFilter() {
+        function applySearchFilter(isInitial = false, changedKeys = new Set()) {
             const keyword = searchInput.value.trim().toLowerCase();
             const filterValue = secondaryFilter.value;
 
-            // Toggle search reset icon
             if (keyword.length > 0) {
                 clearSearchBtn.classList.add('visible');
             } else {
@@ -741,33 +1078,116 @@
                 return matchesKeyword && matchesDropdown;
             });
 
-            renderDirectoryCards(matchedRecords);
+            renderDirectoryCards(matchedRecords, isInitial, changedKeys);
         }
 
-        // Search events
-        searchInput.addEventListener('input', applySearchFilter);
+        /* BOTTOM SHEET LOGIC */
+        function populateBottomSheet(entry) {
+            if (!entry) return;
+
+            const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
+            const chineseName = entry.cname || entry.chinese_name || entry.chineseName || '';
+            const currentClass = entry.class || entry.form || '-';
+            const prevClass = entry.prev_class || entry.last_class || entry.class_2025 || '1P';
+            const primarySchool = entry.primary_school || entry.srjk || entry.primary || 'BKT BERUANG';
+            const imgUrl = getProfilePicUrl(entry);
+
+            sheetNameEn.textContent = fullName;
+            if (chineseName) {
+                sheetNameCn.textContent = chineseName;
+                sheetNameCn.style.display = 'block';
+            } else {
+                sheetNameCn.style.display = 'none';
+            }
+
+            sheetCurrentClass.textContent = currentClass;
+            sheetPrevClass.textContent = prevClass;
+            sheetPrimarySchool.textContent = primarySchool;
+
+            // Avatar
+            if (imgUrl) {
+                sheetAvatarContainer.innerHTML = `<img src="${imgUrl}" alt="${fullName}" onerror="this.parentElement.innerHTML='<span class=\\'sheet-avatar-placeholder\\'>${generateInitials(fullName)}</span>'">`;
+            } else {
+                sheetAvatarContainer.innerHTML = `<span class="sheet-avatar-placeholder">${generateInitials(fullName)}</span>`;
+            }
+
+            // Update navigation button states
+            prevStudentBtn.disabled = selectedRecordIndex <= 0;
+            prevStudentBtn.style.opacity = selectedRecordIndex <= 0 ? '0.4' : '1';
+            nextStudentBtn.disabled = selectedRecordIndex >= currentlyDisplayedRecords.length - 1;
+            nextStudentBtn.style.opacity = selectedRecordIndex >= currentlyDisplayedRecords.length - 1 ? '0.4' : '1';
+        }
+
+        function openBottomSheet(index) {
+            selectedRecordIndex = index;
+            populateBottomSheet(currentlyDisplayedRecords[selectedRecordIndex]);
+
+            sheetBackdrop.classList.add('active');
+            bottomSheet.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBottomSheet() {
+            sheetBackdrop.classList.remove('active');
+            bottomSheet.classList.remove('open');
+            document.body.style.overflow = '';
+            selectedRecordIndex = -1;
+        }
+
+        // Sheet Listeners
+        doneSheetBtn.addEventListener('click', closeBottomSheet);
+        sheetBackdrop.addEventListener('click', closeBottomSheet);
+
+        prevStudentBtn.addEventListener('click', () => {
+            if (selectedRecordIndex > 0) {
+                selectedRecordIndex--;
+                populateBottomSheet(currentlyDisplayedRecords[selectedRecordIndex]);
+            }
+        });
+
+        nextStudentBtn.addEventListener('click', () => {
+            if (selectedRecordIndex < currentlyDisplayedRecords.length - 1) {
+                selectedRecordIndex++;
+                populateBottomSheet(currentlyDisplayedRecords[selectedRecordIndex]);
+            }
+        });
+
+        // Swipe down on bottom sheet to dismiss
+        let touchStartY = 0;
+        bottomSheet.addEventListener('touchstart', e => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        bottomSheet.addEventListener('touchmove', e => {
+            const touchCurrentY = e.touches[0].clientY;
+            const diff = touchCurrentY - touchStartY;
+            if (diff > 90) {
+                closeBottomSheet();
+            }
+        }, { passive: true });
+
+        // Search inputs
+        searchInput.addEventListener('input', () => applySearchFilter(false));
         clearSearchBtn.addEventListener('click', () => {
             searchInput.value = '';
             searchInput.focus();
-            applySearchFilter();
+            applySearchFilter(false);
         });
 
-        secondaryFilter.addEventListener('change', applySearchFilter);
+        secondaryFilter.addEventListener('change', () => applySearchFilter(false));
 
-        // Tap on Live Badge to trigger manual refresh
+        // Live badge click
         liveBadge.addEventListener('click', () => {
             syncStatus.textContent = "Updating...";
             loadDirectory(activeCategory, true);
         });
 
-        // Tabs navigation
+        // Tab Switching
         tabButtons.forEach(btn => {
             btn.addEventListener('click', (event) => {
                 tabButtons.forEach(b => b.classList.remove('active'));
                 const target = event.currentTarget;
                 target.classList.add('active');
-                
-                // Keep selected tab scrolled into view on mobile
                 target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
                 clearInterval(pollTimer);
@@ -782,7 +1202,7 @@
             }, 10000);
         }
 
-        // Initialize default view
+        // Initialize
         loadDirectory('students', false);
         startPolling('students');
     </script>
