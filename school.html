@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SMJK Katholik Melaka • Live Directory & Attendance Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..24,400..700,1,0" />
     <style>
         :root {
             --m3-primary: #006494;
+            --m3-primary-light: #0081bf;
             --m3-on-primary: #ffffff;
             --m3-primary-container: #cbe6ff;
             --m3-on-primary-container: #001e30;
@@ -20,15 +23,19 @@
             --m3-outline: #74777f;
             --m3-error: #ba1a1a;
             --m3-success: #198754;
-            --m3-corner-extra-large: 24px;
-            --m3-corner-full: 9999px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --radius-xl: 24px;
+            --radius-pill: 9999px;
+            --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -36,56 +43,83 @@
             background-color: var(--m3-surface);
             color: var(--m3-on-surface);
             min-height: 100vh;
-            padding: 16px;
+            padding: 12px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         @media (min-width: 768px) {
             body { padding: 24px; }
         }
 
+        /* HEADER & APP BAR */
         header {
             max-width: 1400px;
-            margin: 0 auto 20px auto;
-            background: var(--m3-primary-container);
+            margin: 0 auto 16px auto;
+            background: linear-gradient(145deg, #d8ebff, #c2e2ff);
             color: var(--m3-on-primary-container);
-            padding: 24px 20px;
-            border-radius: var(--m3-corner-extra-large);
+            padding: 18px 16px;
+            border-radius: var(--radius-xl);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
+            box-shadow: 0 4px 24px rgba(0, 100, 148, 0.08);
+            position: relative;
+            overflow: hidden;
         }
 
         @media (min-width: 768px) {
-            header { padding: 36px 40px; margin-bottom: 28px; }
+            header { padding: 28px 32px; margin-bottom: 24px; gap: 20px; }
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
         h1 {
-            font-size: 1.75rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: var(--m3-primary);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
         }
 
-        @media (min-width: 768px) { h1 { font-size: 2.25rem; } }
+        @media (min-width: 768px) { h1 { font-size: 2.1rem; } }
+
+        .subtitle {
+            color: var(--m3-on-surface-variant);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
 
         .live-indicator {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(0, 100, 148, 0.15);
-            padding: 6px 14px;
-            border-radius: var(--m3-corner-full);
-            font-size: 0.8rem;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 6px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--m3-primary);
+            border: 1px solid rgba(0, 100, 148, 0.15);
+            flex-shrink: 0;
+            transition: transform 0.2s var(--spring);
+        }
+
+        .live-indicator:active {
+            transform: scale(0.96);
         }
 
         .pulse-dot {
@@ -93,161 +127,417 @@
             height: 8px;
             background-color: var(--m3-success);
             border-radius: 50%;
-            animation: pulse 1.5s infinite;
+            position: relative;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(25, 135, 84, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+        .pulse-dot::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 2px solid var(--m3-success);
+            animation: ripple 1.8s infinite var(--spring);
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.4); opacity: 0; }
+        }
+
+        /* SCROLLABLE HORIZONTAL TABS (TOUCH OPTIMIZED) */
+        .tab-scroll-wrapper {
+            position: relative;
+            margin: 0 -16px;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 768px) {
+            .tab-scroll-wrapper { margin: 0; padding: 0; }
         }
 
         .tab-container {
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            width: 100%;
-            padding-bottom: 4px;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 2px;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
+
         .tab-container::-webkit-scrollbar { display: none; }
 
         .tab-btn {
-            background: rgba(0, 100, 148, 0.1);
-            border: none;
-            padding: 10px 18px;
-            border-radius: var(--m3-corner-full);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1.5px solid rgba(0, 100, 148, 0.08);
+            padding: 9px 16px;
+            border-radius: var(--radius-pill);
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--m3-primary);
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
+            scroll-snap-align: start;
+            transition: all 0.25s var(--spring);
+            user-select: none;
         }
 
-        .tab-btn.active, .tab-btn:hover {
+        .tab-btn:active {
+            transform: scale(0.94);
+        }
+
+        .tab-btn.active {
             background: var(--m3-primary);
             color: var(--m3-on-primary);
+            border-color: var(--m3-primary);
+            box-shadow: 0 4px 14px rgba(0, 100, 148, 0.25);
+            transform: translateY(-1px);
         }
 
+        /* SEARCH & FILTER CONTROLS */
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-direction: column;
         }
 
-        @media (min-width: 640px) { .controls { flex-direction: row; } }
+        @media (min-width: 640px) { .controls { flex-direction: row; gap: 12px; } }
 
-        .search-bar, .filter-select {
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--m3-primary);
+            pointer-events: none;
+            font-size: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
             background: var(--m3-surface);
             border: 2px solid transparent;
-            padding: 12px 18px;
-            border-radius: var(--m3-corner-full);
-            font-size: 0.95rem;
+            padding: 12px 40px 12px 42px;
+            border-radius: var(--radius-pill);
+            font-size: 0.9rem;
             color: var(--m3-on-surface);
             outline: none;
-            width: 100%;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .search-bar:focus {
+            border-color: var(--m3-primary);
+            box-shadow: 0 0 0 4px rgba(0, 100, 148, 0.15);
+            background: #ffffff;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.07);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--m3-on-surface-variant);
+            font-size: 16px;
             transition: all 0.2s ease;
         }
 
-        .search-bar { flex: 1; }
-        .search-bar:focus, .filter-select:focus {
+        .clear-btn.visible { display: flex; }
+        .clear-btn:active { transform: scale(0.85); background: rgba(0,0,0,0.15); }
+
+        .filter-select {
+            background: var(--m3-surface);
+            border: 2px solid transparent;
+            padding: 12px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--m3-primary);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006494'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 20px;
+            padding-right: 38px;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) { .filter-select { max-width: 200px; } }
+
+        .filter-select:focus {
             border-color: var(--m3-primary);
             box-shadow: 0 0 0 4px rgba(0, 100, 148, 0.15);
         }
-        .filter-select { cursor: pointer; font-weight: 600; }
-        @media (min-width: 640px) { .filter-select { max-width: 220px; } }
 
+        /* DIRECTORY CARDS GRID */
         main {
             max-width: 1400px;
             margin: 0 auto;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 14px;
+            gap: 10px;
         }
 
-        @media (min-width: 580px) { main { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; } }
-        @media (min-width: 1024px) { main { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; } }
+        @media (min-width: 540px) {
+            main { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+        }
 
+        @media (min-width: 1024px) {
+            main { grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+        }
+
+        /* CARD COMPONENT */
         .card {
             background: var(--m3-surface-container);
-            border-radius: 20px;
-            padding: 16px;
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 1px solid rgba(116, 119, 127, 0.1);
+            gap: 12px;
+            border: 1px solid rgba(116, 119, 127, 0.08);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            transition: transform 0.2s var(--spring), box-shadow 0.2s var(--spring), background-color 0.2s ease;
+            animation: cardEntrance 0.35s var(--bounce) backwards;
+        }
+
+        @media (min-width: 768px) {
+            .card { padding: 16px; gap: 14px; }
         }
 
         .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 100, 148, 0.08);
             background: var(--m3-surface-container-high);
         }
 
-        .avatar {
-            width: 64px; height: 64px;
-            border-radius: 16px;
-            background: var(--m3-primary-container);
-            color: var(--m3-primary);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 1.1rem;
-            flex-shrink: 0; overflow: hidden;
+        .card:active {
+            transform: scale(0.97);
         }
 
-        @media (min-width: 768px) { .avatar { width: 72px; height: 72px; border-radius: 20px; font-size: 1.25rem; } }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-        .card-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 100%; }
-        .card-title { font-weight: 700; font-size: 0.95rem; color: var(--m3-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-        .pill { background: var(--m3-primary); color: var(--m3-on-primary); font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; }
-        .subtext { font-size: 0.75rem; color: var(--m3-on-surface-variant); font-family: monospace; }
+        .avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: var(--m3-primary-container);
+            color: var(--m3-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(0, 100, 148, 0.1);
+        }
 
-        .status-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; font-size: 1rem; color: var(--m3-on-surface-variant); }
-        .spinner { width: 36px; height: 36px; border: 4px solid rgba(0, 100, 148, 0.15); border-top-color: var(--m3-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (min-width: 768px) {
+            .avatar { width: 64px; height: 64px; border-radius: var(--radius-md); font-size: 1.2rem; }
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .avatar img.loaded {
+            opacity: 1;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: var(--m3-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            background: var(--m3-primary);
+            color: var(--m3-on-primary);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .subtext {
+            font-size: 0.75rem;
+            color: var(--m3-on-surface-variant);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-weight: 600;
+        }
+
+        /* SKELETON SHIMMER LOADING */
+        .skeleton-card {
+            background: var(--m3-surface-container);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 1.3s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .skeleton-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: var(--m3-surface-container-high);
+            flex-shrink: 0;
+        }
+
+        .skeleton-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            border-radius: 6px;
+            background: var(--m3-surface-container-high);
+        }
+
+        .skeleton-line.short { width: 50%; }
+
+        /* EMPTY & ERROR STATES */
+        .status-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 0.95rem;
+            color: var(--m3-on-surface-variant);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-icon {
+            font-size: 48px;
+            color: var(--m3-outline);
+        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-top">
-            <div>
+            <div class="brand-container">
                 <h1>SMJK Katholik Melaka</h1>
-                <p style="color: var(--m3-on-surface-variant); margin-top: 2px; font-size: 0.9rem;">Live Directory & Attendance Hub</p>
+                <span class="subtitle">Live Directory & Attendance Hub</span>
             </div>
-            <div class="live-indicator">
+            <div class="live-indicator" id="liveBadge" title="Tap to refresh records">
                 <div class="pulse-dot"></div>
-                <span id="syncStatus">Auto-Syncing (10s)</span>
+                <span id="syncStatus">Auto-Syncing</span>
             </div>
         </div>
 
-        <div class="tab-container" id="apiTabs">
-            <button class="tab-btn active" data-endpoint="students">
-                <span class="material-symbols-rounded" style="font-size: 18px;">school</span> Students
-            </button>
-            <button class="tab-btn" data-endpoint="staff">
-                <span class="material-symbols-rounded" style="font-size: 18px;">badge</span> Staff
-            </button>
-            <button class="tab-btn" data-endpoint="prefects">
-                <span class="material-symbols-rounded" style="font-size: 18px;">security</span> Prefects
-            </button>
-            <button class="tab-btn" data-endpoint="librarians">
-                <span class="material-symbols-rounded" style="font-size: 18px;">local_library</span> Librarians
-            </button>
-            <button class="tab-btn" data-endpoint="attendance">
-                <span class="material-symbols-rounded" style="font-size: 18px;">event_available</span> Attendance
-            </button>
+        <div class="tab-scroll-wrapper">
+            <div class="tab-container" id="apiTabs">
+                <button class="tab-btn active" data-endpoint="students">
+                    <span class="material-symbols-rounded">school</span> Students
+                </button>
+                <button class="tab-btn" data-endpoint="staff">
+                    <span class="material-symbols-rounded">badge</span> Staff
+                </button>
+                <button class="tab-btn" data-endpoint="prefects">
+                    <span class="material-symbols-rounded">shield_person</span> Prefects
+                </button>
+                <button class="tab-btn" data-endpoint="librarians">
+                    <span class="material-symbols-rounded">local_library</span> Librarians
+                </button>
+                <button class="tab-btn" data-endpoint="attendance">
+                    <span class="material-symbols-rounded">event_available</span> Attendance
+                </button>
+            </div>
         </div>
 
         <div class="controls">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Search directory records...">
+            <div class="search-wrapper">
+                <span class="material-symbols-rounded search-icon">search</span>
+                <input type="text" id="searchInput" class="search-bar" placeholder="Search by name, ID..." autocomplete="off">
+                <button id="clearSearchBtn" class="clear-btn" aria-label="Clear Search">
+                    <span class="material-symbols-rounded" style="font-size: 16px;">close</span>
+                </button>
+            </div>
             <select id="secondaryFilter" class="filter-select" style="display:none;">
                 <option value="">All Groups</option>
             </select>
@@ -255,10 +545,7 @@
     </header>
 
     <main id="cardGrid">
-        <div class="status-state">
-            <div class="spinner"></div>
-            Connecting to live feed...
-        </div>
+        <!-- Render Skeleton States by default -->
     </main>
 
     <script>
@@ -267,7 +554,7 @@
             staff: 'https://www.chsmelaka.com/api/school/getStaff',
             prefects: 'https://www.chsmelaka.com/api/prefect/getPrefect',
             librarians: 'https://www.chsmelaka.com/api/library/getLibrarians',
-            attendance: 'https://www.chsmelaka.com/api/school/edatang/getAttendance?date=2026-10-6'
+            attendance: 'https://www.chsmelaka.com/api/school/edatang/getAttendance?date=' + new Date().toISOString().split('T')[0]
         };
 
         let currentDataset = [];
@@ -276,12 +563,30 @@
 
         const grid = document.getElementById('cardGrid');
         const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
         const secondaryFilter = document.getElementById('secondaryFilter');
         const tabButtons = document.querySelectorAll('.tab-btn');
         const syncStatus = document.getElementById('syncStatus');
+        const liveBadge = document.getElementById('liveBadge');
+
+        // Render Shimmer Skeleton Placeholders during Loading
+        function renderSkeletons() {
+            let html = '';
+            for (let i = 0; i < 9; i++) {
+                html += `
+                    <div class="skeleton-card">
+                        <div class="skeleton-avatar"></div>
+                        <div class="skeleton-info">
+                            <div class="skeleton-line" style="width: 75%;"></div>
+                            <div class="skeleton-line short"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            grid.innerHTML = html;
+        }
 
         async function fetchDirectoryData(targetUrl) {
-            // Uses local Vercel rewrite route (/api/proxy) to bypass CORS blocks
             const gatewayUrl = `/api/proxy?target=${encodeURIComponent(targetUrl)}`;
             const response = await fetch(gatewayUrl);
             if (!response.ok) throw new Error(`Gateway response status: ${response.status}`);
@@ -292,13 +597,9 @@
             activeCategory = category;
             
             if (!isBackgroundRefresh) {
-                grid.innerHTML = `
-                    <div class="status-state">
-                        <div class="spinner"></div>
-                        Fetching records from server...
-                    </div>
-                `;
+                renderSkeletons();
                 searchInput.value = '';
+                clearSearchBtn.classList.remove('visible');
                 secondaryFilter.style.display = 'none';
             }
 
@@ -317,15 +618,18 @@
                 
                 applySearchFilter();
 
-                syncStatus.textContent = "Live • Synced just now";
-                setTimeout(() => { syncStatus.textContent = "Auto-Syncing (10s)"; }, 3000);
+                syncStatus.textContent = "Synced";
+                setTimeout(() => { syncStatus.textContent = "Auto-Syncing"; }, 2500);
             } catch (err) {
                 console.error(err);
                 if (!isBackgroundRefresh) {
                     grid.innerHTML = `
                         <div class="status-state" style="color: var(--m3-error);">
-                            <b>Unable to load records.</b><br>
-                            <span style="font-size: 0.85rem; color: var(--m3-on-surface-variant);">Please check network configuration or Vercel proxy rewrite rule.</span>
+                            <span class="material-symbols-rounded status-icon" style="color: var(--m3-error);">cloud_off</span>
+                            <b>Unable to sync live records</b>
+                            <span style="font-size: 0.82rem; color: var(--m3-on-surface-variant); max-width: 320px;">
+                                Please check network reachability or verify Vercel reverse proxy rewrite endpoints.
+                            </span>
                         </div>
                     `;
                 }
@@ -334,7 +638,7 @@
 
         function generateInitials(textName) {
             if (!textName) return 'SM';
-            return textName.split(' ').map(n => n[0]).slice(0, 2).join('');
+            return textName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
         }
 
         function buildFilterOptions(category) {
@@ -363,13 +667,23 @@
             grid.innerHTML = '';
 
             if (records.length === 0) {
-                grid.innerHTML = `<div class="status-state">No directory entries found.</div>`;
+                grid.innerHTML = `
+                    <div class="status-state">
+                        <span class="material-symbols-rounded status-icon">person_search</span>
+                        <b>No records found</b>
+                        <span style="font-size: 0.8rem;">Try checking spelling or resetting your filters.</span>
+                    </div>
+                `;
                 return;
             }
 
-            records.forEach(entry => {
+            const fragment = document.createDocumentFragment();
+
+            records.forEach((entry, idx) => {
                 const cardNode = document.createElement('div');
                 cardNode.className = 'card';
+                // Dynamic staggered animation delay capped for mobile smoothness
+                cardNode.style.animationDelay = `${Math.min(idx * 28, 380)}ms`;
 
                 const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
                 const recordId = entry.id || entry.student_id || entry.staff_id || '';
@@ -385,7 +699,7 @@
                 cardNode.innerHTML = `
                     <div class="avatar">
                         <span>${generateInitials(fullName)}</span>
-                        ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onerror="this.remove()">` : ''}
+                        ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()">` : ''}
                     </div>
                     <div class="card-info">
                         <div class="card-title" title="${fullName}">${fullName}</div>
@@ -395,22 +709,31 @@
                         </div>
                     </div>
                 `;
-                grid.appendChild(cardNode);
+                fragment.appendChild(cardNode);
             });
+
+            grid.appendChild(fragment);
         }
 
         function applySearchFilter() {
-            const keyword = searchInput.value.toLowerCase();
+            const keyword = searchInput.value.trim().toLowerCase();
             const filterValue = secondaryFilter.value;
 
+            // Toggle search reset icon
+            if (keyword.length > 0) {
+                clearSearchBtn.classList.add('visible');
+            } else {
+                clearSearchBtn.classList.remove('visible');
+            }
+
             const matchedRecords = currentDataset.filter(entry => {
-                const nameText = (entry.name || entry.fullname || '').toLowerCase();
-                const idText = (entry.id || entry.student_id || '').toString().toLowerCase();
+                const nameText = (entry.name || entry.fullname || entry.student_name || '').toLowerCase();
+                const idText = (entry.id || entry.student_id || entry.staff_id || '').toString().toLowerCase();
                 const matchesKeyword = nameText.includes(keyword) || idText.includes(keyword);
 
                 let matchesDropdown = true;
                 if (activeCategory === 'students') {
-                    matchesDropdown = !filterValue || entry.class === filterValue;
+                    matchesDropdown = !filterValue || (entry.class || entry.form) === filterValue;
                 } else if (activeCategory === 'staff') {
                     matchesDropdown = !filterValue || entry.section === filterValue;
                 }
@@ -421,17 +744,35 @@
             renderDirectoryCards(matchedRecords);
         }
 
+        // Search events
         searchInput.addEventListener('input', applySearchFilter);
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.focus();
+            applySearchFilter();
+        });
+
         secondaryFilter.addEventListener('change', applySearchFilter);
 
+        // Tap on Live Badge to trigger manual refresh
+        liveBadge.addEventListener('click', () => {
+            syncStatus.textContent = "Updating...";
+            loadDirectory(activeCategory, true);
+        });
+
+        // Tabs navigation
         tabButtons.forEach(btn => {
             btn.addEventListener('click', (event) => {
                 tabButtons.forEach(b => b.classList.remove('active'));
-                event.currentTarget.classList.add('active');
+                const target = event.currentTarget;
+                target.classList.add('active');
                 
+                // Keep selected tab scrolled into view on mobile
+                target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
                 clearInterval(pollTimer);
-                loadDirectory(event.currentTarget.dataset.endpoint, false);
-                startPolling(event.currentTarget.dataset.endpoint);
+                loadDirectory(target.dataset.endpoint, false);
+                startPolling(target.dataset.endpoint);
             });
         });
 
@@ -441,6 +782,7 @@
             }, 10000);
         }
 
+        // Initialize default view
         loadDirectory('students', false);
         startPolling('students');
     </script>
