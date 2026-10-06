@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMJK Katholik Melaka • Live Data Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    <style>
+        :root {
+            --m3-primary: #006494;
+            --m3-on-primary: #ffffff;
+            --m3-primary-container: #cbe6ff;
+            --m3-on-primary-container: #001e30;
+            --m3-surface: #f8f9ff;
+            --m3-surface-container: #edf1f9;
+            --m3-surface-container-high: #e2e6ee;
+            --m3-on-surface: #1a1b1f;
+            --m3-on-surface-variant: #44474f;
+            --m3-outline: #74777f;
+            --m3-error: #ba1a1a;
+            --m3-success: #198754;
+            --m3-corner-extra-large: 24px;
+            --m3-corner-full: 9999px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--m3-surface);
+            color: var(--m3-on-surface);
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 24px; }
+        }
+
+        header {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            background: var(--m3-primary-container);
+            color: var(--m3-on-primary-container);
+            padding: 24px 20px;
+            border-radius: var(--m3-corner-extra-large);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            header { padding: 36px 40px; margin-bottom: 28px; }
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--m3-primary);
+            letter-spacing: -0.02em;
+        }
+
+        @media (min-width: 768px) { h1 { font-size: 2.25rem; } }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 100, 148, 0.15);
+            padding: 6px 14px;
+            border-radius: var(--m3-corner-full);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--m3-primary);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--m3-success);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(25, 135, 84, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            width: 100%;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .tab-container::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            background: rgba(0, 100, 148, 0.1);
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--m3-corner-full);
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--m3-primary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--m3-primary);
+            color: var(--m3-on-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 640px) { .controls { flex-direction: row; } }
+
+        .search-bar, .filter-select {
+            background: var(--m3-surface);
+            border: 2px solid transparent;
+            padding: 12px 18px;
+            border-radius: var(--m3-corner-full);
+            font-size: 0.95rem;
+            color: var(--m3-on-surface);
+            outline: none;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .search-bar { flex: 1; }
+        .search-bar:focus, .filter-select:focus {
+            border-color: var(--m3-primary);
+            box-shadow: 0 0 0 4px rgba(0, 100, 148, 0.15);
+        }
+        .filter-select { cursor: pointer; font-weight: 600; }
+        @media (min-width: 640px) { .filter-select { max-width: 220px; } }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        @media (min-width: 580px) { main { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; } }
+        @media (min-width: 1024px) { main { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; } }
+
+        .card {
+            background: var(--m3-surface-container);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(116, 119, 127, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            background: var(--m3-surface-container-high);
+        }
+
+        .avatar {
+            width: 64px; height: 64px;
+            border-radius: 16px;
+            background: var(--m3-primary-container);
+            color: var(--m3-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem;
+            flex-shrink: 0; overflow: hidden;
+        }
+
+        @media (min-width: 768px) { .avatar { width: 72px; height: 72px; border-radius: 20px; font-size: 1.25rem; } }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 100%; }
+        .card-title { font-weight: 700; font-size: 0.95rem; color: var(--m3-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .pill { background: var(--m3-primary); color: var(--m3-on-primary); font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px; text-transform: uppercase; }
+        .subtext { font-size: 0.75rem; color: var(--m3-on-surface-variant); font-family: monospace; }
+
+        .status-state { grid-column: 1 / -1; text-align: center; padding: 60px 20px; font-size: 1rem; color: var(--m3-on-surface-variant); }
+        .spinner { width: 36px; height: 36px; border: 4px solid rgba(0, 100, 148, 0.15); border-top-color: var(--m3-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div>
+                <h1>SMJK Katholik Melaka</h1>
+                <p style="color: var(--m3-on-surface-variant); margin-top: 2px; font-size: 0.9rem;">Live Directory & Attendance Hub</p>
+            </div>
+            <div class="live-indicator">
+                <div class="pulse-dot"></div>
+                <span id="syncStatus">Auto-Syncing (10s)</span>
+            </div>
+        </div>
+
+        <div class="tab-container" id="apiTabs">
+            <button class="tab-btn active" data-endpoint="students">
+                <span class="material-symbols-rounded" style="font-size: 18px;">school</span> Students
+            </button>
+            <button class="tab-btn" data-endpoint="staff">
+                <span class="material-symbols-rounded" style="font-size: 18px;">badge</span> Staff
+            </button>
+            <button class="tab-btn" data-endpoint="prefects">
+                <span class="material-symbols-rounded" style="font-size: 18px;">security</span> Prefects
+            </button>
+            <button class="tab-btn" data-endpoint="librarians">
+                <span class="material-symbols-rounded" style="font-size: 18px;">local_library</span> Librarians
+            </button>
+            <button class="tab-btn" data-endpoint="attendance">
+                <span class="material-symbols-rounded" style="font-size: 18px;">event_available</span> Attendance
+            </button>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="searchInput" class="search-bar" placeholder="Search directory records...">
+            <select id="secondaryFilter" class="filter-select" style="display:none;">
+                <option value="">All Groups</option>
+            </select>
+        </div>
+    </header>
+
+    <main id="cardGrid">
+        <div class="status-state">
+            <div class="spinner"></div>
+            Connecting to live feed...
+        </div>
+    </main>
+
+    <script>
+        const endpointMap = {
+            students: 'https://www.chsmelaka.com/api/school/getStudents',
+            staff: 'https://www.chsmelaka.com/api/school/getStaff',
+            prefects: 'https://www.chsmelaka.com/api/prefect/getPrefect',
+            librarians: 'https://www.chsmelaka.com/api/library/getLibrarians',
+            attendance: 'https://www.chsmelaka.com/api/school/edatang/getAttendance?date=2026-10-6'
+        };
+
+        let currentDataset = [];
+        let activeCategory = 'students';
+        let pollTimer = null;
+
+        const grid = document.getElementById('cardGrid');
+        const searchInput = document.getElementById('searchInput');
+        const secondaryFilter = document.getElementById('secondaryFilter');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const syncStatus = document.getElementById('syncStatus');
+
+        async function fetchDirectoryData(targetUrl) {
+            const gatewayUrl = `https://parents.chsmelaka.com/api/proxy?target=${encodeURIComponent(targetUrl)}`;
+            const response = await fetch(gatewayUrl);
+            if (!response.ok) throw new Error(`Gateway response status: ${response.status}`);
+            return await response.json();
+        }
+
+        async function loadDirectory(category, isBackgroundRefresh = false) {
+            activeCategory = category;
+            
+            // Only show full loading spinner on initial load, not background syncs
+            if (!isBackgroundRefresh) {
+                grid.innerHTML = `
+                    <div class="status-state">
+                        <div class="spinner"></div>
+                        Fetching records from server...
+                    </div>
+                `;
+                searchInput.value = '';
+                secondaryFilter.style.display = 'none';
+            }
+
+            try {
+                let payload = await fetchDirectoryData(endpointMap[category]);
+                
+                if (!Array.isArray(payload)) {
+                    payload = payload.data || payload.records || Object.values(payload).find(v => Array.isArray(v)) || [];
+                }
+
+                currentDataset = Array.isArray(payload) ? payload : [];
+                
+                if (!isBackgroundRefresh) {
+                    buildFilterOptions(category);
+                }
+                
+                applySearchFilter(); // Re-renders cards while keeping user search/filters intact
+
+                syncStatus.textContent = "Live • Synced just now";
+                setTimeout(() => { syncStatus.textContent = "Auto-Syncing (10s)"; }, 3000);
+            } catch (err) {
+                console.error(err);
+                if (!isBackgroundRefresh) {
+                    grid.innerHTML = `
+                        <div class="status-state" style="color: var(--m3-error);">
+                            <b>Unable to load records.</b><br>
+                            <span style="font-size: 0.85rem; color: var(--m3-on-surface-variant);">Please check network configuration.</span>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function generateInitials(textName) {
+            if (!textName) return 'SM';
+            return textName.split(' ').map(n => n[0]).slice(0, 2).join('');
+        }
+
+        function buildFilterOptions(category) {
+            if (category === 'students') {
+                const classList = [...new Set(currentDataset.map(item => item.class || item.form))].filter(Boolean).sort();
+                if (classList.length > 0) {
+                    secondaryFilter.innerHTML = '<option value="">All Classes</option>';
+                    classList.forEach(c => {
+                        secondaryFilter.innerHTML += `<option value="${c}">Class ${c}</option>`;
+                    });
+                    secondaryFilter.style.display = 'block';
+                }
+            } else if (category === 'staff') {
+                const sectionList = [...new Set(currentDataset.map(item => item.section))].filter(Boolean).sort();
+                if (sectionList.length > 0) {
+                    secondaryFilter.innerHTML = '<option value="">All Sections</option>';
+                    sectionList.forEach(s => {
+                        secondaryFilter.innerHTML += `<option value="${s}">Section ${s}</option>`;
+                    });
+                    secondaryFilter.style.display = 'block';
+                }
+            }
+        }
+
+        function renderDirectoryCards(records) {
+            grid.innerHTML = '';
+
+            if (records.length === 0) {
+                grid.innerHTML = `<div class="status-state">No directory entries found.</div>`;
+                return;
+            }
+
+            records.forEach(entry => {
+                const cardNode = document.createElement('div');
+                cardNode.className = 'card';
+
+                const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
+                const recordId = entry.id || entry.student_id || entry.staff_id || '';
+                const badgeLabel = entry.class || entry.section || entry.role || '';
+                
+                let profileImgUrl = '';
+                if (entry.picture) {
+                    profileImgUrl = entry.picture.startsWith('http') ? entry.picture : `http://cdn.owonico.link${entry.picture}`;
+                } else if (activeCategory === 'students' && recordId) {
+                    profileImgUrl = `http://cdn.owonico.link/files/sems/meb2099/student/${recordId}.jpg`;
+                }
+
+                cardNode.innerHTML = `
+                    <div class="avatar">
+                        <span>${generateInitials(fullName)}</span>
+                        ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onerror="this.remove()">` : ''}
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title" title="${fullName}">${fullName}</div>
+                        <div class="card-meta">
+                            ${badgeLabel ? `<span class="pill">${badgeLabel}</span>` : ''}
+                            <span class="subtext">${recordId}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(cardNode);
+            });
+        }
+
+        function applySearchFilter() {
+            const keyword = searchInput.value.toLowerCase();
+            const filterValue = secondaryFilter.value;
+
+            const matchedRecords = currentDataset.filter(entry => {
+                const nameText = (entry.name || entry.fullname || '').toLowerCase();
+                const idText = (entry.id || entry.student_id || '').toString().toLowerCase();
+                const matchesKeyword = nameText.includes(keyword) || idText.includes(keyword);
+
+                let matchesDropdown = true;
+                if (activeCategory === 'students') {
+                    matchesDropdown = !filterValue || entry.class === filterValue;
+                } else if (activeCategory === 'staff') {
+                    matchesDropdown = !filterValue || entry.section === filterValue;
+                }
+
+                return matchesKeyword && matchesDropdown;
+            });
+
+            renderDirectoryCards(matchedRecords);
+        }
+
+        searchInput.addEventListener('input', applySearchFilter);
+        secondaryFilter.addEventListener('change', applySearchFilter);
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+                
+                // Clear existing poll loop when changing tabs and restart it for the new tab
+                clearInterval(pollTimer);
+                loadDirectory(event.currentTarget.dataset.endpoint, false);
+                startPolling(event.currentTarget.dataset.endpoint);
+            });
+        });
+
+        function startPolling(category) {
+            // Poll every 10 seconds (10000 milliseconds) in the background
+            pollTimer = setInterval(() => {
+                loadDirectory(category, true);
+            }, 10000);
+        }
+
+        // Initialize on startup
+        loadDirectory('students', false);
+        startPolling('students');
+    </script>
+</body>
+</html>
