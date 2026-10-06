@@ -267,12 +267,11 @@
 
         @media (min-width: 640px) { .filter-select { max-width: 200px; } }
 
-        /* SCROLL CONTAINER WITH FADE OUT */
+        /* SCROLL CONTAINER WITH FADEOUT */
         .content-scroll-container {
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
-            /* Scroll fade-out mask on top and bottom edges */
             -webkit-mask-image: linear-gradient(to bottom, 
                 transparent 0px, 
                 black 14px, 
@@ -318,12 +317,10 @@
             position: relative;
         }
 
-        /* Only applied during initial staggered entrance */
         .card.stagger-in {
             animation: cardEntrance 0.35s var(--bounce) backwards;
         }
 
-        /* Pulsing ring animation for live updated cards */
         .card.card-updated {
             animation: pulseUpdated 1.4s ease-out;
         }
@@ -464,7 +461,7 @@
             background: var(--m3-surface-container-high);
         }
 
-        /* BOTTOM SHEET STYLING (MATCHING SCREENSHOT) */
+        /* BOTTOM SHEET */
         .sheet-backdrop {
             position: fixed;
             inset: 0;
@@ -532,10 +529,11 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, color 0.2s ease;
         }
 
         .icon-circle-btn:active { transform: scale(0.92); }
+        .icon-circle-btn.starred { color: #f59e0b; }
 
         .sheet-avatar-wrapper {
             position: relative;
@@ -569,7 +567,6 @@
             color: var(--m3-primary);
         }
 
-        /* Name pill card */
         .sheet-name-card {
             background: #eef2f6;
             border-radius: 16px;
@@ -594,7 +591,6 @@
             font-weight: 600;
         }
 
-        /* Details list card */
         .sheet-details-card {
             background: #ffffff;
             border-radius: 20px;
@@ -641,7 +637,6 @@
             font-weight: 800;
         }
 
-        /* Bottom navigation controls */
         .sheet-nav-bar {
             width: 100%;
             display: flex;
@@ -662,7 +657,7 @@
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.03);
             flex-shrink: 0;
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, opacity 0.2s ease;
         }
 
         .nav-btn:active { transform: scale(0.92); }
@@ -738,12 +733,11 @@
         </div>
     </header>
 
-    <!-- CONTENT WRAPPER WITH FADEOUT -->
     <div class="content-scroll-container">
         <main id="cardGrid"></main>
     </div>
 
-    <!-- BOTTOM SHEET COMPONENT (EXACT MATCH FOR SCREENSHOT) -->
+    <!-- BOTTOM SHEET -->
     <div class="sheet-backdrop" id="sheetBackdrop"></div>
     <div class="bottom-sheet" id="bottomSheet">
         <div class="sheet-handle"></div>
@@ -758,36 +752,16 @@
         </div>
 
         <div class="sheet-avatar-wrapper">
-            <div class="sheet-avatar" id="sheetAvatarContainer">
-                <!-- Avatar image inserted dynamically -->
-            </div>
+            <div class="sheet-avatar" id="sheetAvatarContainer"></div>
         </div>
 
         <div class="sheet-name-card">
-            <div class="sheet-name-en" id="sheetNameEn">-</div>
+            <div class="sheet-name-en" id="sheetNameEn"></div>
             <div class="sheet-name-cn" id="sheetNameCn"></div>
         </div>
 
-        <div class="sheet-details-card">
-            <div class="sheet-row">
-                <span class="sheet-label">Current Class</span>
-                <span class="sheet-val highlight-green" id="sheetCurrentClass">-</span>
-            </div>
-            <div class="sheet-row">
-                <span class="sheet-label" id="sheetPrevYearLabel">2025 Class</span>
-                <span class="sheet-val" id="sheetPrevClass">-</span>
-            </div>
-            <div class="sheet-row">
-                <span class="sheet-label">Status</span>
-                <span class="sheet-val">
-                    <span class="material-symbols-rounded sheet-status-arrow" id="sheetStatusIcon">arrow_upward</span>
-                </span>
-            </div>
-            <div class="sheet-row">
-                <span class="sheet-label">Primary School</span>
-                <span class="sheet-val" id="sheetPrimarySchool">-</span>
-            </div>
-        </div>
+        <!-- Dynamically rendered based on actual API keys -->
+        <div class="sheet-details-card" id="sheetDetailsCard"></div>
 
         <div class="sheet-nav-bar">
             <button class="nav-btn" id="prevStudentBtn" aria-label="Previous">
@@ -801,12 +775,21 @@
     </div>
 
     <script>
+        // Formats today's date dynamically (YYYY-MM-DD)
+        const getTodayDateString = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         const endpointMap = {
             students: 'https://www.chsmelaka.com/api/school/getStudents',
             staff: 'https://www.chsmelaka.com/api/school/getStaff',
             prefects: 'https://www.chsmelaka.com/api/prefect/getPrefect',
             librarians: 'https://www.chsmelaka.com/api/library/getLibrarians',
-            attendance: 'https://www.chsmelaka.com/api/school/edatang/getAttendance?date=' + new Date().toISOString().split('T')[0]
+            attendance: `https://www.chsmelaka.com/api/school/edatang/getAttendance?date=${getTodayDateString()}`
         };
 
         let currentDataset = [];
@@ -814,6 +797,7 @@
         let activeCategory = 'students';
         let pollTimer = null;
         let selectedRecordIndex = -1;
+        const favoriteIds = new Set();
 
         const grid = document.getElementById('cardGrid');
         const searchInput = document.getElementById('searchInput');
@@ -829,12 +813,12 @@
         const doneSheetBtn = document.getElementById('doneSheetBtn');
         const prevStudentBtn = document.getElementById('prevStudentBtn');
         const nextStudentBtn = document.getElementById('nextStudentBtn');
+        const shareSheetBtn = document.getElementById('shareSheetBtn');
+        const starSheetBtn = document.getElementById('starSheetBtn');
         const sheetAvatarContainer = document.getElementById('sheetAvatarContainer');
         const sheetNameEn = document.getElementById('sheetNameEn');
         const sheetNameCn = document.getElementById('sheetNameCn');
-        const sheetCurrentClass = document.getElementById('sheetCurrentClass');
-        const sheetPrevClass = document.getElementById('sheetPrevClass');
-        const sheetPrimarySchool = document.getElementById('sheetPrimarySchool');
+        const sheetDetailsCard = document.getElementById('sheetDetailsCard');
 
         function renderSkeletons() {
             let html = '';
@@ -879,12 +863,11 @@
                 const freshDataset = Array.isArray(payload) ? payload : [];
                 
                 if (isBackgroundRefresh) {
-                    // SMART DIFF: Only update and animate records that actually changed
                     handleIncrementalUpdate(freshDataset);
                 } else {
                     currentDataset = freshDataset;
                     buildFilterOptions(category);
-                    applySearchFilter(true); // initial render with stagger
+                    applySearchFilter(true);
                 }
 
                 syncStatus.textContent = "Synced";
@@ -894,7 +877,7 @@
                 if (!isBackgroundRefresh) {
                     grid.innerHTML = `
                         <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--m3-error);">
-                            <b>Unable to sync live records</b>
+                            <b>Unable to load live records.</b>
                         </div>
                     `;
                 }
@@ -916,11 +899,12 @@
         }
 
         function generateInitials(textName) {
-            if (!textName) return 'SM';
-            return textName.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase();
+            if (!textName) return '';
+            const words = textName.trim().split(/\s+/).filter(Boolean);
+            if (words.length === 0) return '';
+            return words.slice(0, 2).map(n => n[0]).join('').toUpperCase();
         }
 
-        /* INCREMENTAL DIFF TO PREVENT RE-ANIMATING UNCHANGED CARDS */
         function handleIncrementalUpdate(freshDataset) {
             const oldMap = new Map();
             currentDataset.forEach(item => oldMap.set(getRecordKey(item), JSON.stringify(item)));
@@ -937,7 +921,6 @@
             currentDataset = freshDataset;
             applySearchFilter(false, changedIds);
 
-            // If the modal is currently open on a record that updated, refresh the modal view
             if (selectedRecordIndex >= 0 && currentlyDisplayedRecords[selectedRecordIndex]) {
                 const curKey = getRecordKey(currentlyDisplayedRecords[selectedRecordIndex]);
                 if (changedIds.has(curKey)) {
@@ -976,21 +959,22 @@
             }
             cardNode.setAttribute('data-id', getRecordKey(entry));
 
-            const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
+            const fullName = entry.name || entry.fullname || entry.student_name || entry.nama || '';
             const recordId = entry.id || entry.student_id || entry.staff_id || '';
             const badgeLabel = entry.class || entry.section || entry.role || '';
             const profileImgUrl = getProfilePicUrl(entry);
+            const initials = generateInitials(fullName);
 
             cardNode.innerHTML = `
                 <div class="avatar">
-                    <span>${generateInitials(fullName)}</span>
+                    <span>${initials}</span>
                     ${profileImgUrl ? `<img src="${profileImgUrl}" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()">` : ''}
                 </div>
                 <div class="card-info">
-                    <div class="card-title" title="${fullName}">${fullName}</div>
+                    <div class="card-title" title="${fullName}">${fullName || recordId}</div>
                     <div class="card-meta">
                         ${badgeLabel ? `<span class="pill">${badgeLabel}</span>` : ''}
-                        <span class="subtext">${recordId}</span>
+                        ${recordId ? `<span class="subtext">${recordId}</span>` : ''}
                     </div>
                 </div>
             `;
@@ -1020,7 +1004,6 @@
                 return;
             }
 
-            // In-place DOM update for background polling
             const existingNodes = new Map();
             grid.querySelectorAll('.card').forEach(node => {
                 existingNodes.set(node.getAttribute('data-id'), node);
@@ -1034,16 +1017,12 @@
                 let node = existingNodes.get(key);
 
                 if (!node) {
-                    // New element added
                     node = createCardElement(entry, idx, true);
                 } else {
-                    // Update index listener
                     node.onclick = () => openBottomSheet(idx);
-                    
-                    // If changed, trigger pulse highlight
                     if (changedKeys.has(key)) {
                         node.classList.remove('card-updated');
-                        void node.offsetWidth; // Force CSS reflow
+                        void node.offsetWidth;
                         node.classList.add('card-updated');
                     }
                 }
@@ -1064,7 +1043,7 @@
             }
 
             const matchedRecords = currentDataset.filter(entry => {
-                const nameText = (entry.name || entry.fullname || entry.student_name || '').toLowerCase();
+                const nameText = (entry.name || entry.fullname || entry.student_name || entry.nama || '').toLowerCase();
                 const idText = (entry.id || entry.student_id || entry.staff_id || '').toString().toLowerCase();
                 const matchesKeyword = nameText.includes(keyword) || idText.includes(keyword);
 
@@ -1081,41 +1060,167 @@
             renderDirectoryCards(matchedRecords, isInitial, changedKeys);
         }
 
-        /* BOTTOM SHEET LOGIC */
+        /* BOTTOM SHEET - DYNAMICALLY POPULATED WITHOUT HARDCODED FALLBACKS */
         function populateBottomSheet(entry) {
             if (!entry) return;
 
-            const fullName = entry.name || entry.fullname || entry.student_name || 'Member';
-            const chineseName = entry.cname || entry.chinese_name || entry.chineseName || '';
-            const currentClass = entry.class || entry.form || '-';
-            const prevClass = entry.prev_class || entry.last_class || entry.class_2025 || '1P';
-            const primarySchool = entry.primary_school || entry.srjk || entry.primary || 'BKT BERUANG';
+            const fullName = entry.name || entry.fullname || entry.student_name || entry.nama || '';
+            const chineseName = entry.cname || entry.chinese_name || entry.nama_cina || entry.chineseName || '';
+            const recordId = entry.id || entry.student_id || entry.staff_id || '';
             const imgUrl = getProfilePicUrl(entry);
+            const initials = generateInitials(fullName);
 
-            sheetNameEn.textContent = fullName;
+            sheetNameEn.textContent = fullName || recordId || '';
             if (chineseName) {
                 sheetNameCn.textContent = chineseName;
                 sheetNameCn.style.display = 'block';
             } else {
+                sheetNameCn.textContent = '';
                 sheetNameCn.style.display = 'none';
             }
 
-            sheetCurrentClass.textContent = currentClass;
-            sheetPrevClass.textContent = prevClass;
-            sheetPrimarySchool.textContent = primarySchool;
-
             // Avatar
             if (imgUrl) {
-                sheetAvatarContainer.innerHTML = `<img src="${imgUrl}" alt="${fullName}" onerror="this.parentElement.innerHTML='<span class=\\'sheet-avatar-placeholder\\'>${generateInitials(fullName)}</span>'">`;
+                sheetAvatarContainer.innerHTML = `<img src="${imgUrl}" alt="${fullName}" onerror="this.parentElement.innerHTML='<span class=\\'sheet-avatar-placeholder\\'>${initials}</span>'">`;
             } else {
-                sheetAvatarContainer.innerHTML = `<span class="sheet-avatar-placeholder">${generateInitials(fullName)}</span>`;
+                sheetAvatarContainer.innerHTML = `<span class="sheet-avatar-placeholder">${initials}</span>`;
             }
+
+            // Star/Favorite toggle state
+            if (recordId && favoriteIds.has(recordId)) {
+                starSheetBtn.classList.add('starred');
+                starSheetBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 22px;">star</span>';
+            } else {
+                starSheetBtn.classList.remove('starred');
+                starSheetBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 22px;">star_outline</span>';
+            }
+
+            // Dynamically construct rows purely based on present data
+            const currentYear = new Date().getFullYear();
+            const prevYear = currentYear - 1;
+            let rowsHtml = '';
+
+            if (activeCategory === 'students') {
+                const curClass = entry.class || entry.tingkatan || entry.form;
+                if (curClass) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Current Class</span>
+                            <span class="sheet-val highlight-green">${curClass}</span>
+                        </div>`;
+                }
+
+                const prevClass = entry.last_class || entry.prev_class || entry.old_class || entry.kelas_lama || entry.class_prev || entry[`class_${prevYear}`] || entry['2025_class'];
+                if (prevClass) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">${prevYear} Class</span>
+                            <span class="sheet-val">${prevClass}</span>
+                        </div>`;
+                }
+
+                const rawStatus = entry.status ?? entry.status_pembelajaran ?? entry.student_status;
+                if (rawStatus !== undefined && rawStatus !== null && rawStatus !== '') {
+                    const statusStr = String(rawStatus).trim().toLowerCase();
+                    let statusContent = '';
+
+                    if (statusStr === 'up' || statusStr === 'naik' || statusStr === 'promoted' || statusStr === '1' || rawStatus === true) {
+                        statusContent = `<span class="material-symbols-rounded sheet-status-arrow">arrow_upward</span>`;
+                    } else if (statusStr === 'kekal' || statusStr === 'stay' || statusStr === '0' || rawStatus === false) {
+                        statusContent = `<span class="material-symbols-rounded" style="color: var(--m3-outline); font-size: 20px;">horizontal_rule</span>`;
+                    } else {
+                        statusContent = `<span class="sheet-val">${rawStatus}</span>`;
+                    }
+
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Status</span>
+                            <span class="sheet-val">${statusContent}</span>
+                        </div>`;
+                }
+
+                const primarySchool = entry.primary_school || entry.srjk || entry.primary || entry.sekolah_rendah || entry.school_from;
+                if (primarySchool) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Primary School</span>
+                            <span class="sheet-val">${primarySchool}</span>
+                        </div>`;
+                }
+
+                if (recordId) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Student ID</span>
+                            <span class="sheet-val">${recordId}</span>
+                        </div>`;
+                }
+            } else if (activeCategory === 'staff') {
+                const section = entry.section || entry.department || entry.bidang;
+                if (section) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Section</span>
+                            <span class="sheet-val highlight-green">${section}</span>
+                        </div>`;
+                }
+
+                const role = entry.role || entry.jawatan || entry.position;
+                if (role) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Role</span>
+                            <span class="sheet-val">${role}</span>
+                        </div>`;
+                }
+
+                if (recordId) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Staff ID</span>
+                            <span class="sheet-val">${recordId}</span>
+                        </div>`;
+                }
+            } else {
+                // Prefects, Librarians, Attendance
+                const roleOrClass = entry.class || entry.role || entry.position || entry.section;
+                if (roleOrClass) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Role / Class</span>
+                            <span class="sheet-val highlight-green">${roleOrClass}</span>
+                        </div>`;
+                }
+
+                const statusOrTime = entry.time || entry.date || entry.timestamp || entry.status;
+                if (statusOrTime) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">Status / Time</span>
+                            <span class="sheet-val">${statusOrTime}</span>
+                        </div>`;
+                }
+
+                if (recordId) {
+                    rowsHtml += `
+                        <div class="sheet-row">
+                            <span class="sheet-label">ID</span>
+                            <span class="sheet-val">${recordId}</span>
+                        </div>`;
+                }
+            }
+
+            sheetDetailsCard.innerHTML = rowsHtml || `
+                <div class="sheet-row">
+                    <span class="sheet-label">Details</span>
+                    <span class="sheet-val">-</span>
+                </div>`;
 
             // Update navigation button states
             prevStudentBtn.disabled = selectedRecordIndex <= 0;
-            prevStudentBtn.style.opacity = selectedRecordIndex <= 0 ? '0.4' : '1';
+            prevStudentBtn.style.opacity = selectedRecordIndex <= 0 ? '0.35' : '1';
             nextStudentBtn.disabled = selectedRecordIndex >= currentlyDisplayedRecords.length - 1;
-            nextStudentBtn.style.opacity = selectedRecordIndex >= currentlyDisplayedRecords.length - 1 ? '0.4' : '1';
+            nextStudentBtn.style.opacity = selectedRecordIndex >= currentlyDisplayedRecords.length - 1 ? '0.35' : '1';
         }
 
         function openBottomSheet(index) {
@@ -1152,6 +1257,37 @@
             }
         });
 
+        starSheetBtn.addEventListener('click', () => {
+            const entry = currentlyDisplayedRecords[selectedRecordIndex];
+            if (!entry) return;
+            const recordId = getRecordKey(entry);
+            if (favoriteIds.has(recordId)) {
+                favoriteIds.delete(recordId);
+            } else {
+                favoriteIds.add(recordId);
+            }
+            populateBottomSheet(entry);
+        });
+
+        shareSheetBtn.addEventListener('click', async () => {
+            const entry = currentlyDisplayedRecords[selectedRecordIndex];
+            if (!entry) return;
+            const fullName = entry.name || entry.fullname || entry.student_name || '';
+            const recordId = getRecordKey(entry);
+            const shareText = `${fullName} (${recordId}) • SMJK Katholik Melaka`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: fullName, text: shareText });
+                } catch (_) {}
+            } else if (navigator.clipboard) {
+                await navigator.clipboard.writeText(shareText);
+                const prevIcon = shareSheetBtn.innerHTML;
+                shareSheetBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 20px; color: var(--m3-success);">check</span>';
+                setTimeout(() => { shareSheetBtn.innerHTML = prevIcon; }, 1500);
+            }
+        });
+
         // Swipe down on bottom sheet to dismiss
         let touchStartY = 0;
         bottomSheet.addEventListener('touchstart', e => {
@@ -1159,8 +1295,7 @@
         }, { passive: true });
 
         bottomSheet.addEventListener('touchmove', e => {
-            const touchCurrentY = e.touches[0].clientY;
-            const diff = touchCurrentY - touchStartY;
+            const diff = e.touches[0].clientY - touchStartY;
             if (diff > 90) {
                 closeBottomSheet();
             }
