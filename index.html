@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Code Extractor & Reader</title>
     
+    <!-- KaTeX for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
     <!-- Marked.js for Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Marked-KaTeX Extension -->
+    <script src="https://cdn.jsdelivr.net/npm/marked-katex-extension/lib/index.umd.js"></script>
 
     <!-- JSZip for exporting extracted files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -188,12 +195,37 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- Markdown Elements --- */
+        /* --- Markdown Elements & Math Styling --- */
         .markdown-text { line-height: 1.7; font-size: 15px; color: #334155; word-break: break-word; overflow-wrap: break-word; }
         .markdown-text h1, .markdown-text h2, .markdown-text h3 { color: #0f172a; letter-spacing: -0.015em; margin-top: 1.2em; margin-bottom: 0.4em; }
+        .markdown-text p { margin: 8px 0; }
+        .markdown-text hr {
+            border: 0;
+            height: 1px;
+            background: #cbd5e1;
+            margin: 22px 0;
+        }
+        .markdown-text ul, .markdown-text ol {
+            padding-left: 24px;
+            margin: 10px 0;
+        }
+        .markdown-text li {
+            margin-bottom: 6px;
+        }
         .markdown-text code {
             background-color: #f1f5f9; color: #e11d48; padding: 2px 5px;
             border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 0.88em; border: 1px solid #e2e8f0;
+        }
+
+        /* LaTeX KaTeX container tweaks */
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 0;
+            margin: 14px 0 !important;
+        }
+        .katex {
+            font-size: 1.05em;
         }
 
         /* --- Code Containers --- */
@@ -277,7 +309,7 @@
     <div id="drop-overlay"><span>Drop Markdown / Code File Here</span></div>
 
     <h1>Markdown Code Extractor & Reader</h1>
-    <p class="subtitle">Organize docs into tabs, collapse codeblocks, strip markers, and export files.</p>
+    <p class="subtitle">Organize docs into tabs, collapse codeblocks, render LaTeX math, and export files.</p>
 
     <div class="tab-bar-container">
         <div class="tab-list" id="tab-list"></div>
@@ -317,6 +349,14 @@
     </div>
 
     <script>
+        // Configure marked with KaTeX support
+        if (typeof markedKatex !== 'undefined') {
+            marked.use(markedKatex({
+                throwOnError: false,
+                nonStandard: true
+            }));
+        }
+
         const STORAGE_KEY = 'markdown_tabs_workspace_data';
         
         let tabs = [];
@@ -463,8 +503,6 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
-        // Universal parser regex: matches markdown triple-backtick blocks OR raw START OF FILE markers
-        // Allows comments (//, #, /*, <!--), 2+ dashes, and text/filenames after START/END OF FILE
         const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
 
         let activeBlockTogglers = [];
@@ -483,8 +521,6 @@
             return map[ext] || ext;
         }
 
-        // Strips all END OF FILE variants (with/without filenames or comment wrappers)
-        // and strips gaps / empty lines directly after START OF FILE
         function cleanCodeBlockContent(content) {
             const endRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*END OF FILE.*$/gim;
             return content
@@ -519,8 +555,6 @@
 
             while ((match = tokenRegex.exec(text)) !== null) {
                 let beforeText = text.substring(lastIndex, match.index);
-                
-                // Cleanup lingering markers outside blocks
                 beforeText = beforeText.replace(markerCleanupRegex, '\n');
 
                 if (beforeText.trim() !== '') {
@@ -710,6 +744,23 @@
 
             if (syntaxHighlightChk.checked) {
                 Prism.highlightAllUnder(outputArea);
+            }
+
+            // Run KaTeX auto-render on math elements not captured during tokenization
+            if (window.renderMathInElement) {
+                try {
+                    renderMathInElement(outputArea, {
+                        delimiters: [
+                            { left: "$$", right: "$$", display: true },
+                            { left: "$", right: "$", display: false },
+                            { left: "\\(", right: "\\)", display: false },
+                            { left: "\\[", right: "\\]", display: true }
+                        ],
+                        throwOnError: false
+                    });
+                } catch (e) {
+                    console.warn("Math rendering error:", e);
+                }
             }
 
             if (!triggerTransition) {
