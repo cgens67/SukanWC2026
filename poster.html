@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Poster & Graphic Organiser Builder</title>
+  <style>
+    /* ========================================================
+       SF PRO DISPLAY LOCAL FONTS (fonts/otf/)
+       ======================================================== */
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('fonts/otf/sf_pro_display_regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('fonts/otf/sf_pro_display_medium.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('fonts/otf/sf_pro_display_semibold.otf') format('opentype');
+      font-weight: 600;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('fonts/otf/sf_pro_display_bold.otf') format('opentype');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: url('fonts/otf/sf_pro_display_heavy.otf') format('opentype');
+      font-weight: 800;
+      font-style: normal;
+    }
+
+    :root[data-theme="light"] {
+      --bg-primary: #F2F2F7;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-solid: #FFFFFF;
+      --fill-tertiary: rgba(118, 118, 128, 0.12);
+      --separator: rgba(60, 60, 67, 0.16);
+      --label-primary: #1C1C1E;
+      --label-secondary: rgba(60, 60, 67, 0.65);
+      --badge-bg: rgba(118, 118, 128, 0.08);
+
+      --ios-blue: #007AFF;
+      --ios-blue-bg: rgba(0, 122, 255, 0.08);
+      --ios-blue-border: rgba(0, 122, 255, 0.25);
+      --ios-red: #FF3B30;
+      --ios-mint: #00C7BE;
+      --ios-purple: #AF52DE;
+      --ios-orange: #FF9500;
+      --slider-fill: #007AFF;
+      --canvas-bg: #F8F9FD;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-primary: #000000;
+      --card-bg: rgba(28, 28, 30, 0.85);
+      --card-solid: #1C1C1E;
+      --fill-tertiary: rgba(118, 118, 128, 0.24);
+      --separator: rgba(84, 84, 88, 0.36);
+      --label-primary: #FFFFFF;
+      --label-secondary: rgba(235, 235, 245, 0.65);
+      --badge-bg: rgba(255, 255, 255, 0.08);
+
+      --ios-blue: #0A84FF;
+      --ios-blue-bg: rgba(10, 132, 255, 0.12);
+      --ios-blue-border: rgba(10, 132, 255, 0.3);
+      --ios-red: #FF453A;
+      --ios-mint: #63E6E2;
+      --ios-purple: #BF5AF2;
+      --ios-orange: #FF9F0A;
+      --slider-fill: #0A84FF;
+      --canvas-bg: #0D0E12;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+    body, button, input, textarea, select { font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    body {
+      background-color: var(--bg-primary); color: var(--label-primary);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 20px 16px 40px; transition: background-color 0.25s ease, color 0.25s ease; overflow-x: hidden;
+    }
+
+    /* Content Sizing Transitions */
+    .animate-content-size {
+      transition: max-height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  padding 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  margin 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .animate-pop-in {
+      opacity: 0;
+      animation: popInItem 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes popInItem {
+      0% { opacity: 0; transform: translateY(10px) scale(0.97); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Top Bar */
+    .top-bar { width: 100%; max-width: 1260px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .app-title-group h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.6px; }
+    .app-title-group p { font-size: 13px; font-weight: 500; color: var(--label-secondary); margin-top: 2px; }
+    .top-actions { display: flex; gap: 8px; }
+
+    .nav-icon-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: 0.5px solid var(--separator);
+      background: var(--card-solid); color: var(--label-primary); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.06); transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
+    }
+    .nav-icon-btn:active { transform: scale(0.92); }
+    .nav-icon-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
+    .nav-icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (max-width: 768px) {
+      .top-bar { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .app-title-group h1 { font-size: 24px; }
+      .top-actions { width: 100%; display: flex; flex-wrap: wrap; gap: 10px; }
+    }
+
+    /* Segmented Control */
+    .segmented-control {
+      position: relative; background-color: var(--fill-tertiary); border-radius: 12px; display: flex; padding: 3px;
+      width: 100%; max-width: 1260px; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .segment-indicator {
+      position: absolute; top: 3px; bottom: 3px; left: 0; width: 0; background: var(--card-solid); border-radius: 9px;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.06);
+      transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1), width 0.28s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; pointer-events: none;
+    }
+    .segment-btn {
+      flex: 1; border: none; background: transparent; padding: 9px 12px; font-size: 14px; font-weight: 500; min-width: 90px;
+      color: var(--label-primary); cursor: pointer; position: relative; z-index: 2; transition: font-weight 0.2s ease, opacity 0.2s ease;
+      white-space: nowrap; text-align: center;
+    }
+    .segment-btn.active { font-weight: 700; }
+
+    /* Toast Notification */
+    .toast-pill {
+      position: fixed; bottom: 24px; background: var(--card-solid); color: var(--label-primary); border: 0.5px solid var(--separator);
+      border-radius: 100px; padding: 10px 20px; font-size: 13.5px; font-weight: 700; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+      display: flex; align-items: center; gap: 8px; z-index: 1000; opacity: 0; transform: translateY(20px);
+      transition: opacity 0.25s, transform 0.25s; pointer-events: none;
+    }
+    .toast-pill.show { opacity: 1; transform: translateY(0); }
+
+    /* Dashboard Layout */
+    .dashboard-layout { width: 100%; max-width: 1260px; display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+    @media (min-width: 990px) { .dashboard-layout { grid-template-columns: 1.35fr 0.65fr; } }
+
+    /* Canvas Stage Container */
+    .canvas-card {
+      background: var(--card-bg); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 0.5px solid var(--separator); border-radius: 30px; padding: 20px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.05); position: relative; min-height: 580px;
+    }
+    .canvas-wrapper {
+      position: relative; width: 100%; max-width: 660px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+      background: var(--canvas-bg); border-radius: 24px; border: 1px solid var(--separator); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.09);
+      overflow: hidden;
+    }
+    #posterCanvas { width: 100%; height: 100%; display: block; border-radius: 22px; }
+
+    /* Side Panel */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+    .panel-card {
+      background: var(--card-bg); backdrop-filter: blur(28px) saturate(180%); -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 0.5px solid var(--separator); border-radius: 22px; padding: 18px; box-shadow: 0 12px 30px rgba(0,0,0,0.03);
+    }
+    .badge-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .count-pill {
+      background: var(--badge-bg); padding: 5px 12px; border-radius: 100px; font-size: 13px;
+      font-weight: 600; color: var(--label-secondary); display: inline-flex; align-items: center; gap: 6px;
+    }
+    .count-indicator-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--ios-mint); }
+
+    /* Buttons */
+    .btn {
+      appearance: none; border: none; font-size: 15px; font-weight: 600; border-radius: 14px; padding: 13px 16px;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, background-color 0.25s ease;
+    }
+    .btn:active { transform: scale(0.96); opacity: 0.88; }
+    .btn-primary { background-color: var(--ios-blue); color: #FFFFFF; font-size: 17px; font-weight: 700; box-shadow: 0 6px 18px rgba(0, 122, 255, 0.35); padding: 14px 18px; }
+    .btn-secondary { background-color: var(--fill-tertiary); color: var(--label-primary); }
+    .btn-compact { padding: 9px 12px; font-size: 13px; border-radius: 11px; gap: 6px; }
+    .btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+    /* Form Fields */
+    .field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .field-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--label-secondary); letter-spacing: 0.3px; }
+    .text-input {
+      width: 100%; border: 1px solid var(--separator); background: var(--fill-tertiary); border-radius: 12px;
+      padding: 10px 14px; font-size: 14px; font-weight: 600; color: var(--label-primary); outline: none;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .text-input:focus { border-color: var(--ios-blue); background: var(--card-solid); }
+
+    /* Blank Rows Editor */
+    .blank-row-item {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+      background: var(--fill-tertiary); padding: 8px 10px; border-radius: 12px;
+    }
+    .blank-prefix-input { width: 50px; text-align: center; font-weight: 700; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-answer-input { flex: 1; padding: 8px 10px; font-size: 13.5px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .btn-icon-del {
+      background: transparent; border: none; color: var(--ios-red); cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; transition: transform 0.15s ease;
+    }
+    .btn-icon-del:active { transform: scale(0.85); }
+    .btn-icon-del svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+
+    /* Modals & Sheets */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal-sheet {
+      background: var(--card-solid); width: 100%; max-width: 490px; border-radius: 22px; padding: 20px; display: flex; flex-direction: column;
+      transform: scale(0.92); box-shadow: 0 20px 48px rgba(0, 0, 0, 0.25); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 85vh; overflow-y: auto;
+    }
+    .modal-backdrop.open .modal-sheet { transform: scale(1); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .modal-header h2 { font-size: 18px; font-weight: 700; }
+    .modal-header button { background: none; border: none; font-size: 16px; color: var(--ios-blue); cursor: pointer; }
+    .modal-header button.bold { font-weight: 700; }
+
+    /* Fullscreen Mode */
+    body.is-fullscreen { padding: 0; margin: 0; height: 100vh; overflow: hidden; justify-content: center; }
+    body.is-fullscreen .top-bar, body.is-fullscreen .segmented-control, body.is-fullscreen .side-panel { display: none !important; }
+    body.is-fullscreen .dashboard-layout { width: 100vw; height: 100vh; max-width: none; display: flex; align-items: center; justify-content: center; }
+    body.is-fullscreen .canvas-card { width: 100vw; height: 100vh; max-width: none; border-radius: 0; border: none; padding: 12px; justify-content: center; }
+    body.is-fullscreen .canvas-wrapper { width: min(92vh, 92vw); height: min(92vh, 92vw); max-width: none; margin: 0; }
+    .fs-exit-floating { display: none; position: fixed; top: 18px; right: 18px; z-index: 1000; }
+    body.is-fullscreen .fs-exit-floating { display: flex; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Toast Notification -->
+  <div class="toast-pill" id="toastPill">Poster updated</div>
+
+  <!-- Floating Exit Button for Fullscreen -->
+  <button class="nav-icon-btn fs-exit-floating" onclick="exitFullscreenMode()" title="Exit Fullscreen">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+
+  <!-- Top Bar Navigation -->
+  <div class="top-bar">
+    <div class="app-title-group">
+      <h1>mind map poster builder</h1>
+      <p>Modern Infographic Studio &bull; Neo-Poster Engine &bull; High-Res 4K Export</p>
+    </div>
+    <div class="top-actions">
+      <!-- Undo / Redo Buttons -->
+      <button class="nav-icon-btn" id="undoNavBtn" onclick="undo()" disabled title="Undo (Ctrl+Z)">
+        <svg viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+      </button>
+      <button class="nav-icon-btn" id="redoNavBtn" onclick="redo()" disabled title="Redo (Ctrl+Y)">
+        <svg viewBox="0 0 24 24"><polyline points="15 14 20 9 15 4"></polyline><path d="M4 20v-7a4 4 0 0 1 4-4h12"></path></svg>
+      </button>
+
+      <!-- Toggle Answer Key Mode -->
+      <button class="nav-icon-btn" id="answerToggleBtn" onclick="toggleAnswerMode()" title="Toggle Answer Key / Blank Mode">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </button>
+
+      <!-- Reset Template -->
+      <button class="nav-icon-btn" onclick="resetToDefaultData()" title="Reset to Initial State">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+      </button>
+
+      <!-- Fullscreen Toggle Button -->
+      <button class="nav-icon-btn" id="fsToggleBtn" onclick="toggleFullscreenMode()" title="Fullscreen / Presentation Mode">
+        <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button class="nav-icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle UI Light/Dark Theme">
+        <svg id="themeIconSun" style="display:none;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg id="themeIconMoon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Segmented Tabs for Editing Specific Nodes or Styles -->
+  <div class="segmented-control" id="segmentedControl" role="tablist">
+    <div class="segment-indicator" id="segmentIndicator"></div>
+    <button class="segment-btn active" data-node="theme" onclick="switchActiveNodeTab('theme')">Art Style</button>
+    <button class="segment-btn" data-node="center" onclick="switchActiveNodeTab('center')">Center Hub</button>
+    <button class="segment-btn" data-node="top" onclick="switchActiveNodeTab('top')">Purpose (17)</button>
+    <button class="segment-btn" data-node="right" onclick="switchActiveNodeTab('right')">Functions (18-20)</button>
+    <button class="segment-btn" data-node="bottom" onclick="switchActiveNodeTab('bottom')">Weight (21)</button>
+    <button class="segment-btn" data-node="left" onclick="switchActiveNodeTab('left')">Evolution (22-24)</button>
+  </div>
+
+  <!-- Main Grid Dashboard -->
+  <div class="dashboard-layout animate-content-size">
+    
+    <!-- Left Column: Canvas Poster Preview Stage -->
+    <div class="canvas-card animate-content-size">
+      <div class="canvas-wrapper">
+        <canvas id="posterCanvas" width="1920" height="1920"></canvas>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Editor Side Panel -->
+    <div class="side-panel animate-content-size">
+      
+      <!-- Primary Action Card -->
+      <div class="panel-card animate-content-size">
+        <div class="badge-bar">
+          <div class="count-pill">
+            <span class="count-indicator-dot"></span>
+            <span id="examScorePill">[8 marks] infoposter</span>
+          </div>
+          <span style="font-size: 11.5px; font-weight: 800; color: var(--ios-blue); letter-spacing: 0.4px;" id="modeIndicatorLabel">STUDENT MODE</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn btn-primary" onclick="exportHighResPoster()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export Poster (PNG)
+          </button>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button class="btn btn-secondary btn-compact" onclick="toggleAnswerMode()">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Reveal Answers
+            </button>
+            <button class="btn btn-secondary btn-compact" onclick="printPoster()">
+              <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Print / PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Dynamic Editor Card -->
+      <div class="panel-card animate-content-size" id="nodeEditorCard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h3 id="activeNodeHeading" style="font-size: 16px; font-weight: 700;">Poster Art Style</h3>
+          <button class="btn btn-secondary btn-compact" onclick="openBulkJsonModal()" style="font-size: 11px; padding: 4px 8px;">JSON</button>
+        </div>
+
+        <div id="dynamicEditorFields"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JSON Bulk Import / Export Modal -->
+  <div class="modal-backdrop" id="jsonModal" onclick="closeBulkJsonModal(event)">
+    <div class="modal-sheet animate-content-size" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <button onclick="closeBulkJsonModal()">Cancel</button>
+        <h2>Poster Data (JSON)</h2>
+        <button class="bold" onclick="applyJsonData()">Apply</button>
+      </div>
+      <p style="font-size: 13px; color: var(--label-secondary); margin-bottom: 10px;">
+        Export or update all mind map data, blank rows, and art parameters directly.
+      </p>
+      <textarea id="jsonModalTextarea" style="width: 100%; height: 260px; border-radius: 12px; border: 1px solid var(--separator); padding: 12px; font-size: 13px; font-family: monospace; background: var(--bg-primary); color: inherit; resize: none; outline: none; user-select: text;"></textarea>
+    </div>
+  </div>
+
+  <script>
+    /* ========================================================
+       REIMAGINED MODERN POSTER DATA & PRESETS
+       ======================================================== */
+    const DEFAULT_POSTER_DATA = {
+      headerBanner: "ENGLISH COMPREHENSION • GRAPHIC ORGANISER",
+      watermark: "[8 MARKS]",
+      themePreset: "neoGlass", // "neoGlass", "cyberTech", "nordicEditorial", "vibrantStudio"
+      connectorStyle: "curvedSpline", // "curvedSpline", "techCircuit", "modernStraight"
+      center: {
+        title: "MOBILE PHONES",
+        subtitle: "TECHNOLOGY EVOLUTION",
+        tag: "CORE TOPIC"
+      },
+      top: {
+        title: "PRIMARY PURPOSE",
+        tag: "UTILITY",
+        blanks: [
+          { num: "17", answer: "Communication and staying in touch with family" }
+        ]
+      },
+      right: {
+        title: "SMARTPHONE FUNCTIONS",
+        tag: "CAPABILITIES",
+        blanks: [
+          { num: "18", answer: "Browse internet & high-speed messaging" },
+          { num: "19", answer: "High-definition photo and 4K video recording" },
+          { num: "20", answer: "Digital payments, banking & GPS navigation" }
+        ]
+      },
+      bottom: {
+        title: "FIRST MOBILE WEIGHT",
+        tag: "HISTORICAL FACT",
+        blanks: [
+          { num: "21", answer: "Approx. 1.1 kilograms (DynaTAC 8000X)" }
+        ]
+      },
+      left: {
+        title: "MODERN PHONES ARE",
+        tag: "CHARACTERISTICS",
+        blanks: [
+          { num: "22", answer: "Ultra-slim, lightweight and durable" },
+          { num: "23", answer: "Equipped with AI & all-day battery" },
+          { num: "24", answer: "Indispensable pocket supercomputers" }
+        ]
+      }
+    };
+
+    let posterData = JSON.parse(JSON.stringify(DEFAULT_POSTER_DATA));
+    let showAnswerKey = false;
+    let activeTab = "theme";
+
+    // Undo / Redo Stacks
+    const undoStack = [];
+    const redoStack = [];
+
+    // Local Storage Persistence
+    try {
+      const saved = localStorage.getItem("neo_poster_data_v2");
+      if (saved) posterData = JSON.parse(saved);
+    } catch (e) {}
+
+    /* ========================================================
+       THEME COLOR PALETTES
+       ======================================================== */
+    const THEMES = {
+      neoGlass: {
+        name: "Neo Glass (Apple Studio)",
+        bgGradient: ["#F6F8FD", "#E9EEF9"],
+        dotGrid: "rgba(100, 120, 160, 0.12)",
+        bannerColor: "#5856D6",
+        center: { fill: "#FFFFFF", stroke: "#007AFF", shadow: "rgba(0, 122, 255, 0.15)", text: "#0F172A", accent: "#007AFF" },
+        top: { badgeBg: "#E8F8F5", accent: "#00A86B", cardFill: "#FFFFFF", stroke: "rgba(0, 168, 107, 0.3)" },
+        right: { badgeBg: "#F3E8FF", accent: "#8B5CF6", cardFill: "#FFFFFF", stroke: "rgba(139, 92, 246, 0.3)" },
+        bottom: { badgeBg: "#FFF4E6", accent: "#F97316", cardFill: "#FFFFFF", stroke: "rgba(249, 115, 22, 0.3)" },
+        left: { badgeBg: "#EFF6FF", accent: "#0284C7", cardFill: "#FFFFFF", stroke: "rgba(2, 132, 199, 0.3)" },
+        connectorGradients: true,
+        lineColor: "#94A3B8"
+      },
+      cyberTech: {
+        name: "Cyber Blueprint (Dark Tech)",
+        bgGradient: ["#0B0F19", "#111827"],
+        dotGrid: "rgba(56, 189, 248, 0.15)",
+        bannerColor: "#38BDF8",
+        center: { fill: "#1E293B", stroke: "#38BDF8", shadow: "rgba(56, 189, 248, 0.3)", text: "#F8FAFC", accent: "#38BDF8" },
+        top: { badgeBg: "rgba(16, 185, 129, 0.15)", accent: "#34D399", cardFill: "#161F30", stroke: "#10B981" },
+        right: { badgeBg: "rgba(192, 132, 252, 0.15)", accent: "#C084FC", cardFill: "#161F30", stroke: "#A855F7" },
+        bottom: { badgeBg: "rgba(251, 146, 60, 0.15)", accent: "#FB923C", cardFill: "#161F30", stroke: "#F97316" },
+        left: { badgeBg: "rgba(56, 189, 248, 0.15)", accent: "#38BDF8", cardFill: "#161F30", stroke: "#0EA5E9" },
+        connectorGradients: true,
+        lineColor: "#38BDF8"
+      },
+      nordicEditorial: {
+        name: "Nordic Minimalist (Editorial)",
+        bgGradient: ["#FAF7F2", "#F2ECE1"],
+        dotGrid: "rgba(60, 50, 40, 0.08)",
+        bannerColor: "#292524",
+        center: { fill: "#FFFFFF", stroke: "#292524", shadow: "rgba(0, 0, 0, 0.08)", text: "#1C1917", accent: "#78716C" },
+        top: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
+        right: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
+        bottom: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
+        left: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
+        connectorGradients: false,
+        lineColor: "#44403C"
+      },
+      vibrantStudio: {
+        name: "Vibrant Pop Infographic",
+        bgGradient: ["#FFFDF0", "#FFF3EB"],
+        dotGrid: "rgba(239, 68, 68, 0.08)",
+        bannerColor: "#EA580C",
+        center: { fill: "#FFFFFF", stroke: "#FF3366", shadow: "rgba(255, 51, 102, 0.2)", text: "#1E1B4B", accent: "#FF3366" },
+        top: { badgeBg: "#ECFDF5", accent: "#059669", cardFill: "#FFFFFF", stroke: "#34D399" },
+        right: { badgeBg: "#FDF2F8", accent: "#DB2777", cardFill: "#FFFFFF", stroke: "#F472B6" },
+        bottom: { badgeBg: "#FEF3C7", accent: "#D97706", cardFill: "#FFFFFF", stroke: "#FBBF24" },
+        left: { badgeBg: "#EFF6FF", accent: "#2563EB", cardFill: "#FFFFFF", stroke: "#60A5FA" },
+        connectorGradients: true,
+        lineColor: "#9333EA"
+      }
+    };
+
+    /* Web Audio Feedback */
+    let audioCtx = null;
+    function playClickSound(strength = 0.5) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(520 + 240 * strength, t);
+        osc.frequency.exponentialRampToValueAtTime(140, t + 0.03);
+        gain.gain.setValueAtTime(0.04 * strength, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.03);
+      } catch (e) {}
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toastPill");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    /* Undo / Redo */
+    function pushStateSnapshot(desc = "") {
+      undoStack.push(JSON.parse(JSON.stringify(posterData)));
+      if (undoStack.length > 40) undoStack.shift();
+      redoStack.length = 0;
+      syncButtons();
+      saveAppState();
+    }
+
+    function undo() {
+      if (undoStack.length === 0) return;
+      redoStack.push(JSON.parse(JSON.stringify(posterData)));
+      posterData = undoStack.pop();
+      saveAppState();
+      renderPoster();
+      renderEditor();
+      syncButtons();
+      playClickSound(0.4);
+      showToast("Undone");
+    }
+
+    function redo() {
+      if (redoStack.length === 0) return;
+      undoStack.push(JSON.parse(JSON.stringify(posterData)));
+      posterData = redoStack.pop();
+      saveAppState();
+      renderPoster();
+      renderEditor();
+      syncButtons();
+      playClickSound(0.4);
+      showToast("Redone");
+    }
+
+    function syncButtons() {
+      document.getElementById("undoNavBtn").disabled = undoStack.length === 0;
+      document.getElementById("redoNavBtn").disabled = redoStack.length === 0;
+    }
+
+    function saveAppState() {
+      try {
+        localStorage.setItem("neo_poster_data_v2", JSON.stringify(posterData));
+      } catch (e) {}
+    }
+
+    function resetToDefaultData() {
+      pushStateSnapshot("Reset Template");
+      posterData = JSON.parse(JSON.stringify(DEFAULT_POSTER_DATA));
+      saveAppState();
+      renderPoster();
+      renderEditor();
+      playClickSound(0.6);
+      showToast("Reset to default layout");
+    }
+
+    /* ========================================================
+       CANVAS POSTER DRAWING ENGINE
+       ======================================================== */
+    const canvas = document.getElementById("posterCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function drawRoundedBox(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.arcTo(x + width, y, x + width, y + radius, radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+      ctx.lineTo(x + radius, y + height);
+      ctx.arcTo(x, y + height, x, y + height - radius, radius);
+      ctx.lineTo(x, y + radius);
+      ctx.arcTo(x, y, x + radius, y, radius);
+      ctx.closePath();
+    }
+
+    // Canvas Vector Icons for each section
+    function drawNodeIcon(ctx, type, cx, cy, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3.2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      if (type === "phone") {
+        // Modern Smartphone Outline + screen notch
+        drawRoundedBox(ctx, cx - 14, cy - 22, 28, 44, 6);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy + 14, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, cy - 17);
+        ctx.lineTo(cx + 5, cy - 17);
+        ctx.stroke();
+      } else if (type === "target") {
+        // Target / Bullseye (Purpose)
+        ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI * 2); ctx.fill();
+      } else if (type === "lightning") {
+        // Lightning bolt / Capabilities (Functions)
+        ctx.beginPath();
+        ctx.moveTo(cx + 2, cy - 15);
+        ctx.lineTo(cx - 10, cy);
+        ctx.lineTo(cx - 1, cy);
+        ctx.lineTo(cx - 3, cy + 15);
+        ctx.lineTo(cx + 10, cy - 2);
+        ctx.lineTo(cx + 1, cy - 2);
+        ctx.closePath();
+        ctx.fill();
+      } else if (type === "scale") {
+        // Weight scale
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 14); ctx.lineTo(cx, cy + 13);
+        ctx.moveTo(cx - 15, cy - 7); ctx.lineTo(cx + 15, cy - 7);
+        ctx.stroke();
+        // Pans
+        ctx.beginPath(); ctx.arc(cx - 11, cy + 2, 6, 0, Math.PI); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx + 11, cy + 2, 6, 0, Math.PI); ctx.stroke();
+      } else if (type === "rocket") {
+        // Modern Evolution Rocket
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 15);
+        ctx.quadraticCurveTo(cx + 10, cy - 4, cx + 7, cy + 8);
+        ctx.lineTo(cx - 7, cy + 8);
+        ctx.quadraticCurveTo(cx - 10, cy - 4, cx, cy - 15);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy - 2, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function renderPoster() {
+      const W = canvas.width;
+      const H = canvas.height;
+      const t = THEMES[posterData.themePreset] || THEMES.neoGlass;
+
+      // 1. Rich Canvas Background (Gradient + Subtle Tech Grid Dots)
+      const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 100, W / 2, H / 2, W * 0.72);
+      bgGrad.addColorStop(0, t.bgGradient[0]);
+      bgGrad.addColorStop(1, t.bgGradient[1]);
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Dot Matrix Background
+      ctx.fillStyle = t.dotGrid;
+      const step = 42;
+      for (let x = 30; x < W; x += step) {
+        for (let y = 30; y < H; y += step) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Outer Decorative Border Frame
+      ctx.strokeStyle = t.dotGrid;
+      ctx.lineWidth = 1.5;
+      drawRoundedBox(ctx, 40, 40, W - 80, H - 80, 24);
+      ctx.stroke();
+
+      // Top Infographic Header Banner
+      if (posterData.headerBanner) {
+        ctx.font = "800 24px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.bannerColor;
+        ctx.textAlign = "center";
+        ctx.letterSpacing = "2px";
+        ctx.fillText(posterData.headerBanner, W / 2, 90);
+        ctx.letterSpacing = "0px";
+      }
+
+      // Geometry Constants
+      const cx = W / 2;
+      const cy = H / 2;
+
+      // Center Core dimensions
+      const cW = 340;
+      const cH = 280;
+      const cX = cx - cW / 2;
+      const cY = cy - cH / 2;
+
+      // Satellite Card dimensions
+      const satW = 420;
+      const satH = 360;
+      const marginOffset = 135;
+
+      const topX = cx - satW / 2;
+      const topY = cY - marginOffset - satH + 30;
+
+      const botX = cx - satW / 2;
+      const botY = cY + cH + marginOffset - 30;
+
+      const leftX = cX - marginOffset - satW + 20;
+      const leftY = cy - satH / 2;
+
+      const rightX = cX + cW + marginOffset - 20;
+      const rightY = cy - satH / 2;
+
+      // 2. Connectors (Spline Curves with Glowing Hub Junctions)
+      const connStyle = posterData.connectorStyle || "curvedSpline";
+
+      function drawConnector(fromX, fromY, toX, toY, color) {
+        ctx.save();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = color;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        if (connStyle === "curvedSpline") {
+          const midX = (fromX + toX) / 2;
+          const midY = (fromY + toY) / 2;
+          ctx.moveTo(fromX, fromY);
+          ctx.bezierCurveTo(midX, fromY, midX, toY, toX, toY);
+        } else if (connStyle === "techCircuit") {
+          ctx.moveTo(fromX, fromY);
+          if (Math.abs(fromX - toX) > Math.abs(fromY - toY)) {
+            const splitX = fromX + (toX - fromX) * 0.5;
+            ctx.lineTo(splitX, fromY);
+            ctx.lineTo(splitX, toY);
+            ctx.lineTo(toX, toY);
+          } else {
+            const splitY = fromY + (toY - fromY) * 0.5;
+            ctx.lineTo(fromX, splitY);
+            ctx.lineTo(toX, splitY);
+            ctx.lineTo(toX, toY);
+          }
+        } else {
+          // Modern Straight
+          ctx.moveTo(fromX, fromY);
+          ctx.lineTo(toX, toY);
+        }
+        ctx.stroke();
+
+        // Junction anchor dots
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(fromX, fromY, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(toX, toY, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw 4 connectors
+      drawConnector(cx, cY, cx, topY + satH, t.top.accent);
+      drawConnector(cx, cY + cH, cx, botY, t.bottom.accent);
+      drawConnector(cX, cy, leftX + satW, cy, t.left.accent);
+      drawConnector(cX + cW, cy, rightX, cy, t.right.accent);
+
+      // 3. Render Modern Satellite Cards
+      function drawSatellite(nodeKey, x, y, width, height, conf, iconType) {
+        const data = posterData[nodeKey];
+        if (!data) return;
+
+        ctx.save();
+        // Drop Shadow
+        ctx.shadowColor = "rgba(0, 0, 0, 0.08)";
+        ctx.shadowBlur = 24;
+        ctx.shadowOffsetY = 10;
+
+        // Card Body
+        drawRoundedBox(ctx, x, y, width, height, 26);
+        ctx.fillStyle = conf.cardFill;
+        ctx.fill();
+        ctx.restore();
+
+        // Card Border Stroke
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = conf.stroke;
+        drawRoundedBox(ctx, x, y, width, height, 26);
+        ctx.stroke();
+
+        // Header Tag Capsule (e.g. "UTILITY", "CAPABILITIES")
+        const tagText = (data.tag || "").toUpperCase();
+        if (tagText) {
+          ctx.font = "800 13px 'SF Pro Display', sans-serif";
+          const tagW = ctx.measureText(tagText).width + 24;
+          drawRoundedBox(ctx, x + 24, y + 20, tagW, 26, 13);
+          ctx.fillStyle = conf.badgeBg;
+          ctx.fill();
+          ctx.fillStyle = conf.accent;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(tagText, x + 24 + tagW / 2, y + 33);
+        }
+
+        // Section Icon Badge (Top Right of card)
+        drawRoundedBox(ctx, x + width - 58, y + 16, 40, 40, 14);
+        ctx.fillStyle = conf.badgeBg;
+        ctx.fill();
+        drawNodeIcon(ctx, iconType, x + width - 38, y + 36, conf.accent);
+
+        // Section Title
+        ctx.font = "800 24px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.center.text;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(data.title, x + 24, y + 62);
+
+        // Underline Accent Bar
+        ctx.fillStyle = conf.accent;
+        drawRoundedBox(ctx, x + 24, y + 96, 42, 4, 2);
+        ctx.fill();
+
+        // Question Blanks / Interactive Slot Rows
+        const blanks = data.blanks || [];
+        const startY = y + 120;
+        const availableH = height - 140;
+        const rowH = blanks.length > 1 ? availableH / blanks.length : 60;
+
+        blanks.forEach((b, idx) => {
+          const rowY = startY + idx * rowH;
+          const leftP = x + 24;
+          const rightP = x + width - 24;
+
+          // Number Capsule Pill
+          drawRoundedBox(ctx, leftP, rowY + 2, 38, 32, 10);
+          ctx.fillStyle = conf.badgeBg;
+          ctx.fill();
+          ctx.strokeStyle = conf.accent;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.font = "800 16px 'SF Pro Display', sans-serif";
+          ctx.fillStyle = conf.accent;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(b.num || `${idx + 1}`, leftP + 19, rowY + 18);
+
+          // Line / Fill Box
+          const slotX = leftP + 48;
+          const slotW = rightP - slotX;
+
+          // Dashed Fill-in-the-blank line
+          ctx.beginPath();
+          ctx.setLineDash([6, 6]);
+          ctx.moveTo(slotX, rowY + 34);
+          ctx.lineTo(rightP, rowY + 34);
+          ctx.strokeStyle = conf.stroke;
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Answer Reveal
+          if (showAnswerKey && b.answer) {
+            ctx.font = "600 17px 'SF Pro Display', sans-serif";
+            ctx.fillStyle = "#007AFF";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(b.answer, slotX + 4, rowY + 29, slotW - 8);
+          }
+        });
+      }
+
+      // Draw all 4 surrounding cards
+      drawSatellite("top", topX, topY, satW, satH, t.top, "target");
+      drawSatellite("bottom", botX, botY, satW, satH, t.bottom, "scale");
+      drawSatellite("left", leftX, leftY, satW, satH, t.left, "rocket");
+      drawSatellite("right", rightX, rightY, satW, satH, t.right, "lightning");
+
+      // 4. Central Hub (Modern Smartphone Chassis / Futuristic Core)
+      ctx.save();
+      ctx.shadowColor = t.center.shadow;
+      ctx.shadowBlur = 36;
+      ctx.shadowOffsetY = 12;
+
+      drawRoundedBox(ctx, cX, cY, cW, cH, 34);
+      ctx.fillStyle = t.center.fill;
+      ctx.fill();
+      ctx.restore();
+
+      // Gradient Border Stroke
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = t.center.stroke;
+      drawRoundedBox(ctx, cX, cY, cW, cH, 34);
+      ctx.stroke();
+
+      // Phone Notch / Speaker Bar
+      drawRoundedBox(ctx, cx - 36, cY + 18, 72, 6, 3);
+      ctx.fillStyle = t.dotGrid;
+      ctx.fill();
+
+      // Central Phone Icon
+      drawNodeIcon(ctx, "phone", cx, cY + 65, t.center.accent);
+
+      // Central Hub Tag Capsule
+      ctx.font = "800 13px 'SF Pro Display', sans-serif";
+      const cTagText = (posterData.center.tag || "CORE TOPIC").toUpperCase();
+      const cTagW = ctx.measureText(cTagText).width + 24;
+      drawRoundedBox(ctx, cx - cTagW / 2, cY + 105, cTagW, 26, 13);
+      ctx.fillStyle = t.center.accent + "1A";
+      ctx.fill();
+      ctx.fillStyle = t.center.accent;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(cTagText, cx, cY + 118);
+
+      // Central Title
+      ctx.font = "900 32px 'SF Pro Display', sans-serif";
+      ctx.fillStyle = t.center.text;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(posterData.center.title, cx, cY + 165);
+
+      // Central Subtitle
+      if (posterData.center.subtitle) {
+        ctx.font = "700 15px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.dotGrid === "rgba(60, 50, 40, 0.08)" ? "#78716C" : "#64748B";
+        ctx.fillText(posterData.center.subtitle, cx, cY + 205);
+      }
+
+      // 5. Official Exam Marks Ribbon Badge (Bottom Right)
+      if (posterData.watermark) {
+        const markW = 160;
+        const markH = 46;
+        const markX = W - markW - 65;
+        const markY = H - markH - 65;
+
+        drawRoundedBox(ctx, markX, markY, markW, markH, 23);
+        ctx.fillStyle = t.bannerColor + "1F";
+        ctx.fill();
+        ctx.strokeStyle = t.bannerColor;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.font = "800 18px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.bannerColor;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`★ ${posterData.watermark}`, markX + markW / 2, markY + markH / 2);
+      }
+    }
+
+    /* ========================================================
+       SIDE PANEL & TAB CONTROLLER
+       ======================================================== */
+    function switchActiveNodeTab(tabKey) {
+      activeTab = tabKey;
+      updateIndicator();
+      renderEditor();
+      playClickSound(0.2);
+    }
+
+    function updateIndicator() {
+      const activeBtn = document.querySelector(`.segment-btn[data-node="${activeTab}"]`);
+      const indicator = document.getElementById("segmentIndicator");
+      if (activeBtn && indicator) {
+        document.querySelectorAll(".segment-btn").forEach(btn => btn.classList.remove("active"));
+        activeBtn.classList.add("active");
+        indicator.style.width = `${activeBtn.offsetWidth}px`;
+        indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+      }
+    }
+
+    function renderEditor() {
+      const container = document.getElementById("dynamicEditorFields");
+      const heading = document.getElementById("activeNodeHeading");
+
+      if (activeTab === "theme") {
+        heading.textContent = "Infographic Theme & Layout";
+        container.innerHTML = `
+          <div class="field-group">
+            <label class="field-label">Visual Style Preset</label>
+            <select class="text-input" onchange="setThemePreset(this.value)" style="cursor: pointer;">
+              <option value="neoGlass" ${posterData.themePreset === 'neoGlass' ? 'selected' : ''}>Neo Glass (Apple Studio Clean)</option>
+              <option value="cyberTech" ${posterData.themePreset === 'cyberTech' ? 'selected' : ''}>Cyber Blueprint (Dark Tech Neon)</option>
+              <option value="vibrantStudio" ${posterData.themePreset === 'vibrantStudio' ? 'selected' : ''}>Vibrant Pop Infographic</option>
+              <option value="nordicEditorial" ${posterData.themePreset === 'nordicEditorial' ? 'selected' : ''}>Nordic Minimalist (Editorial)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Connector Line Style</label>
+            <select class="text-input" onchange="setConnectorStyle(this.value)" style="cursor: pointer;">
+              <option value="curvedSpline" ${posterData.connectorStyle === 'curvedSpline' ? 'selected' : ''}>Curved Spline Bezier</option>
+              <option value="techCircuit" ${posterData.connectorStyle === 'techCircuit' ? 'selected' : ''}>Tech Circuit Bus (Orthogonal)</option>
+              <option value="modernStraight" ${posterData.connectorStyle === 'modernStraight' ? 'selected' : ''}>Clean Direct Straight</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Top Banner Heading</label>
+            <input type="text" class="text-input" value="${posterData.headerBanner || ''}" oninput="updateHeaderBanner(this.value)" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Corner Mark Badge</label>
+            <input type="text" class="text-input" value="${posterData.watermark || ''}" oninput="updateWatermark(this.value)" />
+          </div>
+        `;
+      } else if (activeTab === "center") {
+        heading.textContent = "Central Core Topic";
+        container.innerHTML = `
+          <div class="field-group">
+            <label class="field-label">Core Title</label>
+            <input type="text" class="text-input" value="${posterData.center.title}" oninput="updateCenterTitle(this.value)" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Subtitle / Subheading</label>
+            <input type="text" class="text-input" value="${posterData.center.subtitle || ''}" oninput="updateCenterSubtitle(this.value)" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Category Pill Tag</label>
+            <input type="text" class="text-input" value="${posterData.center.tag || ''}" oninput="updateCenterTag(this.value)" />
+          </div>
+        `;
+      } else {
+        // Outer Satellite Nodes
+        const node = posterData[activeTab];
+        heading.textContent = `${activeTab.toUpperCase()} Card (${node.title})`;
+
+        let blanksHtml = (node.blanks || []).map((b, idx) => `
+          <div class="blank-row-item animate-pop-in">
+            <input type="text" class="blank-prefix-input" value="${b.num}" oninput="updateBlankField('${activeTab}', ${idx}, 'num', this.value)" title="Number label" />
+            <input type="text" class="blank-answer-input" placeholder="Answer key text..." value="${b.answer}" oninput="updateBlankField('${activeTab}', ${idx}, 'answer', this.value)" />
+            <button class="btn-icon-del" onclick="removeBlankRow('${activeTab}', ${idx})" title="Remove">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        `).join("");
+
+        container.innerHTML = `
+          <div class="field-group">
+            <label class="field-label">Card Heading</label>
+            <input type="text" class="text-input" value="${node.title}" oninput="updateOuterTitle('${activeTab}', this.value)" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Pill Tag</label>
+            <input type="text" class="text-input" value="${node.tag || ''}" oninput="updateOuterTag('${activeTab}', this.value)" />
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 8px;">
+            <label class="field-label" style="margin: 0;">Question Blanks (${node.blanks.length})</label>
+            <button class="btn btn-secondary btn-compact" style="font-size: 11px; padding: 4px 8px;" onclick="addBlankRow('${activeTab}')">+ Add Blank</button>
+          </div>
+          <div>${blanksHtml}</div>
+        `;
+      }
+    }
+
+    /* Mutation handlers */
+    function setThemePreset(preset) {
+      pushStateSnapshot("Change Theme");
+      posterData.themePreset = preset;
+      saveAppState();
+      renderPoster();
+      playClickSound(0.4);
+    }
+
+    function setConnectorStyle(style) {
+      pushStateSnapshot("Change Connectors");
+      posterData.connectorStyle = style;
+      saveAppState();
+      renderPoster();
+      playClickSound(0.3);
+    }
+
+    function updateHeaderBanner(val) {
+      posterData.headerBanner = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateWatermark(val) {
+      posterData.watermark = val;
+      document.getElementById("examScorePill").textContent = `${val} infoposter`;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateCenterTitle(val) {
+      posterData.center.title = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateCenterSubtitle(val) {
+      posterData.center.subtitle = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateCenterTag(val) {
+      posterData.center.tag = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateOuterTitle(nodeKey, val) {
+      posterData[nodeKey].title = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateOuterTag(nodeKey, val) {
+      posterData[nodeKey].tag = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function updateBlankField(nodeKey, index, key, val) {
+      if (!posterData[nodeKey].blanks[index]) return;
+      posterData[nodeKey].blanks[index][key] = val;
+      renderPoster();
+      saveAppState();
+    }
+
+    function addBlankRow(nodeKey) {
+      pushStateSnapshot("Add Blank Row");
+      const list = posterData[nodeKey].blanks;
+      const lastNum = list.length > 0 ? (parseInt(list[list.length - 1].num) + 1 || '') : "1";
+      list.push({ num: `${lastNum}`, answer: "" });
+      saveAppState();
+      renderPoster();
+      renderEditor();
+      playClickSound(0.3);
+    }
+
+    function removeBlankRow(nodeKey, index) {
+      pushStateSnapshot("Remove Blank Row");
+      posterData[nodeKey].blanks.splice(index, 1);
+      saveAppState();
+      renderPoster();
+      renderEditor();
+      playClickSound(0.2);
+    }
+
+    function toggleAnswerMode() {
+      showAnswerKey = !showAnswerKey;
+      const label = document.getElementById("modeIndicatorLabel");
+      label.textContent = showAnswerKey ? "ANSWER KEY MODE" : "STUDENT MODE";
+      label.style.color = showAnswerKey ? "var(--ios-purple)" : "var(--ios-blue)";
+      renderPoster();
+      playClickSound(0.4);
+      showToast(showAnswerKey ? "Answer Key Revealed" : "Student Mode Active");
+    }
+
+    /* ========================================================
+       EXPORT & PRINT ENGINE
+       ======================================================== */
+    function exportHighResPoster() {
+      playClickSound(0.5);
+      const link = document.createElement("a");
+      link.download = `Infographic-Poster-${(posterData.center.title || 'MindMap').replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL("image/png", 1.0);
+      link.click();
+      showToast("✓ High-Res PNG Exported!");
+    }
+
+    function printPoster() {
+      const dataUrl = canvas.toDataURL("image/png", 1.0);
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>${posterData.center.title} - Modern Poster</title>
+              <style>
+                @page { size: auto; margin: 10mm; }
+                body { margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #000; }
+                img { max-width: 96vw; max-height: 96vh; object-fit: contain; }
+              </style>
+            </head>
+            <body>
+              <img src="${dataUrl}" onload="window.print(); window.close();" />
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+    }
+
+    /* JSON Modal */
+    function openBulkJsonModal() {
+      document.getElementById("jsonModalTextarea").value = JSON.stringify(posterData, null, 2);
+      document.getElementById("jsonModal").classList.add("open");
+    }
+    function closeBulkJsonModal(e) {
+      if (e && e.target !== e.currentTarget && e.currentTarget.id !== 'jsonModal') return;
+      document.getElementById("jsonModal").classList.remove("open");
+    }
+    function applyJsonData() {
+      try {
+        const parsed = JSON.parse(document.getElementById("jsonModalTextarea").value.trim());
+        pushStateSnapshot("JSON Import");
+        posterData = parsed;
+        saveAppState();
+        renderPoster();
+        renderEditor();
+        closeBulkJsonModal();
+        playClickSound(0.5);
+        showToast("✓ JSON Applied!");
+      } catch (err) {
+        alert("Invalid JSON: " + err.message);
+      }
+    }
+
+    /* Fullscreen & Theme */
+    function toggleFullscreenMode() { document.body.classList.contains("is-fullscreen") ? exitFullscreenMode() : enterFullscreenMode(); }
+    function enterFullscreenMode() { document.body.classList.add("is-fullscreen"); const el = document.documentElement; if (el.requestFullscreen) el.requestFullscreen().catch(() => {}); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen(); }
+    function exitFullscreenMode() { document.body.classList.remove("is-fullscreen"); if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen().catch(() => {}); else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen(); }
+    document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) document.body.classList.remove("is-fullscreen"); });
+
+    function toggleTheme() {
+      const root = document.documentElement;
+      const isDark = root.getAttribute("data-theme") === "dark";
+      const newTheme = isDark ? "light" : "dark";
+      root.setAttribute("data-theme", newTheme);
+      document.getElementById("themeIconSun").style.display = newTheme === "dark" ? "block" : "none";
+      document.getElementById("themeIconMoon").style.display = newTheme === "dark" ? "none" : "block";
+      playClickSound(0.2);
+    }
+
+    /* Keyboard Shortcuts */
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+      const modifier = (navigator.platform.toUpperCase().indexOf('MAC') >= 0) ? e.metaKey : e.ctrlKey;
+      if (modifier && !e.shiftKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+      else if ((modifier && e.shiftKey && e.key.toLowerCase() === 'z') || (modifier && e.key.toLowerCase() === 'y')) { e.preventDefault(); redo(); }
+    });
+
+    window.addEventListener("resize", () => { updateIndicator(); });
+
+    // Startup Initialization
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        renderPoster();
+        renderEditor();
+        updateIndicator();
+      });
+    } else {
+      renderPoster();
+      renderEditor();
+      updateIndicator();
+    }
+  </script>
+</body>
+</html>
