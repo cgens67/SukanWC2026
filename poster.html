@@ -219,15 +219,13 @@
     }
     .scale-btn.active { background: var(--ios-blue); color: #FFFFFF; border-color: var(--ios-blue); }
 
-    /* Blank Rows Editor */
+    /* Clean Blank Rows Editor */
     .blank-row-item {
-      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
-      background: var(--fill-tertiary); padding: 10px 12px; border-radius: 14px;
+      display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+      background: var(--fill-tertiary); padding: 8px 10px; border-radius: 12px;
     }
-    .blank-header-row { display: flex; gap: 8px; align-items: center; }
-    .blank-prefix-input { width: 54px; text-align: center; font-weight: 700; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
-    .blank-label-input { flex: 1; padding: 6px 10px; font-size: 13px; font-weight: 600; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
-    .blank-answer-input { width: 100%; padding: 8px 10px; font-size: 13px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-prefix-input { width: 50px; text-align: center; font-weight: 700; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-answer-input { flex: 1; padding: 8px 10px; font-size: 13.5px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
     
     .btn-icon-del {
       background: transparent; border: none; color: var(--ios-red); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
@@ -276,7 +274,7 @@
   <div class="top-bar">
     <div class="app-title-group">
       <h1>mind map poster builder</h1>
-      <p>Clean Apple Bento Layout • Snug Inset Cells • Resizable Scale</p>
+      <p>Clean Apple Bento Layout • Comprehension Text Sync • Resizable Scale</p>
     </div>
     <div class="top-actions">
       <!-- Undo / Redo Buttons -->
@@ -355,14 +353,14 @@
           <div class="field-group" style="margin-bottom: 4px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <label class="field-label" style="margin: 0;">Diagram Scale (Make Design Large)</label>
-              <span id="scaleValLabel" style="font-size: 12px; font-weight: 800; color: var(--ios-blue);">1.20x</span>
+              <span id="scaleValLabel" style="font-size: 12px; font-weight: 800; color: var(--ios-blue);">1.25x</span>
             </div>
             <div class="scale-btn-group">
               <button class="scale-btn" onclick="setDiagramScale(1.0)">Normal</button>
-              <button class="scale-btn active" onclick="setDiagramScale(1.2)">Large</button>
-              <button class="scale-btn" onclick="setDiagramScale(1.35)">Huge</button>
+              <button class="scale-btn active" onclick="setDiagramScale(1.25)">Large</button>
+              <button class="scale-btn" onclick="setDiagramScale(1.4)">Huge</button>
             </div>
-            <input type="range" id="scaleSlider" min="0.9" max="1.45" step="0.05" value="1.2" 
+            <input type="range" id="scaleSlider" min="0.9" max="1.5" step="0.05" value="1.25" 
                    oninput="setDiagramScale(parseFloat(this.value))" 
                    style="width: 100%; margin-top: 8px; accent-color: var(--ios-blue); cursor: pointer;" />
           </div>
@@ -409,78 +407,46 @@
 
   <script>
     /* ========================================================
-       CLEAN APPLE HIG POSTER SPECIFICATION
+       CLEAN APPLE HIG POSTER SPECIFICATION (EXAM TEXT SYNC)
        ======================================================== */
     const DEFAULT_POSTER_DATA = {
       posterTheme: "lightKeynote",
-      diagramScale: 1.20, // default "Large"
+      diagramScale: 1.25,
       center: {
-        tag: "CORE TOPIC",
-        title: "Mobile Phones",
-        subtitle: "Global Connectivity & Personal Computing"
+        tag: "Core topic",
+        title: "Mobile phones",
+        subtitle: ""
       },
       top: {
-        tag: "PRIMARY PURPOSE",
+        tag: "Purpose",
         title: "Purpose",
         blanks: [
-          {
-            num: "17",
-            label: "Essential Utility",
-            answer: "Instant real-time communication & staying in touch with family"
-          }
+          { num: "17", answer: "Voice communication" }
         ]
       },
       right: {
-        tag: "SMART CAPABILITIES",
+        tag: "Functions",
         title: "Functions of smart phones",
         blanks: [
-          {
-            num: "18",
-            label: "Internet & Web Services",
-            answer: "Browsing the web, sending emails & real-time messaging"
-          },
-          {
-            num: "19",
-            label: "Multimedia Studio",
-            answer: "Capturing high-definition photos & 4K cinematic video"
-          },
-          {
-            num: "20",
-            label: "Smart Tools & Lifestyle",
-            answer: "Turn-by-turn GPS navigation, digital wallets & banking"
-          }
+          { num: "18", answer: "Make video calls" },
+          { num: "19", answer: "Surf the internet" },
+          { num: "20", answer: "Play games" }
         ]
       },
       bottom: {
-        tag: "HISTORICAL HARDWARE",
+        tag: "Weight",
         title: "Weight of the first mobile phone",
         blanks: [
-          {
-            num: "21",
-            label: "DynaTAC 8000X Spec",
-            answer: "Weighed roughly 1.1 kilograms (2.4 lbs)"
-          }
+          { num: "21", answer: "Around 2 kilograms" }
         ]
       },
       left: {
-        tag: "MODERN EVOLUTION",
+        tag: "Modern features",
         title: "Mobile phones now are",
         blanks: [
-          {
-            num: "22",
-            label: "Form Factor",
-            answer: "Ultra-slim, lightweight and pocket-friendly"
-          },
-          {
-            num: "23",
-            label: "Performance",
-            answer: "Powered by fast neural processors with all-day battery"
-          },
-          {
-            num: "24",
-            label: "Everyday Necessity",
-            answer: "Indispensable pocket computers for daily life"
-          }
+          { num: "22", answer: "Smaller" },
+          { num: "23", answer: "Slimmer" },
+          { num: "24", answer: "More useful" }
         ]
       }
     };
@@ -493,7 +459,7 @@
     const redoStack = [];
 
     try {
-      const saved = localStorage.getItem("apple_poster_data_v6");
+      const saved = localStorage.getItem("apple_poster_data_v7");
       if (saved) posterData = JSON.parse(saved);
     } catch (e) {}
 
@@ -511,7 +477,7 @@
         cardInnerCellBorder: "rgba(0, 0, 0, 0.045)",
         titleText: "#1D1D1F",
         bodyText: "#1D1D1F",
-        secondaryText: "#515154",
+        secondaryText: "#1D1D1F",
         lineColor: "#D2D2D7",
         pills: {
           top: { bg: "rgba(0, 199, 190, 0.12)", text: "#007D76", accent: "#00C7BE" },
@@ -531,7 +497,7 @@
         cardInnerCellBorder: "rgba(255, 255, 255, 0.07)",
         titleText: "#F5F5F7",
         bodyText: "#F5F5F7",
-        secondaryText: "#A1A1A6",
+        secondaryText: "#F5F5F7",
         lineColor: "#38383A",
         pills: {
           top: { bg: "rgba(99, 230, 226, 0.18)", text: "#63E6E2", accent: "#63E6E2" },
@@ -613,7 +579,7 @@
 
     function saveAppState() {
       try {
-        localStorage.setItem("apple_poster_data_v6", JSON.stringify(posterData));
+        localStorage.setItem("apple_poster_data_v7", JSON.stringify(posterData));
       } catch (e) {}
     }
 
@@ -681,40 +647,6 @@
       playClickSound(0.25);
     }
 
-    function getTextLines(ctx, text, maxWidth) {
-      const words = (text || "").split(' ');
-      let lines = [];
-      let currentLine = '';
-      for (let n = 0; n < words.length; n++) {
-        const testLine = currentLine ? currentLine + ' ' + words[n] : words[n];
-        const metrics = ctx.measureText(testLine);
-        if (metrics.width > maxWidth && n > 0) {
-          lines.push(currentLine);
-          currentLine = words[n];
-        } else {
-          currentLine = testLine;
-        }
-      }
-      if (currentLine) lines.push(currentLine);
-      return lines.length ? lines : [''];
-    }
-
-    // Helper: Compute snug, tailored height for an item without dead vertical space
-    function measureSnugItemHeight(ctx, item, contentWidth, scaleFactor) {
-      ctx.font = `800 ${20 * scaleFactor}px 'SF Pro Display', sans-serif`;
-      const titleLineH = 24 * scaleFactor;
-      
-      ctx.font = `500 ${17 * scaleFactor}px 'SF Pro Display', sans-serif`;
-      const answerLines = getTextLines(ctx, item.answer || '', contentWidth);
-      const answerLineH = 23 * scaleFactor;
-      const answerTotalH = answerLines.length * answerLineH;
-      
-      // Top pad (14px) + title + gap (4px) + answer + bottom pad (14px)
-      const snugH = Math.round((14 * scaleFactor) + titleLineH + (4 * scaleFactor) + answerTotalH + (14 * scaleFactor));
-      const minBadgeH = Math.round(52 * scaleFactor);
-      return Math.max(minBadgeH, snugH);
-    }
-
     function renderPoster() {
       const W = canvas.width;
       const H = canvas.height;
@@ -724,7 +656,7 @@
       ctx.scale(scale, scale);
       
       const t = APPLE_THEMES[posterData.posterTheme] || APPLE_THEMES.lightKeynote;
-      const ds = posterData.diagramScale || 1.20; // Diagram scale factor
+      const ds = posterData.diagramScale || 1.25;
 
       // 1. Studio Canvas Background
       ctx.fillStyle = t.canvasBg;
@@ -741,45 +673,36 @@
 
       // Center Hub dimensions scaled by ds
       const cW = Math.round(440 * ds);
-      const cH = Math.round(380 * ds);
+      const cH = Math.round(360 * ds);
       const cX = cx - cW / 2;
       const cY = cy - cH / 2;
 
-      // Widths for cards scaled by ds
-      const topW = Math.round(580 * ds);
-      const botW = Math.round(580 * ds);
-      const leftW = Math.round(500 * ds);
-      const rightW = Math.round(500 * ds);
+      // Card widths scaled by ds
+      const topW = Math.round(520 * ds);
+      const botW = Math.round(520 * ds);
+      const leftW = Math.round(480 * ds);
+      const rightW = Math.round(480 * ds);
 
-      // Helper to compute tailored card dimensions based on its snug items
-      function computeCardDimensions(nodeKey, cardWidth) {
+      // Helper to compute snug card dimensions for sentence-cased answers
+      function computeSnugCard(nodeKey) {
         const data = posterData[nodeKey];
         const blanks = data ? data.blanks || [] : [];
-        const headerH = Math.round(112 * ds);
-        const itemGap = Math.round(12 * ds);
-        const bottomPad = Math.round(20 * ds);
-        const contentW = cardWidth - Math.round(48 * ds) - Math.round(62 * ds) - Math.round(14 * ds);
+        const headerH = Math.round(105 * ds);
+        const itemH = Math.round(58 * ds); // compact, snug single-line height
+        const itemGap = Math.round(10 * ds);
+        const bottomPad = Math.round(18 * ds);
 
-        let totalItemsH = 0;
-        const itemHeights = [];
-        blanks.forEach(b => {
-          const ih = measureSnugItemHeight(ctx, b, contentW, ds);
-          itemHeights.push(ih);
-          totalItemsH += ih;
-        });
-
-        const gapsTotal = Math.max(0, blanks.length - 1) * itemGap;
-        const cardH = headerH + totalItemsH + gapsTotal + bottomPad;
-        return { cardH, itemHeights, itemGap, headerH };
+        const cardH = headerH + blanks.length * itemH + Math.max(0, blanks.length - 1) * itemGap + bottomPad;
+        return { cardH, itemH, itemGap, headerH };
       }
 
-      const topDims = computeCardDimensions("top", topW);
-      const botDims = computeCardDimensions("bottom", botW);
-      const leftDims = computeCardDimensions("left", leftW);
-      const rightDims = computeCardDimensions("right", rightW);
+      const topDims = computeSnugCard("top");
+      const botDims = computeSnugCard("bottom");
+      const leftDims = computeSnugCard("left");
+      const rightDims = computeSnugCard("right");
 
-      // Symmetrical Layout Coordinates
-      const vertGap = Math.round(100 * (1.7 - ds * 0.45)); // adaptive connector gap
+      // Adaptive symmetrical connector distance
+      const vertGap = Math.round(95 * (1.7 - ds * 0.45));
       const topX = cx - topW / 2;
       const topY = cY - vertGap - topDims.cardH;
 
@@ -818,7 +741,7 @@
       drawAppleConnector(cX, cy, leftX + leftW, cy, t.pills.left.accent);
       drawAppleConnector(cX + cW, cy, rightX, cy, t.pills.right.accent);
 
-      // 3. Render Bento Cards with SNUG, ZERO-WASTE Inset Spec Cells
+      // 3. Render Bento Cards with Snug, Zero-Waste Answer Cells
       function drawSnugAppleCard(nodeKey, x, y, width, dims, pillConfig) {
         const data = posterData[nodeKey];
         if (!data) return;
@@ -840,82 +763,66 @@
         drawAppleSquircle(ctx, x, y, width, height, Math.round(34 * ds));
         ctx.stroke();
 
-        // Category Tag Badge
-        const tagText = (data.tag || "").toUpperCase();
+        // Category Tag Badge (Sentence cased)
+        const tagText = data.tag || "";
         if (tagText) {
-          ctx.font = `800 ${13.5 * ds}px 'SF Pro Display', sans-serif`;
-          ctx.letterSpacing = "0.9px";
+          ctx.font = `700 ${14 * ds}px 'SF Pro Display', sans-serif`;
           const tagW = ctx.measureText(tagText).width + Math.round(24 * ds);
-          drawAppleSquircle(ctx, x + Math.round(28 * ds), y + Math.round(24 * ds), tagW, Math.round(28 * ds), Math.round(8 * ds));
+          drawAppleSquircle(ctx, x + Math.round(26 * ds), y + Math.round(22 * ds), tagW, Math.round(28 * ds), Math.round(8 * ds));
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(tagText, x + Math.round(28 * ds) + tagW / 2, y + Math.round(38 * ds));
-          ctx.letterSpacing = "0px";
+          ctx.fillText(tagText, x + Math.round(26 * ds) + tagW / 2, y + Math.round(36 * ds));
         }
 
-        // Section Title
-        ctx.font = `800 ${29 * ds}px 'SF Pro Display', sans-serif`;
+        // Section Title (Sentence cased)
+        ctx.font = `800 ${28 * ds}px 'SF Pro Display', sans-serif`;
         ctx.fillStyle = t.titleText;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(data.title, x + Math.round(28 * ds), y + Math.round(62 * ds));
+        ctx.fillText(data.title, x + Math.round(26 * ds), y + Math.round(58 * ds));
 
-        // Render SNUG Inset Cells (tight vertical padding, zero dead space!)
+        // Render Inset Answer Cells (Snug, single-row height, zero vertical gaps)
         const blanks = data.blanks || [];
         let curY = y + dims.headerH;
-        const cellX = x + Math.round(22 * ds);
-        const cellW = width - Math.round(44 * ds);
+        const cellX = x + Math.round(20 * ds);
+        const cellW = width - Math.round(40 * ds);
 
-        blanks.forEach((b, idx) => {
-          const itemH = dims.itemHeights[idx];
+        blanks.forEach((b) => {
+          const itemH = dims.itemH;
 
-          // Inset Pill Background (wraps cleanly around the content)
-          drawAppleSquircle(ctx, cellX, curY, cellW, itemH, Math.round(18 * ds));
+          // Inset Pill Background
+          drawAppleSquircle(ctx, cellX, curY, cellW, itemH, Math.round(16 * ds));
           ctx.fillStyle = t.cardInnerCellBg;
           ctx.fill();
           ctx.lineWidth = 1;
           ctx.strokeStyle = t.cardInnerCellBorder;
           ctx.stroke();
 
-          // Circular Number Badge (centered vertically in the snug cell)
-          const badgeX = cellX + Math.round(28 * ds);
+          // Circular Number Badge
+          const badgeX = cellX + Math.round(26 * ds);
           const badgeY = curY + itemH / 2;
-          const badgeR = Math.round(18 * ds);
+          const badgeR = Math.round(17 * ds);
           ctx.beginPath();
           ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
 
-          ctx.font = `800 ${17 * ds}px 'SF Pro Display', sans-serif`;
+          ctx.font = `800 ${16 * ds}px 'SF Pro Display', sans-serif`;
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(b.num, badgeX, badgeY);
 
-          // Content Block inside Cell
-          const contentX = cellX + Math.round(58 * ds);
-          const contentW = cellW - Math.round(70 * ds);
-          const topPad = Math.round(14 * ds);
-
-          // Feature Label
-          ctx.font = `800 ${19 * ds}px 'SF Pro Display', sans-serif`;
-          ctx.fillStyle = t.titleText;
-          ctx.textAlign = "left";
-          ctx.textBaseline = "top";
-          ctx.fillText(b.label || `Specification ${b.num}`, contentX, curY + topPad);
-
-          // Answer Text
-          ctx.font = `500 ${16.5 * ds}px 'SF Pro Display', sans-serif`;
+          // Sentence-cased Answer Text
+          const contentX = cellX + Math.round(56 * ds);
+          ctx.font = `600 ${18.5 * ds}px 'SF Pro Display', sans-serif`;
           ctx.fillStyle = t.secondaryText;
-          const answerLines = getTextLines(ctx, b.answer || "", contentW);
-          const answerStartY = curY + topPad + Math.round(26 * ds);
-          const lineH = Math.round(22 * ds);
-          answerLines.forEach((line, lIdx) => {
-            ctx.fillText(line, contentX, answerStartY + lIdx * lineH);
-          });
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          ctx.fillText(b.answer || "", contentX, badgeY);
 
           curY += itemH + dims.itemGap;
         });
@@ -948,42 +855,33 @@
       ctx.fill();
 
       // Core Topic Tag Pill
-      const cTag = (posterData.center.tag || "CORE TOPIC").toUpperCase();
-      ctx.font = `800 ${13 * ds}px 'SF Pro Display', sans-serif`;
-      ctx.letterSpacing = "1px";
+      const cTag = posterData.center.tag || "Core topic";
+      ctx.font = `700 ${14 * ds}px 'SF Pro Display', sans-serif`;
       const cTagW = ctx.measureText(cTag).width + Math.round(26 * ds);
-      drawAppleSquircle(ctx, cx - cTagW / 2, cY + Math.round(60 * ds), cTagW, Math.round(26 * ds), Math.round(7 * ds));
+      drawAppleSquircle(ctx, cx - cTagW / 2, cY + Math.round(56 * ds), cTagW, Math.round(26 * ds), Math.round(7 * ds));
       ctx.fillStyle = t.pills.center.bg;
       ctx.fill();
       ctx.fillStyle = t.pills.center.text;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(cTag, cx, cY + Math.round(73 * ds));
-      ctx.letterSpacing = "0px";
+      ctx.fillText(cTag, cx, cY + Math.round(69 * ds));
 
       // Device Glyph
       ctx.strokeStyle = t.pills.center.accent;
       ctx.lineWidth = 3.2;
-      drawAppleSquircle(ctx, cx - Math.round(20 * ds), cY + Math.round(110 * ds), Math.round(40 * ds), Math.round(64 * ds), Math.round(9 * ds));
+      drawAppleSquircle(ctx, cx - Math.round(20 * ds), cY + Math.round(102 * ds), Math.round(40 * ds), Math.round(64 * ds), Math.round(9 * ds));
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(cx, cY + Math.round(162 * ds), 3, 0, Math.PI * 2);
+      ctx.arc(cx, cY + Math.round(154 * ds), 3, 0, Math.PI * 2);
       ctx.fillStyle = t.pills.center.accent;
       ctx.fill();
 
-      // Core Title (Bold & Dynamic)
+      // Core Title (Sentence cased)
       ctx.font = `800 ${44 * ds}px 'SF Pro Display', sans-serif`;
       ctx.fillStyle = t.titleText;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(posterData.center.title, cx, cY + Math.round(230 * ds));
-
-      // Core Subtitle
-      if (posterData.center.subtitle) {
-        ctx.font = `600 ${18 * ds}px 'SF Pro Display', sans-serif`;
-        ctx.fillStyle = t.secondaryText;
-        ctx.fillText(posterData.center.subtitle, cx, cY + Math.round(280 * ds));
-      }
+      ctx.fillText(posterData.center.title, cx, cY + Math.round(222 * ds));
 
       ctx.restore();
     }
@@ -1024,16 +922,13 @@
             </select>
           </div>
           <div class="field-group" style="margin-top: 10px;">
-            <label class="field-label">Design Scale (Overall Size)</label>
+            <label class="field-label">Diagram Scale (Overall Size)</label>
             <div class="scale-btn-group">
               <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.0) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.0)">Normal (1.0x)</button>
-              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.2) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.2)">Large (1.2x)</button>
-              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.35) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.35)">Huge (1.35x)</button>
+              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.25) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.25)">Large (1.25x)</button>
+              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.4) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.4)">Huge (1.4x)</button>
             </div>
           </div>
-          <p style="font-size: 13px; color: var(--label-secondary); line-height: 1.5; margin-top: 12px;">
-            Each answer box now dynamically hugs its text with snug Apple-style padding, eliminating empty voids.
-          </p>
         `;
       } else if (activeTab === "center") {
         heading.textContent = "Central Hero Device";
@@ -1041,10 +936,6 @@
           <div class="field-group">
             <label class="field-label">Topic Title</label>
             <input type="text" class="text-input" value="${posterData.center.title}" oninput="updateCenterTitle(this.value)" />
-          </div>
-          <div class="field-group">
-            <label class="field-label">Subtitle</label>
-            <input type="text" class="text-input" value="${posterData.center.subtitle || ''}" oninput="updateCenterSubtitle(this.value)" />
           </div>
           <div class="field-group">
             <label class="field-label">Pill Tag</label>
@@ -1057,14 +948,11 @@
 
         let blanksHtml = (node.blanks || []).map((b, idx) => `
           <div class="blank-row-item animate-pop-in">
-            <div class="blank-header-row">
-              <input type="text" class="blank-prefix-input" value="${b.num}" oninput="updateBlankField('${activeTab}', ${idx}, 'num', this.value)" title="Number label" />
-              <input type="text" class="blank-label-input" placeholder="Title/Feature..." value="${b.label || ''}" oninput="updateBlankField('${activeTab}', ${idx}, 'label', this.value)" />
-              <button class="btn-icon-del" onclick="removeBlankRow('${activeTab}', ${idx})" title="Remove item">
-                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
-            </div>
-            <textarea class="blank-answer-input" rows="2" placeholder="Integrated Answer..." oninput="updateBlankField('${activeTab}', ${idx}, 'answer', this.value)">${b.answer || ''}</textarea>
+            <input type="text" class="blank-prefix-input" value="${b.num}" oninput="updateBlankField('${activeTab}', ${idx}, 'num', this.value)" title="Number label" />
+            <input type="text" class="blank-answer-input" placeholder="Answer..." value="${b.answer || ''}" oninput="updateBlankField('${activeTab}', ${idx}, 'answer', this.value)" />
+            <button class="btn-icon-del" onclick="removeBlankRow('${activeTab}', ${idx})" title="Remove item">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
         `).join("");
 
@@ -1101,12 +989,6 @@
       saveAppState();
     }
 
-    function updateCenterSubtitle(val) {
-      posterData.center.subtitle = val;
-      renderPoster();
-      saveAppState();
-    }
-
     function updateCenterTag(val) {
       posterData.center.tag = val;
       renderPoster();
@@ -1136,7 +1018,7 @@
       pushStateSnapshot("Add Blank Item");
       const list = posterData[nodeKey].blanks;
       const lastNum = list.length > 0 ? (parseInt(list[list.length - 1].num) + 1 || '') : "1";
-      list.push({ num: `${lastNum}`, label: "Feature", answer: "Specification detail" });
+      list.push({ num: `${lastNum}`, answer: "Answer" });
       saveAppState();
       renderPoster();
       renderEditor();
