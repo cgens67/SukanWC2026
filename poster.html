@@ -165,13 +165,12 @@
       align-items: center; justify-content: center; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.05); position: relative; min-height: 580px;
     }
     .canvas-wrapper {
-      position: relative; width: 100%; max-width: 680px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+      position: relative; width: 100%; max-width: 720px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
       background: var(--canvas-bg); border-radius: 26px; border: 1px solid var(--separator); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.09);
       overflow: hidden;
     }
     #posterCanvas {
       width: 100%; height: 100%; display: block; border-radius: 24px;
-      /* Super-sampled rendering prevents downscale blur */
       image-rendering: -webkit-optimize-contrast;
       image-rendering: auto;
     }
@@ -269,7 +268,7 @@
   <div class="top-bar">
     <div class="app-title-group">
       <h1>mind map poster builder</h1>
-      <p>Apple HIG Specification • Vector-Sharp Canvas Engine • 4K Export</p>
+      <p>Full-Bleed Apple Bento Grid • Vector High-DPI Engine • 4K Export</p>
     </div>
     <div class="top-actions">
       <!-- Undo / Redo Buttons -->
@@ -301,7 +300,7 @@
   <!-- Segmented Tabs for Editing Specific Nodes or Resolution -->
   <div class="segmented-control" id="segmentedControl" role="tablist">
     <div class="segment-indicator" id="segmentIndicator"></div>
-    <button class="segment-btn active" data-node="canvasConfig" onclick="switchActiveNodeTab('canvasConfig')">Resolution & Theme</button>
+    <button class="segment-btn active" data-node="canvasConfig" onclick="switchActiveNodeTab('canvasConfig')">Layout & Theme</button>
     <button class="segment-btn" data-node="center" onclick="switchActiveNodeTab('center')">Center Device</button>
     <button class="segment-btn" data-node="top" onclick="switchActiveNodeTab('top')">Purpose (17)</button>
     <button class="segment-btn" data-node="right" onclick="switchActiveNodeTab('right')">Functions (18-20)</button>
@@ -315,7 +314,6 @@
     <!-- Left Column: Canvas Poster Preview Stage -->
     <div class="canvas-card animate-content-size">
       <div class="canvas-wrapper">
-        <!-- Default buffer 2400x2400 (supersampled for zero pixelation) -->
         <canvas id="posterCanvas" width="2400" height="2400"></canvas>
       </div>
     </div>
@@ -392,7 +390,7 @@
     const DEFAULT_POSTER_DATA = {
       headerBanner: "APPLE DESIGN SPECIFICATION • COMPREHENSION STUDY",
       watermark: "8 MARKS TOTAL",
-      posterTheme: "lightKeynote", // "lightKeynote" or "spaceBlack"
+      posterTheme: "lightKeynote",
       center: {
         tag: "CORE TOPIC",
         title: "Mobile Phones",
@@ -466,13 +464,13 @@
 
     let posterData = JSON.parse(JSON.stringify(DEFAULT_POSTER_DATA));
     let activeTab = "canvasConfig";
-    let currentResolution = 2400; // Native canvas buffer (2400x2400)
+    let currentResolution = 2400;
 
     const undoStack = [];
     const redoStack = [];
 
     try {
-      const saved = localStorage.getItem("apple_poster_data_v3");
+      const saved = localStorage.getItem("apple_poster_data_v4");
       if (saved) posterData = JSON.parse(saved);
     } catch (e) {}
 
@@ -482,19 +480,17 @@
     const APPLE_THEMES = {
       lightKeynote: {
         canvasBg: "#F5F5F7",
-        outerBorder: "rgba(0, 0, 0, 0.06)",
+        outerBorder: "rgba(0, 0, 0, 0.07)",
         bannerText: "#86868B",
-        cardFill: "rgba(255, 255, 255, 0.94)",
+        cardFill: "rgba(255, 255, 255, 0.95)",
         cardBorder: "rgba(0, 0, 0, 0.08)",
-        cardInnerHighlight: "rgba(255, 255, 255, 0.8)",
         cardShadow: "rgba(0, 0, 0, 0.06)",
         titleText: "#1D1D1F",
         bodyText: "#1D1D1F",
-        secondaryText: "#86868B",
+        secondaryText: "#6E6E73",
         lineColor: "#D2D2D7",
-        connectorGlow: "rgba(0, 122, 255, 0.08)",
         pills: {
-          top: { bg: "rgba(0, 199, 190, 0.12)", text: "#008A83", accent: "#00C7BE" },
+          top: { bg: "rgba(0, 199, 190, 0.12)", text: "#007D76", accent: "#00C7BE" },
           right: { bg: "rgba(175, 82, 222, 0.12)", text: "#8933B0", accent: "#AF52DE" },
           bottom: { bg: "rgba(255, 149, 0, 0.12)", text: "#B25E00", accent: "#FF9500" },
           left: { bg: "rgba(0, 122, 255, 0.12)", text: "#0062CC", accent: "#007AFF" },
@@ -502,18 +498,16 @@
         }
       },
       spaceBlack: {
-        canvasBg: "#000000",
+        canvasBg: "#050507",
         outerBorder: "rgba(255, 255, 255, 0.12)",
         bannerText: "#86868B",
-        cardFill: "rgba(28, 28, 30, 0.92)",
+        cardFill: "rgba(28, 28, 30, 0.94)",
         cardBorder: "rgba(255, 255, 255, 0.14)",
-        cardInnerHighlight: "rgba(255, 255, 255, 0.06)",
-        cardShadow: "rgba(0, 0, 0, 0.5)",
+        cardShadow: "rgba(0, 0, 0, 0.55)",
         titleText: "#F5F5F7",
         bodyText: "#F5F5F7",
         secondaryText: "#A1A1A6",
         lineColor: "#38383A",
-        connectorGlow: "rgba(10, 132, 255, 0.18)",
         pills: {
           top: { bg: "rgba(99, 230, 226, 0.18)", text: "#63E6E2", accent: "#63E6E2" },
           right: { bg: "rgba(191, 90, 242, 0.18)", text: "#BF5AF2", accent: "#BF5AF2" },
@@ -594,7 +588,7 @@
 
     function saveAppState() {
       try {
-        localStorage.setItem("apple_poster_data_v3", JSON.stringify(posterData));
+        localStorage.setItem("apple_poster_data_v4", JSON.stringify(posterData));
       } catch (e) {}
     }
 
@@ -609,12 +603,11 @@
     }
 
     /* ========================================================
-       VECTOR-SHARP APPLE CANVAS RENDERER
+       FULL-BLEED VECTOR-SHARP CANVAS RENDERER
        ======================================================== */
     const canvas = document.getElementById("posterCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Apple squircle / smooth rounded rectangle
     function drawAppleSquircle(ctx, x, y, width, height, radius) {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
@@ -629,7 +622,6 @@
       ctx.closePath();
     }
 
-    // Dynamic resolution changer
     function setPosterResolution(resValue) {
       currentResolution = parseInt(resValue, 10);
       canvas.width = currentResolution;
@@ -652,8 +644,7 @@
       const W = canvas.width;
       const H = canvas.height;
       
-      // Vector Coordinate Scaling: Base coordinate system is 2000 x 2000
-      // Scaled up to 2400, 3840, or 4800 for crisp, anti-aliased Retina text!
+      // Scaled against a virtual 2000x2000 coordinate plane
       const scale = W / 2000;
       
       ctx.save();
@@ -665,54 +656,66 @@
       ctx.fillStyle = t.canvasBg;
       ctx.fillRect(0, 0, 2000, 2000);
 
-      // Delicate Outer Frame
+      // Subtle Outer Framing Border
       ctx.strokeStyle = t.outerBorder;
-      ctx.lineWidth = 2;
-      drawAppleSquircle(ctx, 40, 40, 1920, 1920, 36);
+      ctx.lineWidth = 2.5;
+      drawAppleSquircle(ctx, 35, 35, 1930, 1930, 40);
       ctx.stroke();
 
-      // Top Keynote Tracked Header
+      // Top Tracked Header Banner (Enlarged)
       if (posterData.headerBanner) {
-        ctx.font = "700 19px 'SF Pro Display', sans-serif";
+        ctx.font = "800 25px 'SF Pro Display', sans-serif";
         ctx.fillStyle = t.bannerText;
         ctx.textAlign = "center";
-        ctx.letterSpacing = "2.8px";
-        ctx.fillText(posterData.headerBanner, 1000, 95);
+        ctx.letterSpacing = "3.2px";
+        ctx.fillText(posterData.headerBanner, 1000, 75);
         ctx.letterSpacing = "0px";
       }
 
-      // Center and Satellite Box Geometries (Normalized in 2000x2000 space)
+      /* 
+         FULL-BLEED BENTO GEOMETRY (Eliminates dead space)
+         Center Hub: 500w x 410h
+         Top & Bottom: 660w x 340h (tight & fitted for 1 question)
+         Left & Right: 620w x 690h (tall & spacious for 3 questions)
+      */
       const cx = 1000;
       const cy = 1000;
 
-      // Center Phone Hub
-      const cW = 380;
-      const cH = 320;
-      const cX = cx - cW / 2;
-      const cY = cy - cH / 2;
+      // Center Hub
+      const cW = 500;
+      const cH = 410;
+      const cX = cx - cW / 2; // 750
+      const cY = cy - cH / 2; // 795
 
-      // Satellites
-      const satW = 460;
-      const satH = 370;
-      const gap = 120;
+      // Top Card (Purpose)
+      const topW = 660;
+      const topH = 340;
+      const topX = cx - topW / 2; // 670
+      const topY = 110;
 
-      const topX = cx - satW / 2;
-      const topY = cY - gap - satH + 30;
+      // Bottom Card (Weight)
+      const botW = 660;
+      const botH = 340;
+      const botX = cx - botW / 2; // 670
+      const botY = 1530;
 
-      const botX = cx - satW / 2;
-      const botY = cY + cH + gap - 30;
+      // Left Card (Modern Era - 3 items)
+      const leftW = 620;
+      const leftH = 690;
+      const leftX = 65;
+      const leftY = cy - leftH / 2; // 655
 
-      const leftX = cX - gap - satW + 20;
-      const leftY = cy - satH / 2;
+      // Right Card (Functions - 3 items)
+      const rightW = 620;
+      const rightH = 690;
+      const rightX = 2000 - leftW - 65; // 1315
+      const rightY = cy - rightH / 2; // 655
 
-      const rightX = cX + cW + gap - 20;
-      const rightY = cy - satH / 2;
-
-      // 2. Apple Curved Connection Bus Lines
+      // 2. High-Impact Connector Lines
       function drawAppleConnector(fromX, fromY, toX, toY, color) {
         ctx.save();
         ctx.strokeStyle = t.lineColor;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4;
         ctx.lineCap = "round";
 
         ctx.beginPath();
@@ -724,180 +727,176 @@
 
         // Sleek anchor joints
         ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(fromX, fromY, 5, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(toX, toY, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(fromX, fromY, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(toX, toY, 7, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
-      drawAppleConnector(cx, cY, cx, topY + satH, t.pills.top.accent);
+      drawAppleConnector(cx, cY, cx, topY + topH, t.pills.top.accent);
       drawAppleConnector(cx, cY + cH, cx, botY, t.pills.bottom.accent);
-      drawAppleConnector(cX, cy, leftX + satW, cy, t.pills.left.accent);
+      drawAppleConnector(cX, cy, leftX + leftW, cy, t.pills.left.accent);
       drawAppleConnector(cX + cW, cy, rightX, cy, t.pills.right.accent);
 
-      // 3. Render Apple Satellite Bento Cards
+      // 3. Render Large Apple Satellite Bento Cards
       function drawAppleCard(nodeKey, x, y, width, height, pillConfig) {
         const data = posterData[nodeKey];
         if (!data) return;
 
         ctx.save();
-        // Multi-layered diffuse ambient elevation
         ctx.shadowColor = t.cardShadow;
-        ctx.shadowBlur = 32;
-        ctx.shadowOffsetY = 12;
-
-        drawAppleSquircle(ctx, x, y, width, height, 32);
+        ctx.shadowBlur = 40;
+        ctx.shadowOffsetY = 16;
+        drawAppleSquircle(ctx, x, y, width, height, 38);
         ctx.fillStyle = t.cardFill;
         ctx.fill();
         ctx.restore();
 
-        // Card Border
-        ctx.lineWidth = 1.5;
+        // Hairline Card Border
+        ctx.lineWidth = 2;
         ctx.strokeStyle = t.cardBorder;
-        drawAppleSquircle(ctx, x, y, width, height, 32);
+        drawAppleSquircle(ctx, x, y, width, height, 38);
         ctx.stroke();
 
-        // Category Tag Badge (e.g. "PRIMARY PURPOSE")
+        // Category Tag Badge
         const tagText = (data.tag || "").toUpperCase();
         if (tagText) {
-          ctx.font = "800 12.5px 'SF Pro Display', sans-serif";
-          ctx.letterSpacing = "0.8px";
-          const tagW = ctx.measureText(tagText).width + 24;
-          drawAppleSquircle(ctx, x + 24, y + 22, tagW, 26, 8);
+          ctx.font = "800 16px 'SF Pro Display', sans-serif";
+          ctx.letterSpacing = "1px";
+          const tagW = ctx.measureText(tagText).width + 30;
+          drawAppleSquircle(ctx, x + 34, y + 30, tagW, 34, 10);
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(tagText, x + 24 + tagW / 2, y + 35);
+          ctx.fillText(tagText, x + 34 + tagW / 2, y + 47);
           ctx.letterSpacing = "0px";
         }
 
-        // Section Title
-        ctx.font = "700 24px 'SF Pro Display', sans-serif";
+        // Section Title (Large & Bold)
+        ctx.font = "800 36px 'SF Pro Display', sans-serif";
         ctx.fillStyle = t.titleText;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(data.title, x + 24, y + 64);
+        ctx.fillText(data.title, x + 34, y + 80);
 
-        // Render Integrated Question & Answer Items
+        // Render Specification Rows with Large Readable Answers
         const blanks = data.blanks || [];
-        const startY = y + 112;
-        const availableH = height - 128;
+        const startY = y + 145;
+        const availableH = height - 165;
         const rowH = availableH / Math.max(blanks.length, 1);
 
         blanks.forEach((b, idx) => {
           const currentY = startY + idx * rowH;
-          const leftP = x + 24;
-          const contentX = leftP + 44;
-          const contentW = width - 68;
+          const leftP = x + 34;
+          const contentX = leftP + 62;
+          const contentW = width - 96;
 
-          // Apple Number Pill Indicator
+          // Apple Number Pill Indicator (Enlarged)
           ctx.beginPath();
-          ctx.arc(leftP + 14, currentY + 16, 14, 0, Math.PI * 2);
+          ctx.arc(leftP + 22, currentY + 22, 22, 0, Math.PI * 2);
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
 
-          ctx.font = "800 14px 'SF Pro Display', sans-serif";
+          ctx.font = "800 21px 'SF Pro Display', sans-serif";
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(b.num, leftP + 14, currentY + 16);
+          ctx.fillText(b.num, leftP + 22, currentY + 22);
 
           // Subtitle / Label
-          ctx.font = "700 14.5px 'SF Pro Display', sans-serif";
+          ctx.font = "800 22px 'SF Pro Display', sans-serif";
           ctx.fillStyle = t.titleText;
           ctx.textAlign = "left";
           ctx.textBaseline = "top";
-          ctx.fillText(b.label || `Specification ${b.num}`, contentX, currentY + 4);
+          ctx.fillText(b.label || `Specification ${b.num}`, contentX, currentY + 2);
 
-          // Integrated Answer
-          ctx.font = "500 14px 'SF Pro Display', sans-serif";
+          // Full Answer Text (22px Medium with ample line-height)
+          ctx.font = "500 21px 'SF Pro Display', sans-serif";
           ctx.fillStyle = t.secondaryText;
-          
-          // Clean text wrapping for answers
-          wrapAndFillText(ctx, b.answer || "", contentX, currentY + 26, contentW, 19);
+          wrapAndFillText(ctx, b.answer || "", contentX, currentY + 36, contentW, 28);
         });
       }
 
       // Draw all 4 satellite cards
-      drawAppleCard("top", topX, topY, satW, satH, t.pills.top);
-      drawAppleCard("bottom", botX, botY, satW, satH, t.pills.bottom);
-      drawAppleCard("left", leftX, leftY, satW, satH, t.pills.left);
-      drawAppleCard("right", rightX, rightY, satW, satH, t.pills.right);
+      drawAppleCard("top", topX, topY, topW, topH, t.pills.top);
+      drawAppleCard("bottom", botX, botY, botW, botH, t.pills.bottom);
+      drawAppleCard("left", leftX, leftY, leftW, leftH, t.pills.left);
+      drawAppleCard("right", rightX, rightY, rightW, rightH, t.pills.right);
 
-      // 4. Central Hub (Apple Keynote Hero Card)
+      // 4. Large Central Hub Device (Prominent Hero Card)
       ctx.save();
       ctx.shadowColor = t.cardShadow;
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetY = 16;
-      drawAppleSquircle(ctx, cX, cY, cW, cH, 36);
+      ctx.shadowBlur = 48;
+      ctx.shadowOffsetY = 20;
+      drawAppleSquircle(ctx, cX, cY, cW, cH, 44);
       ctx.fillStyle = t.cardFill;
       ctx.fill();
       ctx.restore();
 
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = t.cardBorder;
-      drawAppleSquircle(ctx, cX, cY, cW, cH, 36);
+      drawAppleSquircle(ctx, cX, cY, cW, cH, 44);
       ctx.stroke();
 
       // Top Dynamic Island Pill
-      drawAppleSquircle(ctx, cx - 40, cY + 20, 80, 10, 5);
+      drawAppleSquircle(ctx, cx - 55, cY + 28, 110, 12, 6);
       ctx.fillStyle = t.lineColor;
       ctx.fill();
 
       // Core Topic Tag Pill
       const cTag = (posterData.center.tag || "CORE TOPIC").toUpperCase();
-      ctx.font = "800 12px 'SF Pro Display', sans-serif";
-      ctx.letterSpacing = "0.8px";
-      const cTagW = ctx.measureText(cTag).width + 22;
-      drawAppleSquircle(ctx, cx - cTagW / 2, cY + 54, cTagW, 24, 7);
+      ctx.font = "800 15px 'SF Pro Display', sans-serif";
+      ctx.letterSpacing = "1.2px";
+      const cTagW = ctx.measureText(cTag).width + 30;
+      drawAppleSquircle(ctx, cx - cTagW / 2, cY + 68, cTagW, 30, 9);
       ctx.fillStyle = t.pills.center.bg;
       ctx.fill();
       ctx.fillStyle = t.pills.center.text;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(cTag, cx, cY + 66);
+      ctx.fillText(cTag, cx, cY + 83);
       ctx.letterSpacing = "0px";
 
-      // Device Glyph (Apple Phone outline)
+      // Device Glyph
       ctx.strokeStyle = t.pills.center.accent;
-      ctx.lineWidth = 2.5;
-      drawAppleSquircle(ctx, cx - 18, cY + 98, 36, 56, 8);
+      ctx.lineWidth = 3.5;
+      drawAppleSquircle(ctx, cx - 24, cY + 124, 48, 76, 11);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(cx, cY + 144, 2.5, 0, Math.PI * 2);
+      ctx.arc(cx, cY + 185, 3.5, 0, Math.PI * 2);
       ctx.fillStyle = t.pills.center.accent;
       ctx.fill();
 
-      // Center Title
-      ctx.font = "800 32px 'SF Pro Display', sans-serif";
+      // Prominent Core Title (54px Heavy)
+      ctx.font = "800 52px 'SF Pro Display', sans-serif";
       ctx.fillStyle = t.titleText;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(posterData.center.title, cx, cY + 200);
+      ctx.fillText(posterData.center.title, cx, cY + 255);
 
-      // Center Subtitle
+      // Core Subtitle
       if (posterData.center.subtitle) {
-        ctx.font = "500 15px 'SF Pro Display', sans-serif";
+        ctx.font = "600 22px 'SF Pro Display', sans-serif";
         ctx.fillStyle = t.secondaryText;
-        ctx.fillText(posterData.center.subtitle, cx, cY + 242);
+        ctx.fillText(posterData.center.subtitle, cx, cY + 312);
       }
 
-      // 5. Apple Exam Marks Ribbon Badge (Bottom Right)
+      // 5. Official Exam Marks Ribbon Badge (Bottom Right)
       if (posterData.watermark) {
-        const markW = 160;
-        const markH = 44;
+        const markW = 220;
+        const markH = 54;
         const markX = 2000 - markW - 65;
         const markY = 2000 - markH - 65;
 
-        drawAppleSquircle(ctx, markX, markY, markW, markH, 22);
+        drawAppleSquircle(ctx, markX, markY, markW, markH, 27);
         ctx.fillStyle = t.pills.center.bg;
         ctx.fill();
         ctx.strokeStyle = t.pills.center.accent;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.font = "800 14px 'SF Pro Display', sans-serif";
+        ctx.font = "800 18px 'SF Pro Display', sans-serif";
         ctx.fillStyle = t.pills.center.text;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -907,7 +906,6 @@
       ctx.restore();
     }
 
-    // Helper: Wrap text cleanly within bounded width
     function wrapAndFillText(ctx, text, x, y, maxWidth, lineHeight) {
       const words = text.split(' ');
       let line = '';
@@ -989,7 +987,6 @@
           </div>
         `;
       } else {
-        // Satellite Cards
         const node = posterData[activeTab];
         heading.textContent = `${activeTab.toUpperCase()} Section (${node.title})`;
 
@@ -1178,7 +1175,7 @@
       playClickSound(0.2);
     }
 
-    /* Global Keyboard Shortcuts */
+    /* Keyboard Shortcuts */
     window.addEventListener("keydown", (e) => {
       if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
       const modifier = (navigator.platform.toUpperCase().indexOf('MAC') >= 0) ? e.metaKey : e.ctrlKey;
@@ -1188,7 +1185,7 @@
 
     window.addEventListener("resize", () => { updateIndicator(); });
 
-    // Wait for local fonts to load before canvas draws to ensure sharp rendering
+    // Ensure fonts are ready before rendering
     if (document.fonts) {
       document.fonts.ready.then(() => {
         renderPoster();
