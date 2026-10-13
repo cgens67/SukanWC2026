@@ -211,6 +211,14 @@
     }
     .text-input:focus { border-color: var(--ios-blue); background: var(--card-solid); }
 
+    /* Scale Pill Switcher */
+    .scale-btn-group { display: flex; gap: 6px; margin-top: 4px; }
+    .scale-btn {
+      flex: 1; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--separator); background: var(--fill-tertiary);
+      font-size: 13px; font-weight: 700; color: var(--label-primary); cursor: pointer; transition: all 0.15s ease;
+    }
+    .scale-btn.active { background: var(--ios-blue); color: #FFFFFF; border-color: var(--ios-blue); }
+
     /* Blank Rows Editor */
     .blank-row-item {
       display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
@@ -268,7 +276,7 @@
   <div class="top-bar">
     <div class="app-title-group">
       <h1>mind map poster builder</h1>
-      <p>Clean Apple Bento Layout • Proportional Spacing • 4K Export</p>
+      <p>Clean Apple Bento Layout • Snug Inset Cells • Resizable Scale</p>
     </div>
     <div class="top-actions">
       <!-- Undo / Redo Buttons -->
@@ -300,7 +308,7 @@
   <!-- Segmented Tabs for Editing Specific Nodes or Resolution -->
   <div class="segmented-control" id="segmentedControl" role="tablist">
     <div class="segment-indicator" id="segmentIndicator"></div>
-    <button class="segment-btn active" data-node="canvasConfig" onclick="switchActiveNodeTab('canvasConfig')">Theme & Setup</button>
+    <button class="segment-btn active" data-node="canvasConfig" onclick="switchActiveNodeTab('canvasConfig')">Size & Theme</button>
     <button class="segment-btn" data-node="center" onclick="switchActiveNodeTab('center')">Center Device</button>
     <button class="segment-btn" data-node="top" onclick="switchActiveNodeTab('top')">Purpose (17)</button>
     <button class="segment-btn" data-node="right" onclick="switchActiveNodeTab('right')">Functions (18-20)</button>
@@ -321,18 +329,18 @@
     <!-- Right Column: Interactive Editor Side Panel -->
     <div class="side-panel animate-content-size">
       
-      <!-- Primary Action Card with Resolution Selector -->
+      <!-- Primary Action Card with Resolution & Size Controls -->
       <div class="panel-card animate-content-size">
         <div class="badge-bar">
           <div class="count-pill">
             <span class="count-indicator-dot"></span>
             <span id="currentResBadge">2400 × 2400 (Retina 2K)</span>
           </div>
-          <span style="font-size: 11px; font-weight: 800; color: var(--ios-blue); letter-spacing: 0.5px;">APPLE HIG</span>
+          <span style="font-size: 11px; font-weight: 800; color: var(--ios-blue); letter-spacing: 0.5px;">APPLE HIG SPEC</span>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <!-- Resolution Preset Selector -->
+          <!-- Resolution Selector -->
           <div class="field-group" style="margin-bottom: 2px;">
             <label class="field-label">Export Canvas Resolution</label>
             <select class="text-input" id="resolutionSelect" onchange="setPosterResolution(this.value)" style="cursor: pointer; font-weight: 700;">
@@ -341,6 +349,22 @@
               <option value="3840">3840 × 3840 • 4K UHD Master (Razor Sharp)</option>
               <option value="4800">4800 × 4800 • 300 DPI Ultra Print</option>
             </select>
+          </div>
+
+          <!-- Direct Design Size Selector -->
+          <div class="field-group" style="margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label class="field-label" style="margin: 0;">Diagram Scale (Make Design Large)</label>
+              <span id="scaleValLabel" style="font-size: 12px; font-weight: 800; color: var(--ios-blue);">1.20x</span>
+            </div>
+            <div class="scale-btn-group">
+              <button class="scale-btn" onclick="setDiagramScale(1.0)">Normal</button>
+              <button class="scale-btn active" onclick="setDiagramScale(1.2)">Large</button>
+              <button class="scale-btn" onclick="setDiagramScale(1.35)">Huge</button>
+            </div>
+            <input type="range" id="scaleSlider" min="0.9" max="1.45" step="0.05" value="1.2" 
+                   oninput="setDiagramScale(parseFloat(this.value))" 
+                   style="width: 100%; margin-top: 8px; accent-color: var(--ios-blue); cursor: pointer;" />
           </div>
 
           <button class="btn btn-primary" onclick="exportHighResPoster()">
@@ -389,6 +413,7 @@
        ======================================================== */
     const DEFAULT_POSTER_DATA = {
       posterTheme: "lightKeynote",
+      diagramScale: 1.20, // default "Large"
       center: {
         tag: "CORE TOPIC",
         title: "Mobile Phones",
@@ -468,7 +493,7 @@
     const redoStack = [];
 
     try {
-      const saved = localStorage.getItem("apple_poster_data_v5");
+      const saved = localStorage.getItem("apple_poster_data_v6");
       if (saved) posterData = JSON.parse(saved);
     } catch (e) {}
 
@@ -479,14 +504,14 @@
       lightKeynote: {
         canvasBg: "#F5F5F7",
         outerBorder: "rgba(0, 0, 0, 0.07)",
-        cardFill: "rgba(255, 255, 255, 0.95)",
+        cardFill: "rgba(255, 255, 255, 0.96)",
         cardBorder: "rgba(0, 0, 0, 0.08)",
         cardShadow: "rgba(0, 0, 0, 0.06)",
-        cardInnerCellBg: "rgba(0, 0, 0, 0.024)",
+        cardInnerCellBg: "rgba(0, 0, 0, 0.028)",
         cardInnerCellBorder: "rgba(0, 0, 0, 0.045)",
         titleText: "#1D1D1F",
         bodyText: "#1D1D1F",
-        secondaryText: "#6E6E73",
+        secondaryText: "#515154",
         lineColor: "#D2D2D7",
         pills: {
           top: { bg: "rgba(0, 199, 190, 0.12)", text: "#007D76", accent: "#00C7BE" },
@@ -588,7 +613,7 @@
 
     function saveAppState() {
       try {
-        localStorage.setItem("apple_poster_data_v5", JSON.stringify(posterData));
+        localStorage.setItem("apple_poster_data_v6", JSON.stringify(posterData));
       } catch (e) {}
     }
 
@@ -640,17 +665,66 @@
       showToast(`✓ Buffer updated: ${badgeMap[currentResolution]}`);
     }
 
+    function setDiagramScale(newScale) {
+      pushStateSnapshot("Change Design Scale");
+      posterData.diagramScale = Math.round(newScale * 100) / 100;
+      document.getElementById("scaleValLabel").textContent = `${posterData.diagramScale.toFixed(2)}x`;
+      document.getElementById("scaleSlider").value = posterData.diagramScale;
+
+      document.querySelectorAll(".scale-btn").forEach(btn => {
+        const val = parseFloat(btn.textContent.replace('x', ''));
+        btn.classList.toggle("active", Math.abs(val - posterData.diagramScale) < 0.06);
+      });
+
+      saveAppState();
+      renderPoster();
+      playClickSound(0.25);
+    }
+
+    function getTextLines(ctx, text, maxWidth) {
+      const words = (text || "").split(' ');
+      let lines = [];
+      let currentLine = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = currentLine ? currentLine + ' ' + words[n] : words[n];
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          lines.push(currentLine);
+          currentLine = words[n];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines.length ? lines : [''];
+    }
+
+    // Helper: Compute snug, tailored height for an item without dead vertical space
+    function measureSnugItemHeight(ctx, item, contentWidth, scaleFactor) {
+      ctx.font = `800 ${20 * scaleFactor}px 'SF Pro Display', sans-serif`;
+      const titleLineH = 24 * scaleFactor;
+      
+      ctx.font = `500 ${17 * scaleFactor}px 'SF Pro Display', sans-serif`;
+      const answerLines = getTextLines(ctx, item.answer || '', contentWidth);
+      const answerLineH = 23 * scaleFactor;
+      const answerTotalH = answerLines.length * answerLineH;
+      
+      // Top pad (14px) + title + gap (4px) + answer + bottom pad (14px)
+      const snugH = Math.round((14 * scaleFactor) + titleLineH + (4 * scaleFactor) + answerTotalH + (14 * scaleFactor));
+      const minBadgeH = Math.round(52 * scaleFactor);
+      return Math.max(minBadgeH, snugH);
+    }
+
     function renderPoster() {
       const W = canvas.width;
       const H = canvas.height;
-      
-      // Scaled against virtual 2000x2000 space
       const scale = W / 2000;
       
       ctx.save();
       ctx.scale(scale, scale);
       
       const t = APPLE_THEMES[posterData.posterTheme] || APPLE_THEMES.lightKeynote;
+      const ds = posterData.diagramScale || 1.20; // Diagram scale factor
 
       // 1. Studio Canvas Background
       ctx.fillStyle = t.canvasBg;
@@ -659,54 +733,71 @@
       // Subtle Outer Framing Border
       ctx.strokeStyle = t.outerBorder;
       ctx.lineWidth = 2.5;
-      drawAppleSquircle(ctx, 35, 35, 1930, 1930, 40);
+      drawAppleSquircle(ctx, 35, 35, 1930, 1930, 42);
       ctx.stroke();
 
-      /* 
-         BALANCED BENTO GEOMETRY
-         Total width: 2000, Total height: 2000
-         Center Hub: 460w x 400h
-         Top & Bottom: 720w x 270h (Single-item fitted)
-         Left & Right: 630w x 600h (Three-item fitted)
-      */
       const cx = 1000;
       const cy = 1000;
 
-      // Center Hub
-      const cW = 460;
-      const cH = 400;
-      const cX = cx - cW / 2; // 770
-      const cY = cy - cH / 2; // 800
+      // Center Hub dimensions scaled by ds
+      const cW = Math.round(440 * ds);
+      const cH = Math.round(380 * ds);
+      const cX = cx - cW / 2;
+      const cY = cy - cH / 2;
 
-      // Top Card (Purpose)
-      const topW = 720;
-      const topH = 270;
-      const topX = cx - topW / 2; // 640
-      const topY = 340;
+      // Widths for cards scaled by ds
+      const topW = Math.round(580 * ds);
+      const botW = Math.round(580 * ds);
+      const leftW = Math.round(500 * ds);
+      const rightW = Math.round(500 * ds);
 
-      // Bottom Card (Weight)
-      const botW = 720;
-      const botH = 270;
-      const botX = cx - botW / 2; // 640
-      const botY = 1390;
+      // Helper to compute tailored card dimensions based on its snug items
+      function computeCardDimensions(nodeKey, cardWidth) {
+        const data = posterData[nodeKey];
+        const blanks = data ? data.blanks || [] : [];
+        const headerH = Math.round(112 * ds);
+        const itemGap = Math.round(12 * ds);
+        const bottomPad = Math.round(20 * ds);
+        const contentW = cardWidth - Math.round(48 * ds) - Math.round(62 * ds) - Math.round(14 * ds);
 
-      // Left Card (Modern Era - 3 items)
-      const leftW = 630;
-      const leftH = 600;
-      const leftX = 70;
-      const leftY = cy - leftH / 2; // 700
+        let totalItemsH = 0;
+        const itemHeights = [];
+        blanks.forEach(b => {
+          const ih = measureSnugItemHeight(ctx, b, contentW, ds);
+          itemHeights.push(ih);
+          totalItemsH += ih;
+        });
 
-      // Right Card (Functions - 3 items)
-      const rightW = 630;
-      const rightH = 600;
-      const rightX = 2000 - leftW - 70; // 1300
-      const rightY = cy - rightH / 2; // 700
+        const gapsTotal = Math.max(0, blanks.length - 1) * itemGap;
+        const cardH = headerH + totalItemsH + gapsTotal + bottomPad;
+        return { cardH, itemHeights, itemGap, headerH };
+      }
+
+      const topDims = computeCardDimensions("top", topW);
+      const botDims = computeCardDimensions("bottom", botW);
+      const leftDims = computeCardDimensions("left", leftW);
+      const rightDims = computeCardDimensions("right", rightW);
+
+      // Symmetrical Layout Coordinates
+      const vertGap = Math.round(100 * (1.7 - ds * 0.45)); // adaptive connector gap
+      const topX = cx - topW / 2;
+      const topY = cY - vertGap - topDims.cardH;
+
+      const botX = cx - botW / 2;
+      const botY = cY + cH + vertGap;
+
+      const horizGap = Math.round(70 * (1.6 - ds * 0.45));
+      const leftX = cX - horizGap - leftW;
+      const leftY = cy - leftDims.cardH / 2;
+
+      const rightX = cX + cW + horizGap;
+      const rightY = cy - rightDims.cardH / 2;
 
       // 2. High-Impact Connector Lines
       function drawAppleConnector(fromX, fromY, toX, toY, color) {
         ctx.save();
         ctx.strokeStyle = t.lineColor;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3.8;
         ctx.lineCap = "round";
 
         ctx.beginPath();
@@ -722,193 +813,179 @@
         ctx.restore();
       }
 
-      drawAppleConnector(cx, cY, cx, topY + topH, t.pills.top.accent);
+      drawAppleConnector(cx, cY, cx, topY + topDims.cardH, t.pills.top.accent);
       drawAppleConnector(cx, cY + cH, cx, botY, t.pills.bottom.accent);
       drawAppleConnector(cX, cy, leftX + leftW, cy, t.pills.left.accent);
       drawAppleConnector(cX + cW, cy, rightX, cy, t.pills.right.accent);
 
-      // 3. Render Apple Bento Cards with Inset Spec Cells
-      function drawAppleCard(nodeKey, x, y, width, height, pillConfig) {
+      // 3. Render Bento Cards with SNUG, ZERO-WASTE Inset Spec Cells
+      function drawSnugAppleCard(nodeKey, x, y, width, dims, pillConfig) {
         const data = posterData[nodeKey];
         if (!data) return;
 
+        const height = dims.cardH;
+
         ctx.save();
         ctx.shadowColor = t.cardShadow;
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetY = 16;
-        drawAppleSquircle(ctx, x, y, width, height, 38);
+        ctx.shadowBlur = Math.round(38 * ds);
+        ctx.shadowOffsetY = Math.round(14 * ds);
+        drawAppleSquircle(ctx, x, y, width, height, Math.round(34 * ds));
         ctx.fillStyle = t.cardFill;
         ctx.fill();
         ctx.restore();
 
-        // Card Border
+        // Hairline Card Border
         ctx.lineWidth = 2;
         ctx.strokeStyle = t.cardBorder;
-        drawAppleSquircle(ctx, x, y, width, height, 38);
+        drawAppleSquircle(ctx, x, y, width, height, Math.round(34 * ds));
         ctx.stroke();
 
         // Category Tag Badge
         const tagText = (data.tag || "").toUpperCase();
         if (tagText) {
-          ctx.font = "800 15px 'SF Pro Display', sans-serif";
-          ctx.letterSpacing = "1px";
-          const tagW = ctx.measureText(tagText).width + 28;
-          drawAppleSquircle(ctx, x + 32, y + 26, tagW, 30, 9);
+          ctx.font = `800 ${13.5 * ds}px 'SF Pro Display', sans-serif`;
+          ctx.letterSpacing = "0.9px";
+          const tagW = ctx.measureText(tagText).width + Math.round(24 * ds);
+          drawAppleSquircle(ctx, x + Math.round(28 * ds), y + Math.round(24 * ds), tagW, Math.round(28 * ds), Math.round(8 * ds));
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(tagText, x + 32 + tagW / 2, y + 41);
+          ctx.fillText(tagText, x + Math.round(28 * ds) + tagW / 2, y + Math.round(38 * ds));
           ctx.letterSpacing = "0px";
         }
 
         // Section Title
-        ctx.font = "800 34px 'SF Pro Display', sans-serif";
+        ctx.font = `800 ${29 * ds}px 'SF Pro Display', sans-serif`;
         ctx.fillStyle = t.titleText;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(data.title, x + 32, y + 70);
+        ctx.fillText(data.title, x + Math.round(28 * ds), y + Math.round(62 * ds));
 
-        // Spec Inset Cells Setup (Eliminates excessive vertical spacing)
+        // Render SNUG Inset Cells (tight vertical padding, zero dead space!)
         const blanks = data.blanks || [];
-        const startY = y + 120;
-        const itemGap = 14;
-        const availableH = height - 120 - 24;
-        const itemH = blanks.length > 1
-          ? (availableH - (blanks.length - 1) * itemGap) / blanks.length
-          : availableH;
+        let curY = y + dims.headerH;
+        const cellX = x + Math.round(22 * ds);
+        const cellW = width - Math.round(44 * ds);
 
         blanks.forEach((b, idx) => {
-          const currentY = startY + idx * (itemH + itemGap);
-          const cellX = x + 24;
-          const cellW = width - 48;
+          const itemH = dims.itemHeights[idx];
 
-          // Inset Pill Background for each answer
-          drawAppleSquircle(ctx, cellX, currentY, cellW, itemH, 20);
+          // Inset Pill Background (wraps cleanly around the content)
+          drawAppleSquircle(ctx, cellX, curY, cellW, itemH, Math.round(18 * ds));
           ctx.fillStyle = t.cardInnerCellBg;
           ctx.fill();
           ctx.lineWidth = 1;
           ctx.strokeStyle = t.cardInnerCellBorder;
           ctx.stroke();
 
-          // Circular Number Badge
-          const badgeX = cellX + 32;
-          const badgeY = currentY + itemH / 2;
+          // Circular Number Badge (centered vertically in the snug cell)
+          const badgeX = cellX + Math.round(28 * ds);
+          const badgeY = curY + itemH / 2;
+          const badgeR = Math.round(18 * ds);
           ctx.beginPath();
-          ctx.arc(badgeX, badgeY, 20, 0, Math.PI * 2);
+          ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
           ctx.fillStyle = pillConfig.bg;
           ctx.fill();
 
-          ctx.font = "800 19px 'SF Pro Display', sans-serif";
+          ctx.font = `800 ${17 * ds}px 'SF Pro Display', sans-serif`;
           ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(b.num, badgeX, badgeY);
 
           // Content Block inside Cell
-          const contentX = cellX + 66;
-          const contentW = cellW - 84;
+          const contentX = cellX + Math.round(58 * ds);
+          const contentW = cellW - Math.round(70 * ds);
+          const topPad = Math.round(14 * ds);
 
-          // Feature Subtitle
-          ctx.font = "800 20px 'SF Pro Display', sans-serif";
+          // Feature Label
+          ctx.font = `800 ${19 * ds}px 'SF Pro Display', sans-serif`;
           ctx.fillStyle = t.titleText;
           ctx.textAlign = "left";
           ctx.textBaseline = "top";
-          ctx.fillText(b.label || `Specification ${b.num}`, contentX, currentY + 18);
+          ctx.fillText(b.label || `Specification ${b.num}`, contentX, curY + topPad);
 
-          // Full Answer Text with tight, readable line-height
-          ctx.font = "500 17.5px 'SF Pro Display', sans-serif";
+          // Answer Text
+          ctx.font = `500 ${16.5 * ds}px 'SF Pro Display', sans-serif`;
           ctx.fillStyle = t.secondaryText;
-          wrapAndFillText(ctx, b.answer || "", contentX, currentY + 48, contentW, 24);
+          const answerLines = getTextLines(ctx, b.answer || "", contentW);
+          const answerStartY = curY + topPad + Math.round(26 * ds);
+          const lineH = Math.round(22 * ds);
+          answerLines.forEach((line, lIdx) => {
+            ctx.fillText(line, contentX, answerStartY + lIdx * lineH);
+          });
+
+          curY += itemH + dims.itemGap;
         });
       }
 
       // Draw all 4 satellite cards
-      drawAppleCard("top", topX, topY, topW, topH, t.pills.top);
-      drawAppleCard("bottom", botX, botY, botW, botH, t.pills.bottom);
-      drawAppleCard("left", leftX, leftY, leftW, leftH, t.pills.left);
-      drawAppleCard("right", rightX, rightY, rightW, rightH, t.pills.right);
+      drawSnugAppleCard("top", topX, topY, topW, topDims, t.pills.top);
+      drawSnugAppleCard("bottom", botX, botY, botW, botDims, t.pills.bottom);
+      drawSnugAppleCard("left", leftX, leftY, leftW, leftDims, t.pills.left);
+      drawSnugAppleCard("right", rightX, rightY, rightW, rightDims, t.pills.right);
 
       // 4. Central Hub Device (Hero Card)
       ctx.save();
       ctx.shadowColor = t.cardShadow;
-      ctx.shadowBlur = 48;
-      ctx.shadowOffsetY = 20;
-      drawAppleSquircle(ctx, cX, cY, cW, cH, 44);
+      ctx.shadowBlur = Math.round(44 * ds);
+      ctx.shadowOffsetY = Math.round(16 * ds);
+      drawAppleSquircle(ctx, cX, cY, cW, cH, Math.round(40 * ds));
       ctx.fillStyle = t.cardFill;
       ctx.fill();
       ctx.restore();
 
       ctx.lineWidth = 2.5;
       ctx.strokeStyle = t.cardBorder;
-      drawAppleSquircle(ctx, cX, cY, cW, cH, 44);
+      drawAppleSquircle(ctx, cX, cY, cW, cH, Math.round(40 * ds));
       ctx.stroke();
 
       // Top Dynamic Island Pill
-      drawAppleSquircle(ctx, cx - 50, cY + 28, 100, 12, 6);
+      drawAppleSquircle(ctx, cx - Math.round(46 * ds), cY + Math.round(24 * ds), Math.round(92 * ds), Math.round(10 * ds), Math.round(5 * ds));
       ctx.fillStyle = t.lineColor;
       ctx.fill();
 
       // Core Topic Tag Pill
       const cTag = (posterData.center.tag || "CORE TOPIC").toUpperCase();
-      ctx.font = "800 14px 'SF Pro Display', sans-serif";
-      ctx.letterSpacing = "1.2px";
-      const cTagW = ctx.measureText(cTag).width + 28;
-      drawAppleSquircle(ctx, cx - cTagW / 2, cY + 68, cTagW, 28, 8);
+      ctx.font = `800 ${13 * ds}px 'SF Pro Display', sans-serif`;
+      ctx.letterSpacing = "1px";
+      const cTagW = ctx.measureText(cTag).width + Math.round(26 * ds);
+      drawAppleSquircle(ctx, cx - cTagW / 2, cY + Math.round(60 * ds), cTagW, Math.round(26 * ds), Math.round(7 * ds));
       ctx.fillStyle = t.pills.center.bg;
       ctx.fill();
       ctx.fillStyle = t.pills.center.text;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(cTag, cx, cY + 82);
+      ctx.fillText(cTag, cx, cY + Math.round(73 * ds));
       ctx.letterSpacing = "0px";
 
       // Device Glyph
       ctx.strokeStyle = t.pills.center.accent;
-      ctx.lineWidth = 3.5;
-      drawAppleSquircle(ctx, cx - 22, cY + 120, 44, 72, 10);
+      ctx.lineWidth = 3.2;
+      drawAppleSquircle(ctx, cx - Math.round(20 * ds), cY + Math.round(110 * ds), Math.round(40 * ds), Math.round(64 * ds), Math.round(9 * ds));
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(cx, cY + 178, 3.5, 0, Math.PI * 2);
+      ctx.arc(cx, cY + Math.round(162 * ds), 3, 0, Math.PI * 2);
       ctx.fillStyle = t.pills.center.accent;
       ctx.fill();
 
-      // Core Title
-      ctx.font = "800 48px 'SF Pro Display', sans-serif";
+      // Core Title (Bold & Dynamic)
+      ctx.font = `800 ${44 * ds}px 'SF Pro Display', sans-serif`;
       ctx.fillStyle = t.titleText;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(posterData.center.title, cx, cY + 250);
+      ctx.fillText(posterData.center.title, cx, cY + Math.round(230 * ds));
 
       // Core Subtitle
       if (posterData.center.subtitle) {
-        ctx.font = "600 20px 'SF Pro Display', sans-serif";
+        ctx.font = `600 ${18 * ds}px 'SF Pro Display', sans-serif`;
         ctx.fillStyle = t.secondaryText;
-        ctx.fillText(posterData.center.subtitle, cx, cY + 304);
+        ctx.fillText(posterData.center.subtitle, cx, cY + Math.round(280 * ds));
       }
 
       ctx.restore();
-    }
-
-    function wrapAndFillText(ctx, text, x, y, maxWidth, lineHeight) {
-      const words = text.split(' ');
-      let line = '';
-      let testY = y;
-
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = ctx.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-          ctx.fillText(line, x, testY);
-          line = words[n] + ' ';
-          testY += lineHeight;
-        } else {
-          line = testLine;
-        }
-      }
-      ctx.fillText(line, x, testY);
     }
 
     /* ========================================================
@@ -937,7 +1014,7 @@
       const heading = document.getElementById("activeNodeHeading");
 
       if (activeTab === "canvasConfig") {
-        heading.textContent = "Canvas Theme";
+        heading.textContent = "Theme & Sizing";
         container.innerHTML = `
           <div class="field-group">
             <label class="field-label">Poster Theme</label>
@@ -946,8 +1023,16 @@
               <option value="spaceBlack" ${posterData.posterTheme === 'spaceBlack' ? 'selected' : ''}>Apple Pro Display (Space Black)</option>
             </select>
           </div>
-          <p style="font-size: 13px; color: var(--label-secondary); line-height: 1.5; margin-top: 10px;">
-            The canvas renders with proportional inset cells, removing excess spacing and maintaining Apple HIG alignment.
+          <div class="field-group" style="margin-top: 10px;">
+            <label class="field-label">Design Scale (Overall Size)</label>
+            <div class="scale-btn-group">
+              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.0) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.0)">Normal (1.0x)</button>
+              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.2) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.2)">Large (1.2x)</button>
+              <button class="scale-btn ${Math.abs(posterData.diagramScale - 1.35) < 0.05 ? 'active' : ''}" onclick="setDiagramScale(1.35)">Huge (1.35x)</button>
+            </div>
+          </div>
+          <p style="font-size: 13px; color: var(--label-secondary); line-height: 1.5; margin-top: 12px;">
+            Each answer box now dynamically hugs its text with snug Apple-style padding, eliminating empty voids.
           </p>
         `;
       } else if (activeTab === "center") {
