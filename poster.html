@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Poster & Graphic Organiser Builder</title>
+  <title>Apple-Style Graphic Organiser Builder</title>
   <style>
     /* ========================================================
        SF PRO DISPLAY LOCAL FONTS (fonts/otf/)
@@ -57,7 +57,7 @@
       --ios-purple: #AF52DE;
       --ios-orange: #FF9500;
       --slider-fill: #007AFF;
-      --canvas-bg: #F8F9FD;
+      --canvas-bg: #F5F5F7;
     }
 
     :root[data-theme="dark"] {
@@ -78,7 +78,7 @@
       --ios-purple: #BF5AF2;
       --ios-orange: #FF9F0A;
       --slider-fill: #0A84FF;
-      --canvas-bg: #0D0E12;
+      --canvas-bg: #0A0A0C;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
@@ -91,7 +91,6 @@
       padding: 20px 16px 40px; transition: background-color 0.25s ease, color 0.25s ease; overflow-x: hidden;
     }
 
-    /* Content Sizing Transitions */
     .animate-content-size {
       transition: max-height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
                   height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -166,11 +165,16 @@
       align-items: center; justify-content: center; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.05); position: relative; min-height: 580px;
     }
     .canvas-wrapper {
-      position: relative; width: 100%; max-width: 660px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
-      background: var(--canvas-bg); border-radius: 24px; border: 1px solid var(--separator); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.09);
+      position: relative; width: 100%; max-width: 680px; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+      background: var(--canvas-bg); border-radius: 26px; border: 1px solid var(--separator); box-shadow: 0 18px 44px rgba(0, 0, 0, 0.09);
       overflow: hidden;
     }
-    #posterCanvas { width: 100%; height: 100%; display: block; border-radius: 22px; }
+    #posterCanvas {
+      width: 100%; height: 100%; display: block; border-radius: 24px;
+      /* Super-sampled rendering prevents downscale blur */
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: auto;
+    }
 
     /* Side Panel */
     .side-panel { display: flex; flex-direction: column; gap: 16px; }
@@ -183,7 +187,7 @@
       background: var(--badge-bg); padding: 5px 12px; border-radius: 100px; font-size: 13px;
       font-weight: 600; color: var(--label-secondary); display: inline-flex; align-items: center; gap: 6px;
     }
-    .count-indicator-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--ios-mint); }
+    .count-indicator-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--ios-blue); }
 
     /* Buttons */
     .btn {
@@ -210,13 +214,16 @@
 
     /* Blank Rows Editor */
     .blank-row-item {
-      display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
-      background: var(--fill-tertiary); padding: 8px 10px; border-radius: 12px;
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;
+      background: var(--fill-tertiary); padding: 10px 12px; border-radius: 14px;
     }
-    .blank-prefix-input { width: 50px; text-align: center; font-weight: 700; padding: 8px 4px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
-    .blank-answer-input { flex: 1; padding: 8px 10px; font-size: 13.5px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-header-row { display: flex; gap: 8px; align-items: center; }
+    .blank-prefix-input { width: 54px; text-align: center; font-weight: 700; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-label-input { flex: 1; padding: 6px 10px; font-size: 13px; font-weight: 600; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    .blank-answer-input { width: 100%; padding: 8px 10px; font-size: 13px; border-radius: 8px; border: 1px solid var(--separator); background: var(--card-solid); color: var(--label-primary); outline: none; }
+    
     .btn-icon-del {
-      background: transparent; border: none; color: var(--ios-red); cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none; color: var(--ios-red); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
       border-radius: 8px; transition: transform 0.15s ease;
     }
     .btn-icon-del:active { transform: scale(0.85); }
@@ -251,7 +258,7 @@
 <body>
 
   <!-- Floating Toast Notification -->
-  <div class="toast-pill" id="toastPill">Poster updated</div>
+  <div class="toast-pill" id="toastPill">Resolution updated</div>
 
   <!-- Floating Exit Button for Fullscreen -->
   <button class="nav-icon-btn fs-exit-floating" onclick="exitFullscreenMode()" title="Exit Fullscreen">
@@ -262,7 +269,7 @@
   <div class="top-bar">
     <div class="app-title-group">
       <h1>mind map poster builder</h1>
-      <p>Modern Infographic Studio &bull; Neo-Poster Engine &bull; High-Res 4K Export</p>
+      <p>Apple HIG Specification • Vector-Sharp Canvas Engine • 4K Export</p>
     </div>
     <div class="top-actions">
       <!-- Undo / Redo Buttons -->
@@ -273,18 +280,13 @@
         <svg viewBox="0 0 24 24"><polyline points="15 14 20 9 15 4"></polyline><path d="M4 20v-7a4 4 0 0 1 4-4h12"></path></svg>
       </button>
 
-      <!-- Toggle Answer Key Mode -->
-      <button class="nav-icon-btn" id="answerToggleBtn" onclick="toggleAnswerMode()" title="Toggle Answer Key / Blank Mode">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-      </button>
-
       <!-- Reset Template -->
-      <button class="nav-icon-btn" onclick="resetToDefaultData()" title="Reset to Initial State">
+      <button class="nav-icon-btn" onclick="resetToDefaultData()" title="Reset to Initial Layout">
         <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
       </button>
 
       <!-- Fullscreen Toggle Button -->
-      <button class="nav-icon-btn" id="fsToggleBtn" onclick="toggleFullscreenMode()" title="Fullscreen / Presentation Mode">
+      <button class="nav-icon-btn" id="fsToggleBtn" onclick="toggleFullscreenMode()" title="Fullscreen / Keynote Mode">
         <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
       </button>
 
@@ -296,15 +298,15 @@
     </div>
   </div>
 
-  <!-- Segmented Tabs for Editing Specific Nodes or Styles -->
+  <!-- Segmented Tabs for Editing Specific Nodes or Resolution -->
   <div class="segmented-control" id="segmentedControl" role="tablist">
     <div class="segment-indicator" id="segmentIndicator"></div>
-    <button class="segment-btn active" data-node="theme" onclick="switchActiveNodeTab('theme')">Art Style</button>
-    <button class="segment-btn" data-node="center" onclick="switchActiveNodeTab('center')">Center Hub</button>
+    <button class="segment-btn active" data-node="canvasConfig" onclick="switchActiveNodeTab('canvasConfig')">Resolution & Theme</button>
+    <button class="segment-btn" data-node="center" onclick="switchActiveNodeTab('center')">Center Device</button>
     <button class="segment-btn" data-node="top" onclick="switchActiveNodeTab('top')">Purpose (17)</button>
     <button class="segment-btn" data-node="right" onclick="switchActiveNodeTab('right')">Functions (18-20)</button>
     <button class="segment-btn" data-node="bottom" onclick="switchActiveNodeTab('bottom')">Weight (21)</button>
-    <button class="segment-btn" data-node="left" onclick="switchActiveNodeTab('left')">Evolution (22-24)</button>
+    <button class="segment-btn" data-node="left" onclick="switchActiveNodeTab('left')">Modern Era (22-24)</button>
   </div>
 
   <!-- Main Grid Dashboard -->
@@ -313,46 +315,52 @@
     <!-- Left Column: Canvas Poster Preview Stage -->
     <div class="canvas-card animate-content-size">
       <div class="canvas-wrapper">
-        <canvas id="posterCanvas" width="1920" height="1920"></canvas>
+        <!-- Default buffer 2400x2400 (supersampled for zero pixelation) -->
+        <canvas id="posterCanvas" width="2400" height="2400"></canvas>
       </div>
     </div>
 
     <!-- Right Column: Interactive Editor Side Panel -->
     <div class="side-panel animate-content-size">
       
-      <!-- Primary Action Card -->
+      <!-- Primary Action Card with Resolution Selector -->
       <div class="panel-card animate-content-size">
         <div class="badge-bar">
           <div class="count-pill">
             <span class="count-indicator-dot"></span>
-            <span id="examScorePill">[8 marks] infoposter</span>
+            <span id="currentResBadge">2400 × 2400 (Retina 2K)</span>
           </div>
-          <span style="font-size: 11.5px; font-weight: 800; color: var(--ios-blue); letter-spacing: 0.4px;" id="modeIndicatorLabel">STUDENT MODE</span>
+          <span style="font-size: 11px; font-weight: 800; color: var(--ios-blue); letter-spacing: 0.5px;">APPLE HIG SPEC</span>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
+          <!-- Resolution Preset Selector -->
+          <div class="field-group" style="margin-bottom: 2px;">
+            <label class="field-label">Export Canvas Resolution</label>
+            <select class="text-input" id="resolutionSelect" onchange="setPosterResolution(this.value)" style="cursor: pointer; font-weight: 700;">
+              <option value="1200">1200 × 1200 • Standard HD</option>
+              <option value="2400" selected>2400 × 2400 • Retina 2K (Super Crisp)</option>
+              <option value="3840">3840 × 3840 • 4K UHD Master (Razor Sharp)</option>
+              <option value="4800">4800 × 4800 • 300 DPI Ultra Print</option>
+            </select>
+          </div>
+
           <button class="btn btn-primary" onclick="exportHighResPoster()">
             <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             Export Poster (PNG)
           </button>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button class="btn btn-secondary btn-compact" onclick="toggleAnswerMode()">
-              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              Reveal Answers
-            </button>
-            <button class="btn btn-secondary btn-compact" onclick="printPoster()">
-              <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-              Print / PDF
-            </button>
-          </div>
+          <button class="btn btn-secondary btn-compact" onclick="printPoster()">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            AirPrint / Save as PDF
+          </button>
         </div>
       </div>
 
       <!-- Node Dynamic Editor Card -->
       <div class="panel-card animate-content-size" id="nodeEditorCard">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <h3 id="activeNodeHeading" style="font-size: 16px; font-weight: 700;">Poster Art Style</h3>
+          <h3 id="activeNodeHeading" style="font-size: 16px; font-weight: 700;">Canvas Configuration</h3>
           <button class="btn btn-secondary btn-compact" onclick="openBulkJsonModal()" style="font-size: 11px; padding: 4px 8px;">JSON</button>
         </div>
 
@@ -367,11 +375,11 @@
     <div class="modal-sheet animate-content-size" onclick="event.stopPropagation()">
       <div class="modal-header">
         <button onclick="closeBulkJsonModal()">Cancel</button>
-        <h2>Poster Data (JSON)</h2>
+        <h2>Poster Specification (JSON)</h2>
         <button class="bold" onclick="applyJsonData()">Apply</button>
       </div>
       <p style="font-size: 13px; color: var(--label-secondary); margin-bottom: 10px;">
-        Export or update all mind map data, blank rows, and art parameters directly.
+        Export or update all question numbers, answers, tags, and design tokens directly.
       </p>
       <textarea id="jsonModalTextarea" style="width: 100%; height: 260px; border-radius: 12px; border: 1px solid var(--separator); padding: 12px; font-size: 13px; font-family: monospace; background: var(--bg-primary); color: inherit; resize: none; outline: none; user-select: text;"></textarea>
     </div>
@@ -379,121 +387,140 @@
 
   <script>
     /* ========================================================
-       REIMAGINED MODERN POSTER DATA & PRESETS
+       APPLE HIG POSTER SPECIFICATION (ANSWERS BUILT-IN)
        ======================================================== */
     const DEFAULT_POSTER_DATA = {
-      headerBanner: "ENGLISH COMPREHENSION • GRAPHIC ORGANISER",
-      watermark: "[8 MARKS]",
-      themePreset: "neoGlass", // "neoGlass", "cyberTech", "nordicEditorial", "vibrantStudio"
-      connectorStyle: "curvedSpline", // "curvedSpline", "techCircuit", "modernStraight"
+      headerBanner: "APPLE DESIGN SPECIFICATION • COMPREHENSION STUDY",
+      watermark: "8 MARKS TOTAL",
+      posterTheme: "lightKeynote", // "lightKeynote" or "spaceBlack"
       center: {
-        title: "MOBILE PHONES",
-        subtitle: "TECHNOLOGY EVOLUTION",
-        tag: "CORE TOPIC"
+        tag: "CORE TOPIC",
+        title: "Mobile Phones",
+        subtitle: "Global Connectivity & Personal Computing"
       },
       top: {
-        title: "PRIMARY PURPOSE",
-        tag: "UTILITY",
+        tag: "PRIMARY PURPOSE",
+        title: "Purpose",
         blanks: [
-          { num: "17", answer: "Communication and staying in touch with family" }
+          {
+            num: "17",
+            label: "Essential Utility",
+            answer: "Instant real-time communication & staying in touch with family"
+          }
         ]
       },
       right: {
-        title: "SMARTPHONE FUNCTIONS",
-        tag: "CAPABILITIES",
+        tag: "SMART CAPABILITIES",
+        title: "Functions of smart phones",
         blanks: [
-          { num: "18", answer: "Browse internet & high-speed messaging" },
-          { num: "19", answer: "High-definition photo and 4K video recording" },
-          { num: "20", answer: "Digital payments, banking & GPS navigation" }
+          {
+            num: "18",
+            label: "Internet & Web Services",
+            answer: "Browsing the web, sending emails & real-time messaging"
+          },
+          {
+            num: "19",
+            label: "Multimedia Studio",
+            answer: "Capturing high-definition photos & 4K cinematic video"
+          },
+          {
+            num: "20",
+            label: "Smart Tools & Lifestyle",
+            answer: "Turn-by-turn GPS navigation, digital wallets & banking"
+          }
         ]
       },
       bottom: {
-        title: "FIRST MOBILE WEIGHT",
-        tag: "HISTORICAL FACT",
+        tag: "HISTORICAL HARDWARE",
+        title: "Weight of the first mobile phone",
         blanks: [
-          { num: "21", answer: "Approx. 1.1 kilograms (DynaTAC 8000X)" }
+          {
+            num: "21",
+            label: "DynaTAC 8000X Spec",
+            answer: "Weighed roughly 1.1 kilograms (2.4 lbs)"
+          }
         ]
       },
       left: {
-        title: "MODERN PHONES ARE",
-        tag: "CHARACTERISTICS",
+        tag: "MODERN EVOLUTION",
+        title: "Mobile phones now are",
         blanks: [
-          { num: "22", answer: "Ultra-slim, lightweight and durable" },
-          { num: "23", answer: "Equipped with AI & all-day battery" },
-          { num: "24", answer: "Indispensable pocket supercomputers" }
+          {
+            num: "22",
+            label: "Form Factor",
+            answer: "Ultra-slim, lightweight and pocket-friendly"
+          },
+          {
+            num: "23",
+            label: "Performance",
+            answer: "Powered by fast neural processors with all-day battery"
+          },
+          {
+            num: "24",
+            label: "Everyday Necessity",
+            answer: "Indispensable pocket computers for daily life"
+          }
         ]
       }
     };
 
     let posterData = JSON.parse(JSON.stringify(DEFAULT_POSTER_DATA));
-    let showAnswerKey = false;
-    let activeTab = "theme";
+    let activeTab = "canvasConfig";
+    let currentResolution = 2400; // Native canvas buffer (2400x2400)
 
-    // Undo / Redo Stacks
     const undoStack = [];
     const redoStack = [];
 
-    // Local Storage Persistence
     try {
-      const saved = localStorage.getItem("neo_poster_data_v2");
+      const saved = localStorage.getItem("apple_poster_data_v3");
       if (saved) posterData = JSON.parse(saved);
     } catch (e) {}
 
     /* ========================================================
-       THEME COLOR PALETTES
+       APPLE HIG COLOR PALETTE TOKENS
        ======================================================== */
-    const THEMES = {
-      neoGlass: {
-        name: "Neo Glass (Apple Studio)",
-        bgGradient: ["#F6F8FD", "#E9EEF9"],
-        dotGrid: "rgba(100, 120, 160, 0.12)",
-        bannerColor: "#5856D6",
-        center: { fill: "#FFFFFF", stroke: "#007AFF", shadow: "rgba(0, 122, 255, 0.15)", text: "#0F172A", accent: "#007AFF" },
-        top: { badgeBg: "#E8F8F5", accent: "#00A86B", cardFill: "#FFFFFF", stroke: "rgba(0, 168, 107, 0.3)" },
-        right: { badgeBg: "#F3E8FF", accent: "#8B5CF6", cardFill: "#FFFFFF", stroke: "rgba(139, 92, 246, 0.3)" },
-        bottom: { badgeBg: "#FFF4E6", accent: "#F97316", cardFill: "#FFFFFF", stroke: "rgba(249, 115, 22, 0.3)" },
-        left: { badgeBg: "#EFF6FF", accent: "#0284C7", cardFill: "#FFFFFF", stroke: "rgba(2, 132, 199, 0.3)" },
-        connectorGradients: true,
-        lineColor: "#94A3B8"
+    const APPLE_THEMES = {
+      lightKeynote: {
+        canvasBg: "#F5F5F7",
+        outerBorder: "rgba(0, 0, 0, 0.06)",
+        bannerText: "#86868B",
+        cardFill: "rgba(255, 255, 255, 0.94)",
+        cardBorder: "rgba(0, 0, 0, 0.08)",
+        cardInnerHighlight: "rgba(255, 255, 255, 0.8)",
+        cardShadow: "rgba(0, 0, 0, 0.06)",
+        titleText: "#1D1D1F",
+        bodyText: "#1D1D1F",
+        secondaryText: "#86868B",
+        lineColor: "#D2D2D7",
+        connectorGlow: "rgba(0, 122, 255, 0.08)",
+        pills: {
+          top: { bg: "rgba(0, 199, 190, 0.12)", text: "#008A83", accent: "#00C7BE" },
+          right: { bg: "rgba(175, 82, 222, 0.12)", text: "#8933B0", accent: "#AF52DE" },
+          bottom: { bg: "rgba(255, 149, 0, 0.12)", text: "#B25E00", accent: "#FF9500" },
+          left: { bg: "rgba(0, 122, 255, 0.12)", text: "#0062CC", accent: "#007AFF" },
+          center: { bg: "rgba(0, 122, 255, 0.1)", text: "#007AFF", accent: "#007AFF" }
+        }
       },
-      cyberTech: {
-        name: "Cyber Blueprint (Dark Tech)",
-        bgGradient: ["#0B0F19", "#111827"],
-        dotGrid: "rgba(56, 189, 248, 0.15)",
-        bannerColor: "#38BDF8",
-        center: { fill: "#1E293B", stroke: "#38BDF8", shadow: "rgba(56, 189, 248, 0.3)", text: "#F8FAFC", accent: "#38BDF8" },
-        top: { badgeBg: "rgba(16, 185, 129, 0.15)", accent: "#34D399", cardFill: "#161F30", stroke: "#10B981" },
-        right: { badgeBg: "rgba(192, 132, 252, 0.15)", accent: "#C084FC", cardFill: "#161F30", stroke: "#A855F7" },
-        bottom: { badgeBg: "rgba(251, 146, 60, 0.15)", accent: "#FB923C", cardFill: "#161F30", stroke: "#F97316" },
-        left: { badgeBg: "rgba(56, 189, 248, 0.15)", accent: "#38BDF8", cardFill: "#161F30", stroke: "#0EA5E9" },
-        connectorGradients: true,
-        lineColor: "#38BDF8"
-      },
-      nordicEditorial: {
-        name: "Nordic Minimalist (Editorial)",
-        bgGradient: ["#FAF7F2", "#F2ECE1"],
-        dotGrid: "rgba(60, 50, 40, 0.08)",
-        bannerColor: "#292524",
-        center: { fill: "#FFFFFF", stroke: "#292524", shadow: "rgba(0, 0, 0, 0.08)", text: "#1C1917", accent: "#78716C" },
-        top: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
-        right: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
-        bottom: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
-        left: { badgeBg: "#E7E5E4", accent: "#44403C", cardFill: "#FFFFFF", stroke: "#D6D3D1" },
-        connectorGradients: false,
-        lineColor: "#44403C"
-      },
-      vibrantStudio: {
-        name: "Vibrant Pop Infographic",
-        bgGradient: ["#FFFDF0", "#FFF3EB"],
-        dotGrid: "rgba(239, 68, 68, 0.08)",
-        bannerColor: "#EA580C",
-        center: { fill: "#FFFFFF", stroke: "#FF3366", shadow: "rgba(255, 51, 102, 0.2)", text: "#1E1B4B", accent: "#FF3366" },
-        top: { badgeBg: "#ECFDF5", accent: "#059669", cardFill: "#FFFFFF", stroke: "#34D399" },
-        right: { badgeBg: "#FDF2F8", accent: "#DB2777", cardFill: "#FFFFFF", stroke: "#F472B6" },
-        bottom: { badgeBg: "#FEF3C7", accent: "#D97706", cardFill: "#FFFFFF", stroke: "#FBBF24" },
-        left: { badgeBg: "#EFF6FF", accent: "#2563EB", cardFill: "#FFFFFF", stroke: "#60A5FA" },
-        connectorGradients: true,
-        lineColor: "#9333EA"
+      spaceBlack: {
+        canvasBg: "#000000",
+        outerBorder: "rgba(255, 255, 255, 0.12)",
+        bannerText: "#86868B",
+        cardFill: "rgba(28, 28, 30, 0.92)",
+        cardBorder: "rgba(255, 255, 255, 0.14)",
+        cardInnerHighlight: "rgba(255, 255, 255, 0.06)",
+        cardShadow: "rgba(0, 0, 0, 0.5)",
+        titleText: "#F5F5F7",
+        bodyText: "#F5F5F7",
+        secondaryText: "#A1A1A6",
+        lineColor: "#38383A",
+        connectorGlow: "rgba(10, 132, 255, 0.18)",
+        pills: {
+          top: { bg: "rgba(99, 230, 226, 0.18)", text: "#63E6E2", accent: "#63E6E2" },
+          right: { bg: "rgba(191, 90, 242, 0.18)", text: "#BF5AF2", accent: "#BF5AF2" },
+          bottom: { bg: "rgba(255, 159, 10, 0.18)", text: "#FF9F0A", accent: "#FF9F0A" },
+          left: { bg: "rgba(10, 132, 255, 0.18)", text: "#0A84FF", accent: "#0A84FF" },
+          center: { bg: "rgba(10, 132, 255, 0.18)", text: "#0A84FF", accent: "#0A84FF" }
+        }
       }
     };
 
@@ -507,14 +534,14 @@
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(520 + 240 * strength, t);
-        osc.frequency.exponentialRampToValueAtTime(140, t + 0.03);
+        osc.frequency.setValueAtTime(560 + 200 * strength, t);
+        osc.frequency.exponentialRampToValueAtTime(160, t + 0.026);
         gain.gain.setValueAtTime(0.04 * strength, t);
-        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.026);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(t);
-        osc.stop(t + 0.03);
+        osc.stop(t + 0.026);
       } catch (e) {}
     }
 
@@ -567,7 +594,7 @@
 
     function saveAppState() {
       try {
-        localStorage.setItem("neo_poster_data_v2", JSON.stringify(posterData));
+        localStorage.setItem("apple_poster_data_v3", JSON.stringify(posterData));
       } catch (e) {}
     }
 
@@ -578,16 +605,17 @@
       renderPoster();
       renderEditor();
       playClickSound(0.6);
-      showToast("Reset to default layout");
+      showToast("Restored Apple Specification Layout");
     }
 
     /* ========================================================
-       CANVAS POSTER DRAWING ENGINE
+       VECTOR-SHARP APPLE CANVAS RENDERER
        ======================================================== */
     const canvas = document.getElementById("posterCanvas");
     const ctx = canvas.getContext("2d");
 
-    function drawRoundedBox(ctx, x, y, width, height, radius) {
+    // Apple squircle / smooth rounded rectangle
+    function drawAppleSquircle(ctx, x, y, width, height, radius) {
       ctx.beginPath();
       ctx.moveTo(x + radius, y);
       ctx.lineTo(x + width - radius, y);
@@ -601,362 +629,303 @@
       ctx.closePath();
     }
 
-    // Canvas Vector Icons for each section
-    function drawNodeIcon(ctx, type, cx, cy, color) {
-      ctx.save();
-      ctx.strokeStyle = color;
-      ctx.fillStyle = color;
-      ctx.lineWidth = 3.2;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-
-      if (type === "phone") {
-        // Modern Smartphone Outline + screen notch
-        drawRoundedBox(ctx, cx - 14, cy - 22, 28, 44, 6);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(cx, cy + 14, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(cx - 5, cy - 17);
-        ctx.lineTo(cx + 5, cy - 17);
-        ctx.stroke();
-      } else if (type === "target") {
-        // Target / Bullseye (Purpose)
-        ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx, cy, 2, 0, Math.PI * 2); ctx.fill();
-      } else if (type === "lightning") {
-        // Lightning bolt / Capabilities (Functions)
-        ctx.beginPath();
-        ctx.moveTo(cx + 2, cy - 15);
-        ctx.lineTo(cx - 10, cy);
-        ctx.lineTo(cx - 1, cy);
-        ctx.lineTo(cx - 3, cy + 15);
-        ctx.lineTo(cx + 10, cy - 2);
-        ctx.lineTo(cx + 1, cy - 2);
-        ctx.closePath();
-        ctx.fill();
-      } else if (type === "scale") {
-        // Weight scale
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - 14); ctx.lineTo(cx, cy + 13);
-        ctx.moveTo(cx - 15, cy - 7); ctx.lineTo(cx + 15, cy - 7);
-        ctx.stroke();
-        // Pans
-        ctx.beginPath(); ctx.arc(cx - 11, cy + 2, 6, 0, Math.PI); ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx + 11, cy + 2, 6, 0, Math.PI); ctx.stroke();
-      } else if (type === "rocket") {
-        // Modern Evolution Rocket
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - 15);
-        ctx.quadraticCurveTo(cx + 10, cy - 4, cx + 7, cy + 8);
-        ctx.lineTo(cx - 7, cy + 8);
-        ctx.quadraticCurveTo(cx - 10, cy - 4, cx, cy - 15);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(cx, cy - 2, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
+    // Dynamic resolution changer
+    function setPosterResolution(resValue) {
+      currentResolution = parseInt(resValue, 10);
+      canvas.width = currentResolution;
+      canvas.height = currentResolution;
+      
+      const badgeMap = {
+        1200: "1200 × 1200 (Standard HD)",
+        2400: "2400 × 2400 (Retina 2K)",
+        3840: "3840 × 3840 (4K UHD Master)",
+        4800: "4800 × 4800 (300 DPI Print)"
+      };
+      document.getElementById("currentResBadge").textContent = badgeMap[currentResolution] || `${currentResolution} × ${currentResolution}`;
+      
+      renderPoster();
+      playClickSound(0.4);
+      showToast(`✓ Buffer updated: ${badgeMap[currentResolution]}`);
     }
 
     function renderPoster() {
       const W = canvas.width;
       const H = canvas.height;
-      const t = THEMES[posterData.themePreset] || THEMES.neoGlass;
+      
+      // Vector Coordinate Scaling: Base coordinate system is 2000 x 2000
+      // Scaled up to 2400, 3840, or 4800 for crisp, anti-aliased Retina text!
+      const scale = W / 2000;
+      
+      ctx.save();
+      ctx.scale(scale, scale);
+      
+      const t = APPLE_THEMES[posterData.posterTheme] || APPLE_THEMES.lightKeynote;
 
-      // 1. Rich Canvas Background (Gradient + Subtle Tech Grid Dots)
-      const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 100, W / 2, H / 2, W * 0.72);
-      bgGrad.addColorStop(0, t.bgGradient[0]);
-      bgGrad.addColorStop(1, t.bgGradient[1]);
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, W, H);
+      // 1. Apple Studio Canvas Background
+      ctx.fillStyle = t.canvasBg;
+      ctx.fillRect(0, 0, 2000, 2000);
 
-      // Dot Matrix Background
-      ctx.fillStyle = t.dotGrid;
-      const step = 42;
-      for (let x = 30; x < W; x += step) {
-        for (let y = 30; y < H; y += step) {
-          ctx.beginPath();
-          ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Outer Decorative Border Frame
-      ctx.strokeStyle = t.dotGrid;
-      ctx.lineWidth = 1.5;
-      drawRoundedBox(ctx, 40, 40, W - 80, H - 80, 24);
+      // Delicate Outer Frame
+      ctx.strokeStyle = t.outerBorder;
+      ctx.lineWidth = 2;
+      drawAppleSquircle(ctx, 40, 40, 1920, 1920, 36);
       ctx.stroke();
 
-      // Top Infographic Header Banner
+      // Top Keynote Tracked Header
       if (posterData.headerBanner) {
-        ctx.font = "800 24px 'SF Pro Display', sans-serif";
-        ctx.fillStyle = t.bannerColor;
+        ctx.font = "700 19px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.bannerText;
         ctx.textAlign = "center";
-        ctx.letterSpacing = "2px";
-        ctx.fillText(posterData.headerBanner, W / 2, 90);
+        ctx.letterSpacing = "2.8px";
+        ctx.fillText(posterData.headerBanner, 1000, 95);
         ctx.letterSpacing = "0px";
       }
 
-      // Geometry Constants
-      const cx = W / 2;
-      const cy = H / 2;
+      // Center and Satellite Box Geometries (Normalized in 2000x2000 space)
+      const cx = 1000;
+      const cy = 1000;
 
-      // Center Core dimensions
-      const cW = 340;
-      const cH = 280;
+      // Center Phone Hub
+      const cW = 380;
+      const cH = 320;
       const cX = cx - cW / 2;
       const cY = cy - cH / 2;
 
-      // Satellite Card dimensions
-      const satW = 420;
-      const satH = 360;
-      const marginOffset = 135;
+      // Satellites
+      const satW = 460;
+      const satH = 370;
+      const gap = 120;
 
       const topX = cx - satW / 2;
-      const topY = cY - marginOffset - satH + 30;
+      const topY = cY - gap - satH + 30;
 
       const botX = cx - satW / 2;
-      const botY = cY + cH + marginOffset - 30;
+      const botY = cY + cH + gap - 30;
 
-      const leftX = cX - marginOffset - satW + 20;
+      const leftX = cX - gap - satW + 20;
       const leftY = cy - satH / 2;
 
-      const rightX = cX + cW + marginOffset - 20;
+      const rightX = cX + cW + gap - 20;
       const rightY = cy - satH / 2;
 
-      // 2. Connectors (Spline Curves with Glowing Hub Junctions)
-      const connStyle = posterData.connectorStyle || "curvedSpline";
-
-      function drawConnector(fromX, fromY, toX, toY, color) {
+      // 2. Apple Curved Connection Bus Lines
+      function drawAppleConnector(fromX, fromY, toX, toY, color) {
         ctx.save();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = t.lineColor;
+        ctx.lineWidth = 3;
         ctx.lineCap = "round";
 
         ctx.beginPath();
-        if (connStyle === "curvedSpline") {
-          const midX = (fromX + toX) / 2;
-          const midY = (fromY + toY) / 2;
-          ctx.moveTo(fromX, fromY);
-          ctx.bezierCurveTo(midX, fromY, midX, toY, toX, toY);
-        } else if (connStyle === "techCircuit") {
-          ctx.moveTo(fromX, fromY);
-          if (Math.abs(fromX - toX) > Math.abs(fromY - toY)) {
-            const splitX = fromX + (toX - fromX) * 0.5;
-            ctx.lineTo(splitX, fromY);
-            ctx.lineTo(splitX, toY);
-            ctx.lineTo(toX, toY);
-          } else {
-            const splitY = fromY + (toY - fromY) * 0.5;
-            ctx.lineTo(fromX, splitY);
-            ctx.lineTo(toX, splitY);
-            ctx.lineTo(toX, toY);
-          }
-        } else {
-          // Modern Straight
-          ctx.moveTo(fromX, fromY);
-          ctx.lineTo(toX, toY);
-        }
+        const midX = (fromX + toX) / 2;
+        const midY = (fromY + toY) / 2;
+        ctx.moveTo(fromX, fromY);
+        ctx.bezierCurveTo(midX, fromY, midX, toY, toX, toY);
         ctx.stroke();
 
-        // Junction anchor dots
+        // Sleek anchor joints
         ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(fromX, fromY, 6, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.arc(toX, toY, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(fromX, fromY, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(toX, toY, 5, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       }
 
-      // Draw 4 connectors
-      drawConnector(cx, cY, cx, topY + satH, t.top.accent);
-      drawConnector(cx, cY + cH, cx, botY, t.bottom.accent);
-      drawConnector(cX, cy, leftX + satW, cy, t.left.accent);
-      drawConnector(cX + cW, cy, rightX, cy, t.right.accent);
+      drawAppleConnector(cx, cY, cx, topY + satH, t.pills.top.accent);
+      drawAppleConnector(cx, cY + cH, cx, botY, t.pills.bottom.accent);
+      drawAppleConnector(cX, cy, leftX + satW, cy, t.pills.left.accent);
+      drawAppleConnector(cX + cW, cy, rightX, cy, t.pills.right.accent);
 
-      // 3. Render Modern Satellite Cards
-      function drawSatellite(nodeKey, x, y, width, height, conf, iconType) {
+      // 3. Render Apple Satellite Bento Cards
+      function drawAppleCard(nodeKey, x, y, width, height, pillConfig) {
         const data = posterData[nodeKey];
         if (!data) return;
 
         ctx.save();
-        // Drop Shadow
-        ctx.shadowColor = "rgba(0, 0, 0, 0.08)";
-        ctx.shadowBlur = 24;
-        ctx.shadowOffsetY = 10;
+        // Multi-layered diffuse ambient elevation
+        ctx.shadowColor = t.cardShadow;
+        ctx.shadowBlur = 32;
+        ctx.shadowOffsetY = 12;
 
-        // Card Body
-        drawRoundedBox(ctx, x, y, width, height, 26);
-        ctx.fillStyle = conf.cardFill;
+        drawAppleSquircle(ctx, x, y, width, height, 32);
+        ctx.fillStyle = t.cardFill;
         ctx.fill();
         ctx.restore();
 
-        // Card Border Stroke
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = conf.stroke;
-        drawRoundedBox(ctx, x, y, width, height, 26);
+        // Card Border
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = t.cardBorder;
+        drawAppleSquircle(ctx, x, y, width, height, 32);
         ctx.stroke();
 
-        // Header Tag Capsule (e.g. "UTILITY", "CAPABILITIES")
+        // Category Tag Badge (e.g. "PRIMARY PURPOSE")
         const tagText = (data.tag || "").toUpperCase();
         if (tagText) {
-          ctx.font = "800 13px 'SF Pro Display', sans-serif";
+          ctx.font = "800 12.5px 'SF Pro Display', sans-serif";
+          ctx.letterSpacing = "0.8px";
           const tagW = ctx.measureText(tagText).width + 24;
-          drawRoundedBox(ctx, x + 24, y + 20, tagW, 26, 13);
-          ctx.fillStyle = conf.badgeBg;
+          drawAppleSquircle(ctx, x + 24, y + 22, tagW, 26, 8);
+          ctx.fillStyle = pillConfig.bg;
           ctx.fill();
-          ctx.fillStyle = conf.accent;
+          ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(tagText, x + 24 + tagW / 2, y + 33);
+          ctx.fillText(tagText, x + 24 + tagW / 2, y + 35);
+          ctx.letterSpacing = "0px";
         }
 
-        // Section Icon Badge (Top Right of card)
-        drawRoundedBox(ctx, x + width - 58, y + 16, 40, 40, 14);
-        ctx.fillStyle = conf.badgeBg;
-        ctx.fill();
-        drawNodeIcon(ctx, iconType, x + width - 38, y + 36, conf.accent);
-
         // Section Title
-        ctx.font = "800 24px 'SF Pro Display', sans-serif";
-        ctx.fillStyle = t.center.text;
+        ctx.font = "700 24px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.titleText;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(data.title, x + 24, y + 62);
+        ctx.fillText(data.title, x + 24, y + 64);
 
-        // Underline Accent Bar
-        ctx.fillStyle = conf.accent;
-        drawRoundedBox(ctx, x + 24, y + 96, 42, 4, 2);
-        ctx.fill();
-
-        // Question Blanks / Interactive Slot Rows
+        // Render Integrated Question & Answer Items
         const blanks = data.blanks || [];
-        const startY = y + 120;
-        const availableH = height - 140;
-        const rowH = blanks.length > 1 ? availableH / blanks.length : 60;
+        const startY = y + 112;
+        const availableH = height - 128;
+        const rowH = availableH / Math.max(blanks.length, 1);
 
         blanks.forEach((b, idx) => {
-          const rowY = startY + idx * rowH;
+          const currentY = startY + idx * rowH;
           const leftP = x + 24;
-          const rightP = x + width - 24;
+          const contentX = leftP + 44;
+          const contentW = width - 68;
 
-          // Number Capsule Pill
-          drawRoundedBox(ctx, leftP, rowY + 2, 38, 32, 10);
-          ctx.fillStyle = conf.badgeBg;
+          // Apple Number Pill Indicator
+          ctx.beginPath();
+          ctx.arc(leftP + 14, currentY + 16, 14, 0, Math.PI * 2);
+          ctx.fillStyle = pillConfig.bg;
           ctx.fill();
-          ctx.strokeStyle = conf.accent;
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
 
-          ctx.font = "800 16px 'SF Pro Display', sans-serif";
-          ctx.fillStyle = conf.accent;
+          ctx.font = "800 14px 'SF Pro Display', sans-serif";
+          ctx.fillStyle = pillConfig.text;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.fillText(b.num || `${idx + 1}`, leftP + 19, rowY + 18);
+          ctx.fillText(b.num, leftP + 14, currentY + 16);
 
-          // Line / Fill Box
-          const slotX = leftP + 48;
-          const slotW = rightP - slotX;
+          // Subtitle / Label
+          ctx.font = "700 14.5px 'SF Pro Display', sans-serif";
+          ctx.fillStyle = t.titleText;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "top";
+          ctx.fillText(b.label || `Specification ${b.num}`, contentX, currentY + 4);
 
-          // Dashed Fill-in-the-blank line
-          ctx.beginPath();
-          ctx.setLineDash([6, 6]);
-          ctx.moveTo(slotX, rowY + 34);
-          ctx.lineTo(rightP, rowY + 34);
-          ctx.strokeStyle = conf.stroke;
-          ctx.lineWidth = 2.2;
-          ctx.stroke();
-          ctx.setLineDash([]);
-
-          // Answer Reveal
-          if (showAnswerKey && b.answer) {
-            ctx.font = "600 17px 'SF Pro Display', sans-serif";
-            ctx.fillStyle = "#007AFF";
-            ctx.textAlign = "left";
-            ctx.textBaseline = "bottom";
-            ctx.fillText(b.answer, slotX + 4, rowY + 29, slotW - 8);
-          }
+          // Integrated Answer
+          ctx.font = "500 14px 'SF Pro Display', sans-serif";
+          ctx.fillStyle = t.secondaryText;
+          
+          // Clean text wrapping for answers
+          wrapAndFillText(ctx, b.answer || "", contentX, currentY + 26, contentW, 19);
         });
       }
 
-      // Draw all 4 surrounding cards
-      drawSatellite("top", topX, topY, satW, satH, t.top, "target");
-      drawSatellite("bottom", botX, botY, satW, satH, t.bottom, "scale");
-      drawSatellite("left", leftX, leftY, satW, satH, t.left, "rocket");
-      drawSatellite("right", rightX, rightY, satW, satH, t.right, "lightning");
+      // Draw all 4 satellite cards
+      drawAppleCard("top", topX, topY, satW, satH, t.pills.top);
+      drawAppleCard("bottom", botX, botY, satW, satH, t.pills.bottom);
+      drawAppleCard("left", leftX, leftY, satW, satH, t.pills.left);
+      drawAppleCard("right", rightX, rightY, satW, satH, t.pills.right);
 
-      // 4. Central Hub (Modern Smartphone Chassis / Futuristic Core)
+      // 4. Central Hub (Apple Keynote Hero Card)
       ctx.save();
-      ctx.shadowColor = t.center.shadow;
-      ctx.shadowBlur = 36;
-      ctx.shadowOffsetY = 12;
-
-      drawRoundedBox(ctx, cX, cY, cW, cH, 34);
-      ctx.fillStyle = t.center.fill;
+      ctx.shadowColor = t.cardShadow;
+      ctx.shadowBlur = 40;
+      ctx.shadowOffsetY = 16;
+      drawAppleSquircle(ctx, cX, cY, cW, cH, 36);
+      ctx.fillStyle = t.cardFill;
       ctx.fill();
       ctx.restore();
 
-      // Gradient Border Stroke
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = t.center.stroke;
-      drawRoundedBox(ctx, cX, cY, cW, cH, 34);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = t.cardBorder;
+      drawAppleSquircle(ctx, cX, cY, cW, cH, 36);
       ctx.stroke();
 
-      // Phone Notch / Speaker Bar
-      drawRoundedBox(ctx, cx - 36, cY + 18, 72, 6, 3);
-      ctx.fillStyle = t.dotGrid;
+      // Top Dynamic Island Pill
+      drawAppleSquircle(ctx, cx - 40, cY + 20, 80, 10, 5);
+      ctx.fillStyle = t.lineColor;
       ctx.fill();
 
-      // Central Phone Icon
-      drawNodeIcon(ctx, "phone", cx, cY + 65, t.center.accent);
-
-      // Central Hub Tag Capsule
-      ctx.font = "800 13px 'SF Pro Display', sans-serif";
-      const cTagText = (posterData.center.tag || "CORE TOPIC").toUpperCase();
-      const cTagW = ctx.measureText(cTagText).width + 24;
-      drawRoundedBox(ctx, cx - cTagW / 2, cY + 105, cTagW, 26, 13);
-      ctx.fillStyle = t.center.accent + "1A";
+      // Core Topic Tag Pill
+      const cTag = (posterData.center.tag || "CORE TOPIC").toUpperCase();
+      ctx.font = "800 12px 'SF Pro Display', sans-serif";
+      ctx.letterSpacing = "0.8px";
+      const cTagW = ctx.measureText(cTag).width + 22;
+      drawAppleSquircle(ctx, cx - cTagW / 2, cY + 54, cTagW, 24, 7);
+      ctx.fillStyle = t.pills.center.bg;
       ctx.fill();
-      ctx.fillStyle = t.center.accent;
+      ctx.fillStyle = t.pills.center.text;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(cTagText, cx, cY + 118);
+      ctx.fillText(cTag, cx, cY + 66);
+      ctx.letterSpacing = "0px";
 
-      // Central Title
-      ctx.font = "900 32px 'SF Pro Display', sans-serif";
-      ctx.fillStyle = t.center.text;
+      // Device Glyph (Apple Phone outline)
+      ctx.strokeStyle = t.pills.center.accent;
+      ctx.lineWidth = 2.5;
+      drawAppleSquircle(ctx, cx - 18, cY + 98, 36, 56, 8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx, cY + 144, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = t.pills.center.accent;
+      ctx.fill();
+
+      // Center Title
+      ctx.font = "800 32px 'SF Pro Display', sans-serif";
+      ctx.fillStyle = t.titleText;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(posterData.center.title, cx, cY + 165);
+      ctx.fillText(posterData.center.title, cx, cY + 200);
 
-      // Central Subtitle
+      // Center Subtitle
       if (posterData.center.subtitle) {
-        ctx.font = "700 15px 'SF Pro Display', sans-serif";
-        ctx.fillStyle = t.dotGrid === "rgba(60, 50, 40, 0.08)" ? "#78716C" : "#64748B";
-        ctx.fillText(posterData.center.subtitle, cx, cY + 205);
+        ctx.font = "500 15px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.secondaryText;
+        ctx.fillText(posterData.center.subtitle, cx, cY + 242);
       }
 
-      // 5. Official Exam Marks Ribbon Badge (Bottom Right)
+      // 5. Apple Exam Marks Ribbon Badge (Bottom Right)
       if (posterData.watermark) {
         const markW = 160;
-        const markH = 46;
-        const markX = W - markW - 65;
-        const markY = H - markH - 65;
+        const markH = 44;
+        const markX = 2000 - markW - 65;
+        const markY = 2000 - markH - 65;
 
-        drawRoundedBox(ctx, markX, markY, markW, markH, 23);
-        ctx.fillStyle = t.bannerColor + "1F";
+        drawAppleSquircle(ctx, markX, markY, markW, markH, 22);
+        ctx.fillStyle = t.pills.center.bg;
         ctx.fill();
-        ctx.strokeStyle = t.bannerColor;
-        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = t.pills.center.accent;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        ctx.font = "800 18px 'SF Pro Display', sans-serif";
-        ctx.fillStyle = t.bannerColor;
+        ctx.font = "800 14px 'SF Pro Display', sans-serif";
+        ctx.fillStyle = t.pills.center.text;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`★ ${posterData.watermark}`, markX + markW / 2, markY + markH / 2);
       }
+
+      ctx.restore();
+    }
+
+    // Helper: Wrap text cleanly within bounded width
+    function wrapAndFillText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      let testY = y;
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          ctx.fillText(line, x, testY);
+          line = words[n] + ' ';
+          testY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, testY);
     }
 
     /* ========================================================
@@ -984,24 +953,14 @@
       const container = document.getElementById("dynamicEditorFields");
       const heading = document.getElementById("activeNodeHeading");
 
-      if (activeTab === "theme") {
-        heading.textContent = "Infographic Theme & Layout";
+      if (activeTab === "canvasConfig") {
+        heading.textContent = "Canvas Specification & Style";
         container.innerHTML = `
           <div class="field-group">
-            <label class="field-label">Visual Style Preset</label>
-            <select class="text-input" onchange="setThemePreset(this.value)" style="cursor: pointer;">
-              <option value="neoGlass" ${posterData.themePreset === 'neoGlass' ? 'selected' : ''}>Neo Glass (Apple Studio Clean)</option>
-              <option value="cyberTech" ${posterData.themePreset === 'cyberTech' ? 'selected' : ''}>Cyber Blueprint (Dark Tech Neon)</option>
-              <option value="vibrantStudio" ${posterData.themePreset === 'vibrantStudio' ? 'selected' : ''}>Vibrant Pop Infographic</option>
-              <option value="nordicEditorial" ${posterData.themePreset === 'nordicEditorial' ? 'selected' : ''}>Nordic Minimalist (Editorial)</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Connector Line Style</label>
-            <select class="text-input" onchange="setConnectorStyle(this.value)" style="cursor: pointer;">
-              <option value="curvedSpline" ${posterData.connectorStyle === 'curvedSpline' ? 'selected' : ''}>Curved Spline Bezier</option>
-              <option value="techCircuit" ${posterData.connectorStyle === 'techCircuit' ? 'selected' : ''}>Tech Circuit Bus (Orthogonal)</option>
-              <option value="modernStraight" ${posterData.connectorStyle === 'modernStraight' ? 'selected' : ''}>Clean Direct Straight</option>
+            <label class="field-label">Poster Theme</label>
+            <select class="text-input" onchange="setPosterTheme(this.value)" style="cursor: pointer; font-weight: 700;">
+              <option value="lightKeynote" ${posterData.posterTheme === 'lightKeynote' ? 'selected' : ''}>Apple Keynote Studio (Light Ceramic)</option>
+              <option value="spaceBlack" ${posterData.posterTheme === 'spaceBlack' ? 'selected' : ''}>Apple Pro Display (Space Black)</option>
             </select>
           </div>
           <div class="field-group">
@@ -1014,33 +973,36 @@
           </div>
         `;
       } else if (activeTab === "center") {
-        heading.textContent = "Central Core Topic";
+        heading.textContent = "Central Hero Device";
         container.innerHTML = `
           <div class="field-group">
-            <label class="field-label">Core Title</label>
+            <label class="field-label">Topic Title</label>
             <input type="text" class="text-input" value="${posterData.center.title}" oninput="updateCenterTitle(this.value)" />
           </div>
           <div class="field-group">
-            <label class="field-label">Subtitle / Subheading</label>
+            <label class="field-label">Subtitle</label>
             <input type="text" class="text-input" value="${posterData.center.subtitle || ''}" oninput="updateCenterSubtitle(this.value)" />
           </div>
           <div class="field-group">
-            <label class="field-label">Category Pill Tag</label>
+            <label class="field-label">Pill Tag</label>
             <input type="text" class="text-input" value="${posterData.center.tag || ''}" oninput="updateCenterTag(this.value)" />
           </div>
         `;
       } else {
-        // Outer Satellite Nodes
+        // Satellite Cards
         const node = posterData[activeTab];
-        heading.textContent = `${activeTab.toUpperCase()} Card (${node.title})`;
+        heading.textContent = `${activeTab.toUpperCase()} Section (${node.title})`;
 
         let blanksHtml = (node.blanks || []).map((b, idx) => `
           <div class="blank-row-item animate-pop-in">
-            <input type="text" class="blank-prefix-input" value="${b.num}" oninput="updateBlankField('${activeTab}', ${idx}, 'num', this.value)" title="Number label" />
-            <input type="text" class="blank-answer-input" placeholder="Answer key text..." value="${b.answer}" oninput="updateBlankField('${activeTab}', ${idx}, 'answer', this.value)" />
-            <button class="btn-icon-del" onclick="removeBlankRow('${activeTab}', ${idx})" title="Remove">
-              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+            <div class="blank-header-row">
+              <input type="text" class="blank-prefix-input" value="${b.num}" oninput="updateBlankField('${activeTab}', ${idx}, 'num', this.value)" title="Number label" />
+              <input type="text" class="blank-label-input" placeholder="Title/Feature..." value="${b.label || ''}" oninput="updateBlankField('${activeTab}', ${idx}, 'label', this.value)" />
+              <button class="btn-icon-del" onclick="removeBlankRow('${activeTab}', ${idx})" title="Remove item">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <textarea class="blank-answer-input" rows="2" placeholder="Integrated Answer..." oninput="updateBlankField('${activeTab}', ${idx}, 'answer', this.value)">${b.answer || ''}</textarea>
           </div>
         `).join("");
 
@@ -1050,12 +1012,12 @@
             <input type="text" class="text-input" value="${node.title}" oninput="updateOuterTitle('${activeTab}', this.value)" />
           </div>
           <div class="field-group">
-            <label class="field-label">Pill Tag</label>
+            <label class="field-label">Pill Category Tag</label>
             <input type="text" class="text-input" value="${node.tag || ''}" oninput="updateOuterTag('${activeTab}', this.value)" />
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 8px;">
-            <label class="field-label" style="margin: 0;">Question Blanks (${node.blanks.length})</label>
-            <button class="btn btn-secondary btn-compact" style="font-size: 11px; padding: 4px 8px;" onclick="addBlankRow('${activeTab}')">+ Add Blank</button>
+            <label class="field-label" style="margin: 0;">Specification Items (${node.blanks.length})</label>
+            <button class="btn btn-secondary btn-compact" style="font-size: 11px; padding: 4px 8px;" onclick="addBlankRow('${activeTab}')">+ Add Item</button>
           </div>
           <div>${blanksHtml}</div>
         `;
@@ -1063,17 +1025,9 @@
     }
 
     /* Mutation handlers */
-    function setThemePreset(preset) {
-      pushStateSnapshot("Change Theme");
-      posterData.themePreset = preset;
-      saveAppState();
-      renderPoster();
-      playClickSound(0.4);
-    }
-
-    function setConnectorStyle(style) {
-      pushStateSnapshot("Change Connectors");
-      posterData.connectorStyle = style;
+    function setPosterTheme(theme) {
+      pushStateSnapshot("Change Poster Theme");
+      posterData.posterTheme = theme;
       saveAppState();
       renderPoster();
       playClickSound(0.3);
@@ -1087,7 +1041,6 @@
 
     function updateWatermark(val) {
       posterData.watermark = val;
-      document.getElementById("examScorePill").textContent = `${val} infoposter`;
       renderPoster();
       saveAppState();
     }
@@ -1130,10 +1083,10 @@
     }
 
     function addBlankRow(nodeKey) {
-      pushStateSnapshot("Add Blank Row");
+      pushStateSnapshot("Add Blank Item");
       const list = posterData[nodeKey].blanks;
       const lastNum = list.length > 0 ? (parseInt(list[list.length - 1].num) + 1 || '') : "1";
-      list.push({ num: `${lastNum}`, answer: "" });
+      list.push({ num: `${lastNum}`, label: "Feature", answer: "Specification detail" });
       saveAppState();
       renderPoster();
       renderEditor();
@@ -1141,22 +1094,12 @@
     }
 
     function removeBlankRow(nodeKey, index) {
-      pushStateSnapshot("Remove Blank Row");
+      pushStateSnapshot("Remove Item");
       posterData[nodeKey].blanks.splice(index, 1);
       saveAppState();
       renderPoster();
       renderEditor();
       playClickSound(0.2);
-    }
-
-    function toggleAnswerMode() {
-      showAnswerKey = !showAnswerKey;
-      const label = document.getElementById("modeIndicatorLabel");
-      label.textContent = showAnswerKey ? "ANSWER KEY MODE" : "STUDENT MODE";
-      label.style.color = showAnswerKey ? "var(--ios-purple)" : "var(--ios-blue)";
-      renderPoster();
-      playClickSound(0.4);
-      showToast(showAnswerKey ? "Answer Key Revealed" : "Student Mode Active");
     }
 
     /* ========================================================
@@ -1165,10 +1108,10 @@
     function exportHighResPoster() {
       playClickSound(0.5);
       const link = document.createElement("a");
-      link.download = `Infographic-Poster-${(posterData.center.title || 'MindMap').replace(/\s+/g, '_')}.png`;
+      link.download = `Apple-Spec-${(posterData.center.title || 'MindMap').replace(/\s+/g, '_')}-${currentResolution}p.png`;
       link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
-      showToast("✓ High-Res PNG Exported!");
+      showToast(`✓ Exported ${currentResolution}×${currentResolution} PNG!`);
     }
 
     function printPoster() {
@@ -1178,10 +1121,10 @@
         printWindow.document.write(`
           <html>
             <head>
-              <title>${posterData.center.title} - Modern Poster</title>
+              <title>${posterData.center.title} - Apple Specification</title>
               <style>
-                @page { size: auto; margin: 10mm; }
-                body { margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #000; }
+                @page { size: auto; margin: 8mm; }
+                body { margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; background: #FFF; }
                 img { max-width: 96vw; max-height: 96vh; object-fit: contain; }
               </style>
             </head>
@@ -1235,7 +1178,7 @@
       playClickSound(0.2);
     }
 
-    /* Keyboard Shortcuts */
+    /* Global Keyboard Shortcuts */
     window.addEventListener("keydown", (e) => {
       if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
       const modifier = (navigator.platform.toUpperCase().indexOf('MAC') >= 0) ? e.metaKey : e.ctrlKey;
@@ -1245,7 +1188,7 @@
 
     window.addEventListener("resize", () => { updateIndicator(); });
 
-    // Startup Initialization
+    // Wait for local fonts to load before canvas draws to ensure sharp rendering
     if (document.fonts) {
       document.fonts.ready.then(() => {
         renderPoster();
