@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sejarah Tingkatan 2 UASA — Modul Bilik Darjah Multiplayer & KBAT Pintar</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600;1,800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- PeerJS CDN (Real-time WebRTC P2P Data Channels — NO FIREBASE REQUIRED) -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+  <!-- Tailwind Configuration with Material Design 3 Expressive Tonal Tokens -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            md: {
+              primary: '#5B42F3',
+              'primary-hover': '#472ee0',
+              'primary-container': '#EADDFF',
+              'on-primary-container': '#21005D',
+              secondary: '#825500',
+              'secondary-container': '#FFDDAF',
+              'on-secondary-container': '#2A1800',
+              tertiary: '#006C4C',
+              'tertiary-container': '#89F8C7',
+              'on-tertiary-container': '#002114',
+              surface: '#FDF7FF',
+              'surface-container-lowest': '#FFFFFF',
+              'surface-container-low': '#F7F2FA',
+              'surface-container': '#F2ECF5',
+              'surface-container-high': '#ECE6F0',
+              'surface-container-highest': '#E6E0E9',
+              'on-surface': '#1D1A22',
+              'on-surface-variant': '#49454E',
+              outline: '#7A757F',
+              'outline-variant': '#CAC4D0',
+              error: '#BA1A1A',
+              'error-container': '#FFDAD6',
+              'on-error-container': '#410002',
+              success: '#1B6C39',
+              'success-container': '#A6F5B4',
+              'on-success-container': '#00210C',
+            }
+          },
+          borderRadius: {
+            '2xl': '20px',
+            '3xl': '28px',
+            '4xl': '36px',
+          },
+          boxShadow: {
+            'md3-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.08), 0px 1px 2px 0px rgba(0, 0, 0, 0.12)',
+            'md3-2': '0px 4px 12px 2px rgba(91, 66, 243, 0.12), 0px 1px 3px 0px rgba(0, 0, 0, 0.08)',
+            'md3-3': '0px 8px 24px 4px rgba(91, 66, 243, 0.18), 0px 2px 6px 1px rgba(0, 0, 0, 0.06)',
+            'glow-purple': '0px 0px 28px rgba(91, 66, 243, 0.38)',
+            'glow-amber': '0px 0px 24px rgba(255, 221, 175, 0.6)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* CSS animateContentSize Engine */
+    .animate-content-size {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 360ms cubic-bezier(0.2, 0, 0, 1), opacity 260ms ease;
+      opacity: 0;
+    }
+    .animate-content-size.expanded {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+    .animate-content-size > .expand-wrapper {
+      overflow: hidden;
+    }
+
+    /* Spring micro-animations */
+    @keyframes springBounce {
+      0% { opacity: 0; transform: scale(0.85) translateY(16px); }
+      60% { transform: scale(1.04) translateY(-3px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .spring-pop {
+      animation: springBounce 420ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .pulse-glow {
+      animation: pulseSoft 2.2s infinite ease-in-out;
+    }
+
+    @keyframes liveDotGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.25); }
+    }
+    .live-dot {
+      animation: liveDotGlow 1.6s infinite ease-in-out;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    * { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#FAF8FE] text-md-on-surface font-sans selection:bg-md-primary-container selection:text-md-on-primary-container pb-28 sm:pb-14">
+
+  <!-- ========================================================================= -->
+  <!-- TOP APP BAR WITH LIVE MULTIPLAYER STATUS CHIP                            -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-md-surface/90 backdrop-blur-md border-b border-md-surface-container-high transition-all">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-18 sm:h-20 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-md-primary to-[#836CFF] flex items-center justify-center text-white shadow-md3-2 active:scale-95 transition-transform">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-xl font-black tracking-tight text-md-on-surface">UASA Sejarah T2</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-md-secondary-container text-md-on-secondary-container">
+              KSSM Live
+            </span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-md-on-surface-variant font-medium">Ujian Akhir Sesi Akademik • Mod P2P Pintar</p>
+        </div>
+      </div>
+
+      <!-- Action Chips (Multiplayer, Formula, Score) -->
+      <div class="flex items-center gap-2">
+        
+        <!-- MULTIPLAYER TRIGGER BUTTON -->
+        <button onclick="openMultiplayerHub()" id="mpHeaderBtn" class="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-gradient-to-r from-md-primary to-[#6D53FF] text-white font-extrabold text-xs sm:text-sm shadow-md3-2 hover:opacity-95 active:scale-95 transition-all">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-dot"></span>
+          <span id="mpHeaderBtnText">Host / Sertai Bilik</span>
+        </button>
+
+        <button onclick="openFormulaModal()" class="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-md-surface-container-high hover:bg-md-primary-container text-md-on-surface hover:text-md-on-primary-container transition-all active:scale-95 text-xs font-bold">
+          <svg class="w-4 h-4 text-md-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Formula KBAT
+        </button>
+
+        <div class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-md-surface-container-highest text-md-on-surface font-black text-xs sm:text-sm">
+          <span id="headerScoreValue" class="text-md-primary">0</span>
+          <span class="text-[10px] text-md-on-surface-variant font-semibold">Markah</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Multiplayer Room Banner (Visible when inside a room) -->
+    <div id="liveRoomBanner" class="hidden bg-md-primary-container text-md-on-primary-container px-4 py-2 text-xs font-bold border-b border-md-primary/20">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+          <span id="liveRoomBannerRole">Mod: Pemain</span>
+          <span>•</span>
+          <span>Bilik PIN: <strong id="liveRoomBannerPin" class="tracking-widest font-mono text-sm bg-white px-2 py-0.5 rounded-lg text-md-primary font-black">------</strong></span>
+          <span class="hidden sm:inline">•</span>
+          <span class="hidden sm:inline" id="liveRoomBannerName">Nama: -</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openLiveLeaderboardModal()" class="px-2.5 py-1 rounded-full bg-white text-md-primary font-extrabold hover:bg-white/80 active:scale-95 text-[11px] shadow-xs">
+            🏆 Carta Kedudukan
+          </button>
+          <button onclick="leaveRoom()" class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-extrabold hover:bg-rose-200 active:scale-95 text-[11px]">
+            Keluar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation Tabs -->
+    <div class="hidden sm:block max-w-6xl mx-auto px-6 pb-3 pt-1">
+      <nav class="flex p-1.5 rounded-full bg-md-surface-container-high/70 gap-1 text-xs sm:text-sm font-semibold">
+        <button id="desk-tab-A" onclick="switchSection('A')" class="flex-1 py-2 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-200 bg-md-primary text-white shadow-md3-1 font-bold">
+          <span>Bahagian A (Objektif)</span>
+          <span id="badgeCountA" class="px-2 py-0.5 rounded-full text-[10px] bg-white/20">0/15</span>
+        </button>
+        <button id="desk-tab-B" onclick="switchSection('B')" class="flex-1 py-2 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-200 text-md-on-surface-variant hover:bg-md-surface-container-highest">
+          <span>Bahagian B (Struktur)</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-md-surface-container-lowest">4 Soalan</span>
+        </button>
+        <button id="desk-tab-C" onclick="switchSection('C')" class="flex-1 py-2 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-200 text-md-on-surface-variant hover:bg-md-surface-container-highest">
+          <span class="text-md-primary font-bold">★ Bahagian C (KBAT Esei)</span>
+          <span class="px-2 py-0.5 rounded-full text-[10px] bg-md-secondary-container text-md-on-secondary-container font-extrabold">PERAK & PIL</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN CONTENT CONTAINER                                                   -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-5 sm:py-7">
+
+    <!-- ======================================================================= -->
+    <!-- SECTION A: 15 FULL MCQS WITH FILTER CHIPS & EXPLANATION EXPANSIONS      -->
+    <!-- ======================================================================= -->
+    <section id="section-A" class="space-y-6">
+      
+      <div class="bg-gradient-to-r from-md-surface-container to-md-surface-container-low p-5 sm:p-7 rounded-3xl border border-md-surface-container-high shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-md-primary-container text-md-on-primary-container text-xs font-bold mb-2">
+              Kertas 1 • 20 Markah Peperiksaan
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-md-on-surface tracking-tight">Bahagian A: 15 Soalan Aneka Pilihan</h2>
+            <p class="text-xs sm:text-sm text-md-on-surface-variant mt-1">Uji kefahaman sejarah dari Bab 1 hingga Bab 10. Skor anda disegerakkan secara langsung kepada Host bilik!</p>
+          </div>
+
+          <div class="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-md-surface-container-high self-start sm:self-auto">
+            <div class="text-xs font-bold text-md-on-surface-variant">Kemajuan:</div>
+            <div class="w-24 sm:w-32 bg-md-surface-container-highest rounded-full h-2.5 overflow-hidden">
+              <div id="progBarA" class="bg-md-primary h-full w-0 transition-all duration-500 rounded-full"></div>
+            </div>
+            <span id="progCountA" class="text-xs font-black text-md-primary">0 / 15</span>
+          </div>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="mt-4 pt-3 border-t border-md-surface-container-high flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          <span class="text-xs font-bold text-md-on-surface-variant shrink-0 mr-1">Tapis Bab:</span>
+          <button onclick="filterMCQ('all')" id="filter-btn-all" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-primary text-white shadow-xs">Semua (15)</button>
+          <button onclick="filterMCQ('alam')" id="filter-btn-alam" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-surface-container-high text-md-on-surface-variant hover:bg-md-surface-container-highest">Bab 1-4 (Alam Melayu)</button>
+          <button onclick="filterMCQ('melaka')" id="filter-btn-melaka" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-surface-container-high text-md-on-surface-variant hover:bg-md-surface-container-highest">Bab 5-6 (Melaka & Johor)</button>
+          <button onclick="filterMCQ('negeri')" id="filter-btn-negeri" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-surface-container-high text-md-on-surface-variant hover:bg-md-surface-container-highest">Bab 7-10 (Negeri-negeri)</button>
+        </div>
+      </div>
+
+      <div id="mcqListContainer" class="space-y-4 sm:space-y-5">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- SECTION B: 4 STRUCTURED TASK SETS                                       -->
+    <!-- ======================================================================= -->
+    <section id="section-B" class="hidden space-y-6">
+      
+      <div class="bg-gradient-to-r from-md-surface-container to-md-surface-container-low p-5 sm:p-7 rounded-3xl border border-md-surface-container-high shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-md-tertiary-container text-md-on-tertiary-container text-xs font-bold mb-2">
+              Kertas 2 • Bahagian B • 40 Markah
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-md-on-surface tracking-tight">Bahagian B: Soalan Struktur & Padanan Interaktif</h2>
+            <p class="text-xs sm:text-sm text-md-on-surface-variant mt-1">Lengkapkan padanan jawatan, barangan pelabuhan, sistem adat, dan monumen Alam Melayu.</p>
+          </div>
+          <button onclick="checkAllSectionB()" class="px-5 py-2.5 rounded-full bg-md-primary hover:bg-md-primary-hover active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md3-1 transition-all">
+            Semak Semua Bahagian B
+          </button>
+        </div>
+      </div>
+
+      <!-- Task 1: Pembesar Empat Lipatan -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-md-primary text-white font-extrabold text-xs flex items-center justify-center">1</span>
+            <div>
+              <h3 class="font-extrabold text-base sm:text-lg text-md-on-surface">Sistem Pembesar Empat Lipatan Kesultanan Melayu Melaka</h3>
+              <p class="text-xs text-md-on-surface-variant">Padankan tugas dan tanggungjawab utama bagi setiap pembesar:</p>
+            </div>
+          </div>
+          <span id="scoreBadgeTask1" class="text-xs font-bold px-2.5 py-1 rounded-full bg-md-surface-container text-md-on-surface-variant">4 Markah</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Bendahara -->
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest transition-colors duration-300" id="b-card-ben">
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-xs font-black text-md-primary uppercase tracking-wide">Jawatan: Bendahara</span>
+              <span id="b-tag-ben" class="text-[11px] font-bold text-gray-400">Belum Disemak</span>
+            </div>
+            <select id="b-sel-ben" onchange="resetBItem('ben')" class="w-full text-xs sm:text-sm p-3 rounded-xl bg-white border border-md-outline-variant font-medium text-md-on-surface focus:ring-2 focus:ring-md-primary">
+              <option value="" disabled selected>-- Pilih Peranan Bendahara --</option>
+              <option value="penasihat">Penasihat utama Sultan, pemangku raja & ketua turus angkatan perang</option>
+              <option value="polis">Ketua polis dan penjara serta menjaga keamanan kota Melaka</option>
+              <option value="laut">Panglima angkatan laut dan pengawal keselamatan perairan Selat Melaka</option>
+              <option value="khazanah">Ketua pemegang khazanah diraja dan pemungut ufti serta cukai</option>
+            </select>
+          </div>
+
+          <!-- Temenggung -->
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest transition-colors duration-300" id="b-card-tem">
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-xs font-black text-md-primary uppercase tracking-wide">Jawatan: Temenggung</span>
+              <span id="b-tag-tem" class="text-[11px] font-bold text-gray-400">Belum Disemak</span>
+            </div>
+            <select id="b-sel-tem" onchange="resetBItem('tem')" class="w-full text-xs sm:text-sm p-3 rounded-xl bg-white border border-md-outline-variant font-medium text-md-on-surface focus:ring-2 focus:ring-md-primary">
+              <option value="" disabled selected>-- Pilih Peranan Temenggung --</option>
+              <option value="penasihat">Penasihat utama Sultan, pemangku raja & ketua turus angkatan perang</option>
+              <option value="polis">Ketua polis dan penjara serta menjaga keamanan kota Melaka</option>
+              <option value="laut">Panglima angkatan laut dan pengawal keselamatan perairan Selat Melaka</option>
+              <option value="khazanah">Ketua pemegang khazanah diraja dan pemungut ufti serta cukai</option>
+            </select>
+          </div>
+
+          <!-- Laksamana -->
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest transition-colors duration-300" id="b-card-lak">
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-xs font-black text-md-primary uppercase tracking-wide">Jawatan: Laksamana</span>
+              <span id="b-tag-lak" class="text-[11px] font-bold text-gray-400">Belum Disemak</span>
+            </div>
+            <select id="b-sel-lak" onchange="resetBItem('lak')" class="w-full text-xs sm:text-sm p-3 rounded-xl bg-white border border-md-outline-variant font-medium text-md-on-surface focus:ring-2 focus:ring-md-primary">
+              <option value="" disabled selected>-- Pilih Peranan Laksamana --</option>
+              <option value="penasihat">Penasihat utama Sultan, pemangku raja & ketua turus angkatan perang</option>
+              <option value="polis">Ketua polis dan penjara serta menjaga keamanan kota Melaka</option>
+              <option value="laut">Panglima angkatan laut dan pengawal keselamatan perairan Selat Melaka</option>
+              <option value="khazanah">Ketua pemegang khazanah diraja dan pemungut ufti serta cukai</option>
+            </select>
+          </div>
+
+          <!-- Penghulu Bendahari -->
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest transition-colors duration-300" id="b-card-hari">
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-xs font-black text-md-primary uppercase tracking-wide">Jawatan: Penghulu Bendahari</span>
+              <span id="b-tag-hari" class="text-[11px] font-bold text-gray-400">Belum Disemak</span>
+            </div>
+            <select id="b-sel-hari" onchange="resetBItem('hari')" class="w-full text-xs sm:text-sm p-3 rounded-xl bg-white border border-md-outline-variant font-medium text-md-on-surface focus:ring-2 focus:ring-md-primary">
+              <option value="" disabled selected>-- Pilih Peranan Penghulu Bendahari --</option>
+              <option value="penasihat">Penasihat utama Sultan, pemangku raja & ketua turus angkatan perang</option>
+              <option value="polis">Ketua polis dan penjara serta menjaga keamanan kota Melaka</option>
+              <option value="laut">Panglima angkatan laut dan pengawal keselamatan perairan Selat Melaka</option>
+              <option value="khazanah">Ketua pemegang khazanah diraja dan pemungut ufti serta cukai</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2: Perdagangan Melaka -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-md-secondary text-white font-extrabold text-xs flex items-center justify-center">2</span>
+            <div>
+              <h3 class="font-extrabold text-base sm:text-lg text-md-on-surface">Pusat Perdagangan & Barangan Antarabangsa Melaka</h3>
+              <p class="text-xs text-md-on-surface-variant">Lengkapkan petikan dengan memilih barangan yang betul:</p>
+            </div>
+          </div>
+          <span id="scoreBadgeTask2" class="text-xs font-bold px-2.5 py-1 rounded-full bg-md-surface-container text-md-on-surface-variant">3 Markah</span>
+        </div>
+
+        <div class="p-4 sm:p-5 rounded-2xl bg-md-surface-container-low space-y-3.5 text-xs sm:text-sm leading-relaxed text-md-on-surface">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+            <span>(a) Pedagang dari <strong>Alam Melayu</strong> membawa hasil hutan & rempah seperti:</span>
+            <select id="sel-trade-1" class="p-2 px-3 rounded-xl bg-white border border-md-outline-variant font-bold text-md-primary">
+              <option value="">[Pilih Barangan]</option>
+              <option value="kapur">Kapur barus, lada hitam & kayu cendana</option>
+              <option value="tembikar">Tembikar biru putih & cawan teh</option>
+              <option value="kain">Kain pelekat & kain kasa sutera</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+            <span>(b) Saudagar dari <strong>China</strong> membawa barangan mewah iaitu:</span>
+            <select id="sel-trade-2" class="p-2 px-3 rounded-xl bg-white border border-md-outline-variant font-bold text-md-primary">
+              <option value="">[Pilih Barangan]</option>
+              <option value="gaharu">Kayu gaharu & sarang burung layang-layang</option>
+              <option value="sutera">Sutera halus, tembikar seramik & benang emas</option>
+              <option value="candu">Batu permata & rempah ratus</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+            <span>(c) Saudagar dari <strong>India (Gujarat & Koromandel)</strong> membekalkan:</span>
+            <select id="sel-trade-3" class="p-2 px-3 rounded-xl bg-white border border-md-outline-variant font-bold text-md-primary">
+              <option value="">[Pilih Barangan]</option>
+              <option value="tekstil">Kain kapas, kain corak & batu akik</option>
+              <option value="porselin">Pinggan porselin Dinasti Yuan</option>
+              <option value="lada">Lada hitam & cengkih Maluku</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3: Sistem Adat -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-md-tertiary text-white font-extrabold text-xs flex items-center justify-center">3</span>
+            <div>
+              <h3 class="font-extrabold text-base sm:text-lg text-md-on-surface">Klasifikasi Sistem Adat Masyarakat Melayu (Bab 7 & 8)</h3>
+              <p class="text-xs text-md-on-surface-variant">Tentukan sama ada kenyataan merujuk kepada <strong>Adat Perpatih</strong> atau <strong>Adat Temenggung</strong>:</p>
+            </div>
+          </div>
+          <span id="scoreBadgeTask3" class="text-xs font-bold px-2.5 py-1 rounded-full bg-md-surface-container text-md-on-surface-variant">4 Markah</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest flex flex-col justify-between" id="adat-card-1">
+            <p class="text-xs font-medium text-md-on-surface mb-2">1. Jurai nasab keturunan bapa (patrilineal) dan pewarisan takhta diutamakan kepada anak lelaki tertua.</p>
+            <select id="sel-adat-1" class="text-xs p-2.5 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">-- Pilih Sistem Adat --</option>
+              <option value="temenggung">Adat Temenggung</option>
+              <option value="perpatih">Adat Perpatih</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest flex flex-col justify-between" id="adat-card-2">
+            <p class="text-xs font-medium text-md-on-surface mb-2">2. Bersifat matrilinear iaitu mengutamakan jurai keturunan ibu dalam pewarisan harta pusaka tanah.</p>
+            <select id="sel-adat-2" class="text-xs p-2.5 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">-- Pilih Sistem Adat --</option>
+              <option value="temenggung">Adat Temenggung</option>
+              <option value="perpatih">Adat Perpatih</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest flex flex-col justify-between" id="adat-card-3">
+            <p class="text-xs font-medium text-md-on-surface mb-2">3. Hukuman jenayah lebih bersifat pemulihan, perdamaian, dan ganti rugi berasaskan musyawarah.</p>
+            <select id="sel-adat-3" class="text-xs p-2.5 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">-- Pilih Sistem Adat --</option>
+              <option value="temenggung">Adat Temenggung</option>
+              <option value="perpatih">Adat Perpatih</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest flex flex-col justify-between" id="adat-card-4">
+            <p class="text-xs font-medium text-md-on-surface mb-2">4. Hukuman bertujuan memberi pengajaran setimpal, tegas dan memelihara kedaulatan pemerintah berkuasa mutlak.</p>
+            <select id="sel-adat-4" class="text-xs p-2.5 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">-- Pilih Sistem Adat --</option>
+              <option value="temenggung">Adat Temenggung</option>
+              <option value="perpatih">Adat Perpatih</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4: Candi Alam Melayu -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-[#6750A4] text-white font-extrabold text-xs flex items-center justify-center">4</span>
+            <div>
+              <h3 class="font-extrabold text-base sm:text-lg text-md-on-surface">Candi dan Monumen Kerajaan Alam Melayu (Bab 3 & 4)</h3>
+              <p class="text-xs text-md-on-surface-variant">Padankan candi berikut dengan kerajaan pembina asalnya:</p>
+            </div>
+          </div>
+          <span id="scoreBadgeTask4" class="text-xs font-bold px-2.5 py-1 rounded-full bg-md-surface-container text-md-on-surface-variant">4 Markah</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest" id="candi-card-1">
+            <span class="text-xs font-bold text-md-primary block mb-1">Candi Borobudur</span>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Monumen Buddha Mahayana di Jawa Tengah.</p>
+            <select id="sel-candi-1" class="w-full text-xs p-2 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">Pilih Kerajaan</option>
+              <option value="sailendra">Kerajaan Sailendra/Mataram</option>
+              <option value="angkor">Kerajaan Angkor</option>
+              <option value="kedah">Kerajaan Kedah Tua</option>
+              <option value="champa">Kerajaan Champa</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest" id="candi-card-2">
+            <span class="text-xs font-bold text-md-primary block mb-1">Angkor Wat</span>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Kuil Hindu-Buddha dengan takungan Baray raksasa.</p>
+            <select id="sel-candi-2" class="w-full text-xs p-2 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">Pilih Kerajaan</option>
+              <option value="sailendra">Kerajaan Sailendra/Mataram</option>
+              <option value="angkor">Kerajaan Angkor</option>
+              <option value="kedah">Kerajaan Kedah Tua</option>
+              <option value="champa">Kerajaan Champa</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest" id="candi-card-3">
+            <span class="text-xs font-bold text-md-primary block mb-1">Candi Bukit Batu Pahat</span>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Tapak kuil purba Lembah Bujang, Kedah.</p>
+            <select id="sel-candi-3" class="w-full text-xs p-2 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">Pilih Kerajaan</option>
+              <option value="sailendra">Kerajaan Sailendra/Mataram</option>
+              <option value="angkor">Kerajaan Angkor</option>
+              <option value="kedah">Kerajaan Kedah Tua</option>
+              <option value="champa">Kerajaan Champa</option>
+            </select>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest" id="candi-card-4">
+            <span class="text-xs font-bold text-md-primary block mb-1">Candi Po Nagar</span>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Kuil Hindu di pesisir pantai Nha Trang.</p>
+            <select id="sel-candi-4" class="w-full text-xs p-2 rounded-xl bg-white border border-md-outline-variant font-bold">
+              <option value="">Pilih Kerajaan</option>
+              <option value="sailendra">Kerajaan Sailendra/Mataram</option>
+              <option value="angkor">Kerajaan Angkor</option>
+              <option value="kedah">Kerajaan Kedah Tua</option>
+              <option value="champa">Kerajaan Champa</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- SECTION C: KBAT ESEI CHOOSER WITH PERAK & PIL FORMULA                   -->
+    <!-- ======================================================================= -->
+    <section id="section-C" class="hidden space-y-6">
+
+      <!-- Header Banner -->
+      <div class="bg-gradient-to-br from-[#ECE8FF] via-[#F6F4FE] to-white p-6 sm:p-8 rounded-3xl border-2 border-md-primary/25 shadow-md3-2 relative overflow-hidden">
+        <div class="max-w-3xl relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-md-primary text-white text-xs font-black mb-3 shadow-xs">
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Kertas 2 • Bahagian C • Esei Penuh (40 Markah)
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-md-on-surface tracking-tight">
+            Penjana Esei KBAT Pintar: <span class="text-md-primary">PERAK & PIL</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-md-on-surface-variant mt-2 leading-relaxed">
+            Murid <strong>tidak perlu menaip manual</strong>! Klik soalan peperiksaan di bawah, pilih blok formula cikgu, dan ayat verbatim skema peperiksaan akan disusun secara automatik ke dalam kad jawapan.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 1: Pilih Soalan Esei Sebenar -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full bg-md-primary text-white text-xs font-black flex items-center justify-center">1</span>
+            <div>
+              <h3 class="text-sm sm:text-base font-black text-md-on-surface">Pilih Set Soalan Esei Peperiksaan UASA:</h3>
+              <p class="text-[11px] text-md-on-surface-variant">Klik salah satu soalan di bawah untuk memuatkan senario soalan KBAT (c) [8 Markah]:</p>
+            </div>
+          </div>
+          <span class="text-xs font-bold text-md-primary hidden sm:inline">6 Set Lengkap</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="essayQuestionPicker">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Stimulus & Active Question Prompt Card -->
+        <div class="mt-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-md-surface-container to-md-surface-container-low border-2 border-md-primary/20">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-black uppercase text-md-primary tracking-wider" id="activeQuestionTag">Soalan Terpilih</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-md-on-surface shadow-xs" id="activeQuestionBab">Bab 5</span>
+          </div>
+
+          <p class="text-xs sm:text-sm font-semibold text-md-on-surface leading-relaxed" id="activeQuestionStimulus">
+            "Kegemilangan Melaka pada abad ke-15 dibina atas asas kestabilan pentadbiran Sistem Pembesar Empat Lipatan..."
+          </p>
+
+          <div class="mt-3 pt-3 border-t border-md-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="text-xs font-extrabold text-md-on-surface flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-md-primary text-white text-[11px] font-black">Soalan (c)</span>
+              <span id="activeQuestionPrompt" class="text-md-primary">Beri pendapat anda mengenai kepentingan mengekalkan kestabilan politik di negara kita pada hari ini. [8 Markah]</span>
+            </div>
+            <span class="text-[11px] font-black text-md-secondary shrink-0" id="suggestedFormulaBadge">Padanan: PERAK (Kesan Positif)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Pilih Kategori Formula (PERAK / PIL) -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full bg-md-primary text-white text-xs font-black flex items-center justify-center">2</span>
+            <div>
+              <h3 class="text-sm sm:text-base font-black text-md-on-surface">Pilih Kategori Formula KBAT:</h3>
+              <p class="text-[11px] text-md-on-surface-variant">Kategori dipadankan mengikut kata tugas soalan:</p>
+            </div>
+          </div>
+          <button onclick="openFormulaModal()" class="text-xs font-extrabold text-md-primary hover:underline flex items-center gap-1">
+            Panduan Kata Tugas
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <button id="mode-btn-1" onclick="setFrameworkMode(1)" class="p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-md-primary bg-md-primary/10 shadow-sm active:scale-95">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-black text-md-primary uppercase">Mod 1</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-md-primary"></span>
+              </div>
+              <h4 class="font-extrabold text-xs sm:text-sm text-md-on-surface">PERAK (Kesan Positif)</h4>
+              <p class="text-[11px] text-md-on-surface-variant mt-1">Pendapat, Mengapakah, Kebaikan, Manfaat, Kepentingan.</p>
+            </div>
+          </button>
+
+          <button id="mode-btn-2" onclick="setFrameworkMode(2)" class="p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-transparent bg-md-surface-container hover:bg-md-surface-container-high active:scale-95">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-black text-md-on-surface-variant uppercase">Mod 2</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+              </div>
+              <h4 class="font-extrabold text-xs sm:text-sm text-md-on-surface">PERAK (Kesan Negatif)</h4>
+              <p class="text-[11px] text-md-on-surface-variant mt-1">Kata Tugas: sekiranya ...... <em>TIDAK @ TIADA</em>.</p>
+            </div>
+          </button>
+
+          <button id="mode-btn-3" onclick="setFrameworkMode(3)" class="p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-transparent bg-md-surface-container hover:bg-md-surface-container-high active:scale-95">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-black text-md-on-surface-variant uppercase">Mod 3</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+              </div>
+              <h4 class="font-extrabold text-xs sm:text-sm text-md-on-surface">PIL (Langkah / Tindakan)</h4>
+              <p class="text-[11px] text-md-on-surface-variant mt-1">Bagaimanakah, Cadangan, Usaha, Langkah, Tindakan.</p>
+            </div>
+          </button>
+
+          <button id="mode-btn-4" onclick="setFrameworkMode(4)" class="p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-transparent bg-md-surface-container hover:bg-md-surface-container-high active:scale-95">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-black text-md-on-surface-variant uppercase">Mod 4</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>
+              </div>
+              <h4 class="font-extrabold text-xs sm:text-sm text-md-on-surface">PIL (Iktibar / Nilai)</h4>
+              <p class="text-[11px] text-md-on-surface-variant mt-1">Iktibar, Nilai Murni, Diteladani, Dipelajari.</p>
+            </div>
+          </button>
+        </div>
+
+        <div class="mt-4 p-3 rounded-2xl bg-md-surface-container flex items-center gap-3 text-xs">
+          <span class="font-black text-md-primary uppercase tracking-wider shrink-0 flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Kata Tugas:
+          </span>
+          <span id="kataTugasText" class="font-semibold text-md-on-surface">Beri pendapat anda, Mengapakah, Kesan, Kebaikan, Manfaat, Kepentingan, Buktikan</span>
+        </div>
+      </div>
+
+      <!-- Step 3: Klik Butang Blok Ayat Verbatim Cikgu -->
+      <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-full bg-md-primary text-white text-xs font-black flex items-center justify-center">3</span>
+            <div>
+              <h3 class="text-sm sm:text-base font-black text-md-on-surface">Pilih Blok Isi & Huraian:</h3>
+              <p class="text-[11px] text-md-on-surface-variant">Klik butang untuk memasukkan atau membuang ayat verbatim ke kad jawapan:</p>
+            </div>
+          </div>
+          <button onclick="resetSelectedPoints()" class="self-start sm:self-auto text-xs font-bold text-md-error hover:underline px-2 py-1">
+            Padam Pilihan
+          </button>
+        </div>
+
+        <div id="sentenceBlocksGrid" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Step 4: Kad Esei Lengkap (8 Markah Penuh) -->
+      <div class="bg-gradient-to-b from-white to-[#FBF9FE] rounded-3xl p-5 sm:p-8 border-2 border-md-primary shadow-md3-3 transition-all duration-300">
+        
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-md-surface-container-high">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black uppercase tracking-wider text-md-primary">Hasil Susunan Esei Pelajar</span>
+              <span id="rubricArasBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-md-surface-container text-md-on-surface-variant">
+                Aras 1 (Permulaan)
+              </span>
+            </div>
+            <h3 class="text-base sm:text-lg font-black text-md-on-surface mt-0.5">Esei Jawapan Penuh UASA (8 Markah)</h3>
+          </div>
+
+          <div id="markahBadge" class="px-5 py-2 rounded-2xl bg-md-surface-container-high text-md-on-surface-variant flex items-center gap-3 transition-all duration-300">
+            <div class="text-right">
+              <div class="text-[10px] uppercase font-black tracking-wider text-md-on-surface-variant">Skor Rubrik</div>
+              <div id="markahScoreVal" class="text-lg sm:text-xl font-black">0 / 8 Markah</div>
+            </div>
+            <div id="badgeCheckIcon" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- AnimateContentSize Live Essay Box -->
+        <div class="my-5 p-5 sm:p-6 rounded-2xl bg-md-surface-container-low/80 border border-md-surface-container-highest min-h-[140px] text-xs sm:text-sm leading-relaxed text-md-on-surface select-all font-medium transition-all duration-300" id="essayLiveBox">
+          <span class="text-gray-400 italic">Sila klik sekurang-kurangnya satu blok formula di Langkah 3 untuk menjana ayat esei lengkap anda...</span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+          <div class="flex items-center gap-3 text-xs font-semibold text-md-on-surface-variant">
+            <span id="statWordCount">Jumlah Perkataan: 0</span>
+            <span>•</span>
+            <span id="statPointCount">Isi Lengkap: 0 / 3</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="copyEssayText()" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-md-primary hover:bg-md-primary-hover active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md3-1 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/>
+              </svg>
+              <span>Salin Esei Lengkap</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MULTIPLAYER MODAL OVERLAYS (NO FIREBASE REQUIRED — WEBRTC P2P ENGINE)     -->
+  <!-- ========================================================================= -->
+  
+  <!-- 1. HUB MODAL: CHOOSE HOST OR JOIN -->
+  <div id="mpHubModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-md-surface rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-md-surface-container-high shadow-md3-3 spring-pop">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-md-surface-container-high">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-md-primary to-[#8A70FF] text-white flex items-center justify-center text-lg">🎮</div>
+          <div>
+            <h3 class="font-black text-lg text-md-on-surface">Bilik Darjah Multiplayer</h3>
+            <p class="text-xs text-md-on-surface-variant">Sambungan P2P Segerak Tanpa Firebase</p>
+          </div>
+        </div>
+        <button onclick="closeMultiplayerHub()" class="w-8 h-8 rounded-full bg-md-surface-container-high flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <div class="mt-6 space-y-4">
+        <!-- Host Card -->
+        <div onclick="openHostSetup()" class="p-5 rounded-2xl border-2 border-md-primary/30 hover:border-md-primary bg-md-surface-container-low hover:bg-md-primary/5 transition-all cursor-pointer group active:scale-95">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-md-primary text-white">Guru / Ketua Kumpulan</span>
+            <span class="text-md-primary group-hover:translate-x-1 transition-transform font-black">➔</span>
+          </div>
+          <h4 class="font-extrabold text-base text-md-on-surface">Cipta & Host Bilik Permainan</h4>
+          <p class="text-xs text-md-on-surface-variant mt-1">Jana PIN 6-digit bilik darjah. Anda boleh memantau skor dan papan markah secara langsung!</p>
+        </div>
+
+        <!-- Join Card -->
+        <div onclick="openPlayerSetup()" class="p-5 rounded-2xl border-2 border-md-secondary/30 hover:border-md-secondary bg-md-surface-container-low hover:bg-md-secondary/5 transition-all cursor-pointer group active:scale-95">
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-md-secondary text-white">Murid / Pemain</span>
+            <span class="text-md-secondary group-hover:translate-x-1 transition-transform font-black">➔</span>
+          </div>
+          <h4 class="font-extrabold text-base text-md-on-surface">Sertai Bilik dengan Kod 6-Digit</h4>
+          <p class="text-xs text-md-on-surface-variant mt-1">Masukkan nama anda dan PIN 6-digit yang diberikan oleh Guru untuk berentap bersama rakan!</p>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-center text-md-on-surface-variant mt-5">
+        🔒 Menggunakan teknologi WebRTC P2P Berenkripsi (Langsung dari peranti ke peranti).
+      </p>
+
+    </div>
+  </div>
+
+  <!-- 2. HOST SETUP & LOBBY MODAL -->
+  <div id="hostLobbyModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-md-surface rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-md-surface-container-high shadow-md3-3 spring-pop">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-md-surface-container-high">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-md-primary text-white">Mod Guru / Host</span>
+          <h3 class="font-black text-xl text-md-on-surface mt-1">Lobi Bilik Permainan</h3>
+        </div>
+        <button onclick="closeHostModal()" class="w-8 h-8 rounded-full bg-md-surface-container-high flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <!-- 6-Digit PIN Display -->
+      <div class="mt-5 text-center p-5 rounded-2xl bg-gradient-to-b from-md-surface-container to-md-surface-container-low border border-md-primary/20">
+        <p class="text-xs uppercase font-black tracking-widest text-md-on-surface-variant mb-2">Kod PIN Bilik (Kongsi dengan Pelajar):</p>
+        
+        <div class="flex justify-center items-center gap-2 font-mono" id="hostPinBoxes">
+          <!-- 6 big boxes -->
+        </div>
+
+        <div class="mt-4 flex justify-center gap-2">
+          <button onclick="copyHostPin()" class="px-4 py-2 rounded-full bg-md-primary text-white text-xs font-bold shadow-xs hover:bg-md-primary-hover active:scale-95 transition-all flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Salin Kod PIN
+          </button>
+        </div>
+      </div>
+
+      <!-- Connected Players List in Lobby -->
+      <div class="mt-5">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-black uppercase tracking-wider text-md-on-surface">Senarai Pelajar Masuk (<span id="hostPlayerCount">0</span>):</h4>
+          <span class="text-[11px] text-emerald-700 font-bold flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span> Sedia menerima sambungan
+          </span>
+        </div>
+
+        <div id="hostPlayerListGrid" class="min-h-[110px] max-h-48 overflow-y-auto p-3 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest flex flex-wrap gap-2 content-start">
+          <span class="text-gray-400 text-xs italic m-auto">Menunggu pelajar memasukkan kod PIN 6-digit...</span>
+        </div>
+      </div>
+
+      <!-- Host Action Controls -->
+      <div class="mt-6 flex flex-col sm:flex-row gap-2.5">
+        <button onclick="startHostGame()" class="flex-1 py-3 px-6 rounded-full bg-gradient-to-r from-md-primary to-[#7559FF] text-white text-xs sm:text-sm font-black shadow-md3-2 hover:opacity-95 active:scale-95 transition-all text-center">
+          Mula Pertandingan Bilik Sekarang!
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 3. PLAYER SETUP & JOIN MODAL -->
+  <div id="playerJoinModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-md-surface rounded-3xl max-w-md w-full p-6 sm:p-8 border border-md-surface-container-high shadow-md3-3 spring-pop">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-md-surface-container-high">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-md-secondary text-white">Sertai Bilik</span>
+          <h3 class="font-black text-xl text-md-on-surface mt-1">Masukkan Maklumat Anda</h3>
+        </div>
+        <button onclick="closePlayerModal()" class="w-8 h-8 rounded-full bg-md-surface-container-high flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <div class="space-y-4 mt-5">
+        <!-- Name Input -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-md-on-surface mb-1.5">Nama Penuh / Nama Samaran:</label>
+          <input type="text" id="playerInputName" placeholder="Contoh: Danial Haikal" maxlength="25" class="w-full p-3.5 rounded-2xl bg-white border-2 border-md-outline-variant focus:border-md-primary focus:outline-none font-bold text-sm text-md-on-surface" />
+        </div>
+
+        <!-- 6-Digit PIN Input -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-md-on-surface mb-1.5">Kod PIN 6-Digit Bilik:</label>
+          <input type="text" id="playerInputPin" placeholder="Contoh: 482910" maxlength="6" inputmode="numeric" class="w-full p-3.5 rounded-2xl bg-white border-2 border-md-outline-variant focus:border-md-primary focus:outline-none font-mono font-black text-lg tracking-widest text-center text-md-primary" />
+        </div>
+
+        <!-- Avatar Selector -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-md-on-surface mb-1.5">Pilih Ikon Avatar:</label>
+          <div class="flex items-center justify-between gap-1" id="avatarPickerContainer">
+            <!-- Dynamically populated avatar chips -->
+          </div>
+        </div>
+
+        <button onclick="submitPlayerJoin()" class="w-full py-3.5 rounded-full bg-gradient-to-r from-md-primary to-[#7559FF] text-white text-sm font-black shadow-md3-2 hover:opacity-95 active:scale-95 transition-all mt-2">
+          Masuk Bilik & Bersedia
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. LIVE LEADERBOARD / PODIUM MODAL -->
+  <div id="liveLeaderboardModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-md-surface rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-md-surface-container-high shadow-md3-3 spring-pop">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-md-surface-container-high">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🏆</span>
+          <h3 class="font-black text-lg text-md-on-surface">Carta Kedudukan Terkini</h3>
+        </div>
+        <button onclick="closeLiveLeaderboardModal()" class="w-8 h-8 rounded-full bg-md-surface-container-high flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <div class="mt-4 space-y-2 max-h-[60vh] overflow-y-auto p-1" id="leaderboardListContainer">
+        <!-- Rendered in real-time -->
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button onclick="closeLiveLeaderboardModal()" class="px-5 py-2 rounded-full bg-md-surface-container-high text-xs font-bold">
+          Tutup
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <aside class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-md-surface/95 backdrop-blur-lg border-t border-md-surface-container-high py-2 px-4 shadow-md3-3" aria-label="Navigasi Mudah Alih">
+    <div class="flex items-center justify-around gap-1 max-w-md mx-auto">
+      
+      <button onclick="switchSection('A')" id="mob-tab-A" class="flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all text-md-primary font-bold active:scale-95">
+        <div class="w-10 h-7 rounded-full bg-md-primary-container text-md-on-primary-container flex items-center justify-center mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <span class="text-[10px] tracking-tight">Objektif (A)</span>
+      </button>
+
+      <button onclick="switchSection('B')" id="mob-tab-B" class="flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all text-md-on-surface-variant font-medium active:scale-95">
+        <div class="w-10 h-7 rounded-full flex items-center justify-center mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </div>
+        <span class="text-[10px] tracking-tight">Struktur (B)</span>
+      </button>
+
+      <button onclick="switchSection('C')" id="mob-tab-C" class="flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all text-md-on-surface-variant font-medium active:scale-95">
+        <div class="w-10 h-7 rounded-full flex items-center justify-center mb-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18"/></svg>
+        </div>
+        <span class="text-[10px] tracking-tight">KBAT (C)</span>
+      </button>
+
+    </div>
+  </aside>
+
+  <!-- Formula Cheat Sheet Modal -->
+  <div id="formulaModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-md-surface rounded-t-3xl sm:rounded-3xl max-w-2xl w-full p-5 sm:p-8 max-h-[88vh] overflow-y-auto border border-md-surface-container-high shadow-md3-3 no-scrollbar animate-content-size expanded">
+      <div class="expand-wrapper">
+        <div class="w-12 h-1.5 rounded-full bg-gray-300 mx-auto mb-4 sm:hidden"></div>
+        <div class="flex items-center justify-between pb-4 border-b border-md-surface-container-high">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-md-primary-container text-md-on-primary-container flex items-center justify-center font-black">★</div>
+            <div>
+              <h3 class="font-black text-base sm:text-lg text-md-on-surface leading-tight">Rumusan Formula: PERAK & PIL</h3>
+              <p class="text-xs text-md-on-surface-variant">Panduan Teknik Menjawab 8 Markah Penuh KBAT</p>
+            </div>
+          </div>
+          <button onclick="closeFormulaModal()" class="w-8 h-8 rounded-full bg-md-surface-container-high flex items-center justify-center text-sm font-bold">✕</button>
+        </div>
+
+        <div class="space-y-4 mt-5 text-xs sm:text-sm">
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest">
+            <h4 class="font-black text-md-primary text-sm mb-1">Formula PERAK (Kesan & Impak)</h4>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Gunakan jika soalan bertanya: <em>Kepentingan, Kebaikan, Faedah, Manfaat, Kesan, Mengapakah, Beri Pendapat</em>.</p>
+            <div class="space-y-1 font-medium">
+              <div><strong class="text-md-primary">P (Politik):</strong> Politik stabil → pentadbiran licin → negara aman.</div>
+              <div><strong class="text-md-primary">E (Ekonomi):</strong> Ekonomi meningkat → peluang kerja meningkat → taraf hidup naik.</div>
+              <div><strong class="text-md-primary">RAK (Rakyat):</strong> Rakyat bersatu padu → perpaduan terpelihara → rakyat sejahtera.</div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest">
+            <h4 class="font-black text-md-secondary text-sm mb-1">Formula PIL (Tindakan & Iktibar)</h4>
+            <p class="text-[11px] text-md-on-surface-variant mb-2">Gunakan jika soalan meminta: <em>Bagaimanakah, Usaha, Langkah, Tindakan, Cadangan, Iktibar, Nilai</em>.</p>
+            <div class="space-y-1 font-medium">
+              <div><strong class="text-md-secondary">P (Perpaduan):</strong> Mementingkan perpaduan → politik stabil & pentadbiran licin.</div>
+              <div><strong class="text-md-secondary">IL (Ilmu):</strong> Mementingkan ilmu pengetahuan → ekonomi meningkat & taraf hidup naik.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <button onclick="closeFormulaModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-md-primary text-white text-xs sm:text-sm font-bold shadow-md3-1">
+            Faham & Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastAlert" class="fixed bottom-20 sm:bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 px-5 py-3 rounded-full bg-md-on-surface text-white text-xs sm:text-sm font-bold shadow-md3-3">
+    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+    <span id="toastAlertMsg">Notifikasi</span>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: DATA, WEBRTC P2P MULTIPLAYER ENGINE & APP CORE               -->
+  <!-- ========================================================================= -->
+  <script>
+    /* -------------------------------------------------------------------------
+       1. EXACT VERBATIM FORMULA DATA (DO NOT ALTER A SINGLE WORD)
+       ------------------------------------------------------------------------- */
+    const VERBATIM_LIBRARIES = {
+      1: {
+        title: "PERAK (Kesan Positif)",
+        kataTugas: "Beri pendapat anda, Mengapakah, Kesan, Kebaikan, Manfaat, Kepentingan, Buktikan",
+        points: [
+          {
+            id: "P",
+            badge: "P - POLITIK",
+            label: "Kestabilan Politik",
+            marks: 3,
+            verbatim: "... kerana / ialah menjadikan politik stabil. Apabila politik stabil maka pentadbiran licin. Kesannya negara aman."
+          },
+          {
+            id: "E",
+            badge: "E - EKONOMI",
+            label: "Peningkatan Ekonomi",
+            marks: 3,
+            verbatim: "Kedua, menjadikan ekonomi meningkat. Apabila ekonomi meningkat maka peluang pekerjaan meningkat. Selain itu, pendapatan rakyat meningkat. Kesannya taraf hidup meningkat."
+          },
+          {
+            id: "RAK",
+            badge: "RAK - RAKYAT",
+            label: "Perpaduan Rakyat",
+            marks: 2,
+            verbatim: "Ketiga, menjadikan rakyat bersatu padu. Apabila rakyat bersatu padu maka perpaduan terpelihara. Kesannya rakyat hidup sejahtera."
+          }
+        ]
+      },
+      2: {
+        title: "PERAK (Kesan Negatif)",
+        kataTugas: "sekiranya ...... TIDAK @ TIADA",
+        points: [
+          {
+            id: "P",
+            badge: "P - POLITIK",
+            label: "Ketidakstabilan Politik",
+            marks: 3,
+            verbatim: "... ialah menjadikan politik tidak stabil. Apabila politik tidak stabil maka pentadbiran tidak licin. Kesannya negara tidak aman."
+          },
+          {
+            id: "E",
+            badge: "E - EKONOMI",
+            label: "Kemerosotan Ekonomi",
+            marks: 3,
+            verbatim: "Kedua, menjadikan ekonomi merosot. Apabila ekonomi merosot maka peluang pekerjaan merosot. Selain itu, pendapatan merosot. Kesannya taraf hidup merosot."
+          },
+          {
+            id: "RAK",
+            badge: "RAK - RAKYAT",
+            label: "Perpecahan Rakyat",
+            marks: 2,
+            verbatim: "Ketiga, menjadikan rakyat tidak bersatu padu. Apabila rakyat tidak bersatu padu maka perpaduan tidak terpelihara. Kesannya rakyat hidup saling mencurigai."
+          }
+        ]
+      },
+      3: {
+        title: "PIL (Langkah / Cadangan / Usaha / Tindakan)",
+        kataTugas: "bagaimanakah / cadangan / usaha / langkah / tindakan",
+        points: [
+          {
+            id: "P",
+            badge: "P - PERPADUAN",
+            label: "Mementingkan Perpaduan",
+            marks: 4,
+            verbatim: ".... ialah dengan cara mementingkan perpaduan supaya menjadikan politik stabil. Apabila politik stabil maka pentadbiran licin. Kesannya negara aman."
+          },
+          {
+            id: "IL",
+            badge: "IL - ILMU PENGETAHUAN",
+            label: "Mementingkan Ilmu Pengetahuan",
+            marks: 4,
+            verbatim: "Kedua, dengan cara mementingkan ilmu pengetahuan supaya menjadikan ekonomi meningkat. Apabila ekonomi meningkat maka peluang pekerjaan meningkat. Selain itu, pendapatan meningkat. Kesannya taraf hidup meningkat."
+          }
+        ]
+      },
+      4: {
+        title: "PIL (Iktibar / Nilai Murni / Diteladani / Dipelajari)",
+        kataTugas: "Iktibar / nilai murni / diteladani / dipelajari",
+        points: [
+          {
+            id: "P",
+            badge: "P - PERPADUAN",
+            label: "Menghayati Perpaduan",
+            marks: 4,
+            verbatim: ".... ialah kita hendaklah mementingkan perpaduan supaya menjadikan politik stabil. Apabila politik stabil maka pentadbiran licin. Kesannya negara aman."
+          },
+          {
+            id: "IL",
+            badge: "IL - ILMU PENGETAHUAN",
+            label: "Menghayati Ilmu Pengetahuan",
+            marks: 4,
+            verbatim: "Kedua, kita hendaklah mementingkan ilmu pengetahuan supaya menjadikan ekonomi meningkat. Apabila ekonomi meningkat maka peluang pekerjaan meningkat. Selain itu, pendapatan meningkat. Kesannya taraf hidup meningkat."
+          }
+        ]
+      }
+    };
+
+    /* -------------------------------------------------------------------------
+       2. AUTHENTIC UASA BAHAGIAN C ESSAY QUESTIONS
+       ------------------------------------------------------------------------- */
+    const BAHAGIAN_C_QUESTIONS = [
+      {
+        id: 1,
+        bab: "Bab 5",
+        title: "Soalan Esei 1: Kesultanan Melayu Melaka",
+        mode: 1,
+        stimulus: "Kegemilangan Melaka pada abad ke-15 dibina atas asas kestabilan pentadbiran Sistem Pembesar Empat Lipatan dan kemakmuran aktiviti pelabuhan maritim antarabangsa.",
+        prompt: "Beri pendapat anda mengenai kepentingan mengekalkan kestabilan politik di negara kita pada hari ini. [8 Markah]",
+        suggestedFormula: "PERAK (Kesan Positif)"
+      },
+      {
+        id: 2,
+        bab: "Bab 6",
+        title: "Soalan Esei 2: Kesultanan Johor Riau",
+        mode: 2,
+        stimulus: "Perbalahan antara pembesar dan perebutan takhta boleh meruntuhkan empayar agung, sebagaimana yang pernah mengancam kedaulatan Kesultanan Johor Riau semasa Perang Tiga Segi.",
+        prompt: "Sekiranya rakyat Malaysia TIDAK bersatu padu dan saling bertoleransi, apakah kesan negatif yang akan menimpa negara? [8 Markah]",
+        suggestedFormula: "PERAK (Kesan Negatif)"
+      },
+      {
+        id: 3,
+        bab: "Bab 2",
+        title: "Soalan Esei 3: Kebijaksanaan Kerajaan Alam Melayu",
+        mode: 3,
+        stimulus: "Raja-raja kerajaan Angkor dan Funan berjaya memakmurkan rakyat menerusi pembinaan sistem pengairan Baray dan pengurusan sumber alam yang efisien.",
+        prompt: "Bagaimanakah usaha atau langkah anda sebagai generasi muda untuk menyumbang kepada kemakmuran dan teknologi negara? [8 Markah]",
+        suggestedFormula: "PIL (Langkah / Cadangan)"
+      },
+      {
+        id: 4,
+        bab: "Bab 5",
+        title: "Soalan Esei 4: Kepimpinan Berwibawa Melaka",
+        mode: 4,
+        stimulus: "Hukum Kanun Melaka dan Undang-Undang Laut Melaka membuktikan tamadun bangsa kita telah mempunyai sistem perundangan bertulis yang adil, telus dan berdaulat.",
+        prompt: "Apakah iktibar atau nilai murni yang boleh dipelajari daripada keluhuran undang-undang Kesultanan Melaka? [8 Markah]",
+        suggestedFormula: "PIL (Iktibar / Nilai Murni)"
+      },
+      {
+        id: 5,
+        bab: "Bab 7 & 8",
+        title: "Soalan Esei 5: Warisan Negeri-Negeri Melayu",
+        mode: 3,
+        stimulus: "Negeri Perak, Pahang, Terengganu dan Selangor mewarisi sistem kebudayaan, adat istiadat nobat dan perlembagaan bertulis yang menjadi lambang identiti perpaduan kebangsaan.",
+        prompt: "Cadangkan langkah-langkah yang wajar diambil oleh pihak sekolah bagi menyemai semangat patriotisme memelihara warisan budaya. [8 Markah]",
+        suggestedFormula: "PIL (Langkah / Cadangan)"
+      },
+      {
+        id: 6,
+        bab: "Bab 9 & 10",
+        title: "Soalan Esei 6: Keharmonian Sarawak & Sabah",
+        mode: 2,
+        stimulus: "Kepelbagaian etnik di Sarawak dan Sabah seperti Iban, Bidayuh, Kadazandusun dan Bajau kaya dengan tradisi bekerjasama menerusi perayaan tradisi dan gotong-royong.",
+        prompt: "Sekiranya generasi hari ini TIADA rasa hormat terhadap perbezaan adat resam pelbagai kaum, apakah akibat buruknya kepada masyarakat? [8 Markah]",
+        suggestedFormula: "PERAK (Kesan Negatif)"
+      }
+    ];
+
+    /* -------------------------------------------------------------------------
+       3. 15 FULL MCQS FOR BAHAGIAN A
+       ------------------------------------------------------------------------- */
+    const FULL_MCQS = [
+      { id: 1, cat: "alam", bab: "Bab 1", q: "Kerajaan Funan diasaskan oleh Kaundinya. Apakah pelabuhan utamanya yang menghubungkan laluan perdagangan antarabangsa?", options: ["Pelabuhan Oc-Eo", "Pelabuhan Palembang", "Pelabuhan Dai Chiem", "Pelabuhan Yasodharapura"], ans: 0, exp: "Pelabuhan Oc-Eo di muara Sungai Mekong merupakan pangkalan perdagangan utama kerajaan Funan." },
+      { id: 2, cat: "alam", bab: "Bab 2", q: "Raja Indravarman I di Kerajaan Angkor telah membina takungan air raksasa untuk aktiviti pertanian. Apakah nama struktur tersebut?", options: ["Terusan Kra", "Tasik Tonle Sap", "Baray", "Subak"], ans: 2, exp: "Baray merupakan takungan air gergasi yang membekalkan air ke kawasan sawah padi Angkor sepanjang tahun." },
+      { id: 3, cat: "alam", bab: "Bab 2", q: "Golongan manakah yang diberi kepercayaan oleh Raja Srivijaya untuk mengawal keselamatan perairan Selat Melaka?", options: ["Orang Asli", "Orang Laut", "Tentera Chola", "Pedagang Arab"], ans: 1, exp: "Orang Laut bertindak sebagai tentera laut pengawal laluan kapal dagang di perairan Srivijaya." },
+      { id: 4, cat: "alam", bab: "Bab 3", q: "Prasasti Kedukan Bukit dan Talang Tuwo di Srivijaya ditulis menggunakan tulisan dan bahasa apakah?", options: ["Tulisan Arab dalam Bahasa Melayu Kuno", "Tulisan Palava dalam Bahasa Melayu Kuno", "Tulisan Kawi dalam Bahasa Sanskrit", "Tulisan Jawi dalam Bahasa Jawa Kuno"], ans: 1, exp: "Batu bersurat Srivijaya menggunakan tulisan Palava dan ditulis dalam Bahasa Melayu Kuno." },
+      { id: 5, cat: "alam", bab: "Bab 4", q: "Kompleks Candi Prambanan di Pulau Jawa dibina oleh Dinasti Sanjaya khas untuk penganut agama apakah?", options: ["Agama Hindu Trimurti", "Agama Buddha Mahayana", "Agama Islam", "Kepercayaan Animisme"], ans: 0, exp: "Candi Prambanan merupakan kompleks kuil Hindu terbesar di Asia Tenggara yang didedikasikan untuk Trimurti." },
+      { id: 6, cat: "melaka", bab: "Bab 5", q: "Mengapakah pemilihan muara Sungai Bertam oleh Parameswara dianggap amat berfaedah dari sudut geografi maritim?", options: ["Bebas daripada ancaman lanun sepenuhnya", "Terlindung daripada tiupan angin monsun barat daya dan timur laut", "Memiliki lombong emas terbesar di Semenanjung", "Mempunyai tanah sawah seperti Lembah Mekong"], ans: 1, exp: "Kedudukan Melaka terlindung oleh pulau Sumatera dan Banjaran Titiwangsa daripada tiupan angin kencang monsun." },
+      { id: 7, cat: "melaka", bab: "Bab 5", q: "Fasal 1 dalam naskhah bertulis Hukum Kanun Melaka memperuntukkan tentang perkara berkaitan:", options: ["Tanggungjawab dan autoriti Raja serta pembesar empat lipatan", "Peraturan kapal dagang di pelabuhan", "Hukuman terhadap pesalah di laut", "Kaedah perkahwinan pedagang asing"], ans: 0, exp: "Fasal 1 Hukum Kanun Melaka menetapkan hak, autoriti, serta tanggungjawab Sultan dan para pembesar." },
+      { id: 8, cat: "melaka", bab: "Bab 5", q: "Dalam Undang-Undang Laut Melaka, siapakah yang diibaratkan sebagai 'raja di laut'?", options: ["Jurumudi", "Malim", "Nakhoda", "Syahbandar"], ans: 2, exp: "Nakhoda dianggap sebagai raja dalam kapal laut dan perintahnya mesti dipatuhi oleh seluruh anak kapal." },
+      { id: 9, cat: "melaka", bab: "Bab 6", q: "Di manakah pusat pemerintahan terawal yang diasaskan oleh Sultan Alauddin Riayat Shah I bagi Kesultanan Johor Riau?", options: ["Kota Kara, Pekan Tua", "Kota Tinggi", "Sayong Pinang", "Riau Lingga"], ans: 0, exp: "Kota Kara di Pekan Tua berhampiran tebing Sungai Johor merupakan benteng terawal Kesultanan Johor Riau." },
+      { id: 10, cat: "melaka", bab: "Bab 6", q: "Apakah tujuan utama Kesultanan Johor Riau menjalin pakatan strategik dengan Belanda (VOC) pada tahun 1641?", options: ["Menyerang Siam di Singgora", "Mengusir penjajah Portugis dari Melaka", "Menghapuskan lanun Bugis", "Menguasai timah di Perak"], ans: 1, exp: "Pakatan Johor-Belanda membolehkan gabungan tentera mengepung dan menewaskan Portugis di Melaka pada tahun 1641." },
+      { id: 11, cat: "negeri", bab: "Bab 7", q: "Sistem perwarisan takhta bagi Kesultanan Perak mengamalkan sistem:", options: ["Pilihan raya oleh Undang", "Giliran tiga keluarga diraja", "Pewarisan anak perempuan sulung", "Lantikan mutlak Sultan Selangor"], ans: 1, exp: "Takhta Perak diwarisi mengikut sistem giliran berasaskan hierarki: Raja Kecil Bongsu hingga Raja Muda dan Sultan." },
+      { id: 12, cat: "negeri", bab: "Bab 8", q: "Dalam Adat Perpatih di Negeri Sembilan, bagaimanakah pemimpin tertinggi iaitu Yang di-Pertuan Besar dipilih?", options: ["Diwarisi mutlak oleh anak sulung", "Dipilih menerusi permuafakatan empat Undang", "Dilantik oleh Yang di-Pertuan Agong", "Dipilih oleh ketua keluarga (Buapak)"], ans: 1, exp: "Yang di-Pertuan Besar dipilih secara mufakat oleh empat Undang: Sungai Ujong, Jelebu, Johol dan Rembau." },
+      { id: 13, cat: "negeri", bab: "Bab 8", q: "Apakah fungsi asas institusi Buapak dalam struktur Adat Perpatih?", options: ["Ketua pentadbir luak atau daerah", "Ketua bagi unit keluarga (perut)", "Panglima perang laut", "Penasihat istana"], ans: 1, exp: "Buapak merupakan ketua bagi setiap unit perut dan menjadi rujukan utama hal-ehwal kekeluargaan anak buah." },
+      { id: 14, cat: "negeri", bab: "Bab 9", q: "Masyarakat Melanau di Sarawak mengadakan Pesta Kaul setiap tahun bagi tujuan:", options: ["Menyambut keputeraan ketua kaum", "Memohon restu roh laut (Ipoh) dan keselamatan nelayan", "Merayakan kejayaan perang", "Perjanjian sempadan tanah"], ans: 1, exp: "Pesta Kaul diadakan bagi memohon keselamatan, rezeki berlimpah, dan mengelakkan malapetaka laut (Ipoh)." },
+      { id: 15, cat: "negeri", bab: "Bab 10", q: "Tarian Sumazau kaum Kadazandusun di Sabah diilhamkan daripada gerak:", options: ["Burung kenyalang terbang", "Burung layang-layang", "Kibasan sayap burung helang melayang", "Pohon rumbia ditiup angin"], ans: 2, exp: "Gerakan tangan penari Sumazau meniru kibasan sayap burung helang melayang semasa musim menuai padi." }
+    ];
+
+    /* -------------------------------------------------------------------------
+       4. GLOBAL APPLICATION & MULTIPLAYER STATE
+       ------------------------------------------------------------------------- */
+    const AVATAR_OPTIONS = ['🦁', '🐯', '🦅', '🐬', '👑', '🚀', '⚡', '🛡️'];
+
+    const state = {
+      currentTab: 'A',
+      mcqFilter: 'all',
+      mcqAnswers: {},
+      bScores: { task1: 0, task2: 0, task3: 0, task4: 0 },
+      selectedEssayQuestion: 1,
+      currentFrameworkMode: 1,
+      selectedPointIds: [],
+      
+      // Multiplayer specifics (Zero Firebase)
+      mpRole: null, // 'host' | 'player' | null
+      roomPin: null,
+      playerName: '',
+      playerAvatar: '🦁',
+      peer: null,
+      connections: [], // For Host: list of player data connections
+      hostConnection: null, // For Player: connection to Host
+      broadcastChannel: null, // Cross-tab zero-lag fallback
+      playersMap: {} // { [id]: { id, name, avatar, score, lastAction } }
+    };
+
+    /* -------------------------------------------------------------------------
+       5. PEERJS + BROADCASTCHANNEL MULTIPLAYER ENGINE (NO FIREBASE!)
+       ------------------------------------------------------------------------- */
+    function initAvatarPicker() {
+      const container = document.getElementById('avatarPickerContainer');
+      container.innerHTML = AVATAR_OPTIONS.map(av => `
+        <button type="button" onclick="selectAvatar('${av}')" id="av-btn-${av}" class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg transition-transform active:scale-95 ${av === state.playerAvatar ? 'bg-md-primary text-white ring-2 ring-md-primary/40 scale-105' : 'bg-md-surface-container hover:bg-md-surface-container-high'}">
+          ${av}
+        </button>
+      `).join('');
+    }
+
+    function selectAvatar(av) {
+      state.playerAvatar = av;
+      initAvatarPicker();
+    }
+
+    function openMultiplayerHub() {
+      document.getElementById('mpHubModal').classList.remove('hidden');
+      document.getElementById('mpHubModal').classList.add('flex');
+    }
+
+    function closeMultiplayerHub() {
+      document.getElementById('mpHubModal').classList.add('hidden');
+      document.getElementById('mpHubModal').classList.remove('flex');
+    }
+
+    // --- HOST LOGIC ---
+    function openHostSetup() {
+      closeMultiplayerHub();
+      // Generate 6-digit random PIN
+      const pin = Math.floor(100000 + Math.random() * 900000).toString();
+      state.roomPin = pin;
+      state.mpRole = 'host';
+      state.playersMap = {};
+
+      // Render 6 PIN boxes
+      const pinBoxes = document.getElementById('hostPinBoxes');
+      pinBoxes.innerHTML = pin.split('').map(digit => `
+        <span class="w-11 h-14 sm:w-12 sm:h-16 rounded-2xl bg-white border-2 border-md-primary text-md-primary font-black text-2xl sm:text-3xl flex items-center justify-center shadow-sm">
+          ${digit}
+        </span>
+      `).join('');
+
+      document.getElementById('hostPlayerCount').innerText = '0';
+      document.getElementById('hostPlayerListGrid').innerHTML = `<span class="text-gray-400 text-xs italic m-auto">Menunggu pelajar memasukkan kod PIN ${pin}...</span>`;
+
+      // Setup PeerJS for Host
+      const peerId = `uasa-u2-${pin}`;
+      if (state.peer) state.peer.destroy();
+      
+      try {
+        state.peer = new Peer(peerId);
+        state.peer.on('connection', conn => {
+          handleIncomingConnection(conn);
+        });
+      } catch (err) {
+        console.warn("PeerJS init note:", err);
+      }
+
+      // Also open local BroadcastChannel for zero-latency same-device tabs
+      setupBroadcastChannel(pin);
+
+      document.getElementById('hostLobbyModal').classList.remove('hidden');
+      document.getElementById('hostLobbyModal').classList.add('flex');
+    }
+
+    function handleIncomingConnection(conn) {
+      state.connections.push(conn);
+      conn.on('data', data => {
+        handleNetworkMessage(data, conn);
+      });
+    }
+
+    function setupBroadcastChannel(pin) {
+      if (state.broadcastChannel) state.broadcastChannel.close();
+      state.broadcastChannel = new BroadcastChannel(`uasa-room-${pin}`);
+      state.broadcastChannel.onmessage = (event) => {
+        handleNetworkMessage(event.data);
+      };
+    }
+
+    function closeHostModal() {
+      document.getElementById('hostLobbyModal').classList.add('hidden');
+      document.getElementById('hostLobbyModal').classList.remove('flex');
+    }
+
+    function copyHostPin() {
+      navigator.clipboard.writeText(state.roomPin).then(() => {
+        showToastAlert(`Kod PIN ${state.roomPin} berjaya disalin!`);
+      });
+    }
+
+    function startHostGame() {
+      closeHostModal();
+      enableLiveRoomBanner('Guru (Host)');
+      broadcastNetworkMessage({
+        type: 'GAME_STARTED',
+        pin: state.roomPin
+      });
+      showToastAlert("Pertandingan Bilik dimulakan! Semua pemain sedia.");
+    }
+
+    // --- PLAYER LOGIC ---
+    function openPlayerSetup() {
+      closeMultiplayerHub();
+      initAvatarPicker();
+      document.getElementById('playerJoinModal').classList.remove('hidden');
+      document.getElementById('playerJoinModal').classList.add('flex');
+    }
+
+    function closePlayerModal() {
+      document.getElementById('playerJoinModal').classList.add('hidden');
+      document.getElementById('playerJoinModal').classList.remove('flex');
+    }
+
+    function submitPlayerJoin() {
+      const name = document.getElementById('playerInputName').value.trim();
+      const pin = document.getElementById('playerInputPin').value.trim();
+
+      if (!name) {
+        showToastAlert("Sila masukkan nama anda!");
+        return;
+      }
+      if (!pin || pin.length !== 6) {
+        showToastAlert("Kod PIN mestilah 6 digit!");
+        return;
+      }
+
+      state.playerName = name;
+      state.roomPin = pin;
+      state.mpRole = 'player';
+
+      // Setup Player PeerJS to connect to Host
+      const myId = `uasa-player-${Math.floor(Math.random() * 999999)}`;
+      if (state.peer) state.peer.destroy();
+      
+      try {
+        state.peer = new Peer(myId);
+        state.peer.on('open', () => {
+          const hostPeerId = `uasa-u2-${pin}`;
+          state.hostConnection = state.peer.connect(hostPeerId);
+          if (state.hostConnection) {
+            state.hostConnection.on('open', () => {
+              sendPlayerJoinEvent();
+            });
+            state.hostConnection.on('data', data => {
+              handleNetworkMessage(data);
+            });
+          }
+        });
+      } catch (e) {
+        console.warn("Peer connection fallback active");
+      }
+
+      // Also listen on BroadcastChannel for seamless local tab multiplay
+      setupBroadcastChannel(pin);
+      setTimeout(() => {
+        sendPlayerJoinEvent();
+      }, 300);
+
+      closePlayerModal();
+      enableLiveRoomBanner(`Pemain: ${name}`);
+      showToastAlert(`Berjaya masuk ke Bilik ${pin}!`);
+    }
+
+    function sendPlayerJoinEvent() {
+      const payload = {
+        type: 'PLAYER_JOIN',
+        playerId: state.peer ? state.peer.id : `local-${state.playerName}`,
+        name: state.playerName,
+        avatar: state.playerAvatar,
+        score: computeTotalMarks()
+      };
+      broadcastNetworkMessage(payload);
+    }
+
+    function broadcastNetworkMessage(msg) {
+      // 1. Through BroadcastChannel
+      if (state.broadcastChannel) {
+        state.broadcastChannel.postMessage(msg);
+      }
+      // 2. Through WebRTC Host connections
+      if (state.mpRole === 'host' && state.connections.length > 0) {
+        state.connections.forEach(conn => {
+          if (conn.open) conn.send(msg);
+        });
+      }
+      // 3. Through WebRTC Player -> Host connection
+      if (state.mpRole === 'player' && state.hostConnection && state.hostConnection.open) {
+        state.hostConnection.send(msg);
+      }
+    }
+
+    function handleNetworkMessage(msg, senderConn) {
+      if (!msg || !msg.type) return;
+
+      if (msg.type === 'PLAYER_JOIN') {
+        state.playersMap[msg.playerId] = {
+          id: msg.playerId,
+          name: msg.name,
+          avatar: msg.avatar,
+          score: msg.score || 0,
+          lastAction: 'Menyertai bilik'
+        };
+        renderHostLobbyPlayers();
+        renderLiveLeaderboard();
+
+        // If I am Host, relay updated full players list back to everyone
+        if (state.mpRole === 'host') {
+          broadcastNetworkMessage({
+            type: 'SYNC_PLAYERS',
+            players: state.playersMap
+          });
+        }
+      }
+
+      if (msg.type === 'SYNC_PLAYERS') {
+        state.playersMap = msg.players;
+        renderHostLobbyPlayers();
+        renderLiveLeaderboard();
+      }
+
+      if (msg.type === 'SCORE_UPDATE') {
+        if (state.playersMap[msg.playerId]) {
+          state.playersMap[msg.playerId].score = msg.score;
+          state.playersMap[msg.playerId].lastAction = msg.lastAction || 'Menjawab soalan';
+        } else {
+          state.playersMap[msg.playerId] = {
+            id: msg.playerId,
+            name: msg.name,
+            avatar: msg.avatar || '🦁',
+            score: msg.score,
+            lastAction: msg.lastAction || 'Menjawab'
+          };
+        }
+        renderLiveLeaderboard();
+
+        // If Host, broadcast updated list to all players
+        if (state.mpRole === 'host') {
+          broadcastNetworkMessage({
+            type: 'SYNC_PLAYERS',
+            players: state.playersMap
+          });
+        }
+      }
+
+      if (msg.type === 'GAME_STARTED') {
+        showToastAlert("🚀 Host telah memulakan pertandingan! Selamat maju jaya!");
+        triggerCelebration();
+      }
+    }
+
+    function renderHostLobbyPlayers() {
+      const container = document.getElementById('hostPlayerListGrid');
+      const countLabel = document.getElementById('hostPlayerCount');
+      const players = Object.values(state.playersMap);
+
+      countLabel.innerText = players.length;
+
+      if (players.length === 0) {
+        container.innerHTML = `<span class="text-gray-400 text-xs italic m-auto">Menunggu pelajar memasukkan kod PIN ${state.roomPin}...</span>`;
+        return;
+      }
+
+      container.innerHTML = players.map(p => `
+        <div class="px-3 py-2 rounded-2xl bg-white border border-md-primary/20 flex items-center gap-2 shadow-xs spring-pop">
+          <span class="text-base">${p.avatar}</span>
+          <span class="text-xs font-black text-md-on-surface">${p.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderLiveLeaderboard() {
+      const container = document.getElementById('leaderboardListContainer');
+      const sorted = Object.values(state.playersMap).sort((a, b) => b.score - a.score);
+
+      if (sorted.length === 0) {
+        container.innerHTML = `<p class="text-xs text-gray-400 text-center py-6 italic">Belum ada markah direkodkan...</p>`;
+        return;
+      }
+
+      container.innerHTML = sorted.map((p, idx) => {
+        let medal = `#${idx + 1}`;
+        if (idx === 0) medal = '🥇';
+        if (idx === 1) medal = '🥈';
+        if (idx === 2) medal = '🥉';
+
+        return `
+          <div class="p-3 rounded-2xl ${idx === 0 ? 'bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-300' : 'bg-md-surface-container-low border border-md-surface-container-highest'} flex items-center justify-between transition-all">
+            <div class="flex items-center gap-3">
+              <span class="font-black text-sm w-6 text-center">${medal}</span>
+              <span class="text-xl">${p.avatar}</span>
+              <div>
+                <h5 class="text-xs font-black text-md-on-surface">${p.name} ${p.name === state.playerName ? '(Anda)' : ''}</h5>
+                <p class="text-[10px] text-md-on-surface-variant">${p.lastAction || 'Sedang menjawab'}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-sm font-black text-md-primary">${p.score}</span>
+              <span class="text-[10px] block text-gray-400 font-bold">Markah</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function enableLiveRoomBanner(roleText) {
+      document.getElementById('liveRoomBanner').classList.remove('hidden');
+      document.getElementById('liveRoomBannerRole').innerText = `Mod: ${roleText}`;
+      document.getElementById('liveRoomBannerPin').innerText = state.roomPin;
+      document.getElementById('liveRoomBannerName').innerText = `Pemain: ${state.playerName || 'Guru'}`;
+      document.getElementById('mpHeaderBtnText').innerText = `Bilik: ${state.roomPin}`;
+    }
+
+    function leaveRoom() {
+      if (confirm("Adakah anda ingin keluar dari bilik ini?")) {
+        if (state.peer) state.peer.destroy();
+        if (state.broadcastChannel) state.broadcastChannel.close();
+        state.mpRole = null;
+        state.roomPin = null;
+        state.playersMap = {};
+        document.getElementById('liveRoomBanner').classList.add('hidden');
+        document.getElementById('mpHeaderBtnText').innerText = "Host / Sertai Bilik";
+        showToastAlert("Anda telah meninggalkan bilik.");
+      }
+    }
+
+    function openLiveLeaderboardModal() {
+      renderLiveLeaderboard();
+      document.getElementById('liveLeaderboardModal').classList.remove('hidden');
+      document.getElementById('liveLeaderboardModal').classList.add('flex');
+    }
+
+    function closeLiveLeaderboardModal() {
+      document.getElementById('liveLeaderboardModal').classList.add('hidden');
+      document.getElementById('liveLeaderboardModal').classList.remove('flex');
+    }
+
+    function notifyScoreUpdate(actionDesc) {
+      const currentScore = computeTotalMarks();
+      if (state.mpRole === 'player') {
+        broadcastNetworkMessage({
+          type: 'SCORE_UPDATE',
+          playerId: state.peer ? state.peer.id : `local-${state.playerName}`,
+          name: state.playerName,
+          avatar: state.playerAvatar,
+          score: currentScore,
+          lastAction: actionDesc
+        });
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       6. TAB SWITCHING
+       ------------------------------------------------------------------------- */
+    function switchSection(secId) {
+      state.currentTab = secId;
+
+      ['A', 'B', 'C'].forEach(id => {
+        const sec = document.getElementById(`section-${id}`);
+        const deskBtn = document.getElementById(`desk-tab-${id}`);
+        const mobBtn = document.getElementById(`mob-tab-${id}`);
+
+        if (id === secId) {
+          sec.classList.remove('hidden');
+          sec.classList.add('spring-pop');
+          
+          deskBtn.className = "flex-1 py-2 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-200 bg-md-primary text-white shadow-md3-1 font-bold";
+          mobBtn.className = "flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all text-md-primary font-bold active:scale-95";
+          mobBtn.querySelector('div').className = "w-10 h-7 rounded-full bg-md-primary-container text-md-on-primary-container flex items-center justify-center mb-1";
+        } else {
+          sec.classList.add('hidden');
+          sec.classList.remove('spring-pop');
+
+          deskBtn.className = "flex-1 py-2 px-4 rounded-full flex items-center justify-center gap-2 transition-all duration-200 text-md-on-surface-variant hover:bg-md-surface-container-highest font-medium";
+          mobBtn.className = "flex-1 flex flex-col items-center justify-center py-1.5 px-2 rounded-2xl transition-all text-md-on-surface-variant font-medium active:scale-95";
+          mobBtn.querySelector('div').className = "w-10 h-7 rounded-full flex items-center justify-center mb-1 text-md-on-surface-variant";
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* -------------------------------------------------------------------------
+       7. BAHAGIAN A LOGIC (15 MCQS)
+       ------------------------------------------------------------------------- */
+    function filterMCQ(category) {
+      state.mcqFilter = category;
+      ['all', 'alam', 'melaka', 'negeri'].forEach(c => {
+        const btn = document.getElementById(`filter-btn-${c}`);
+        if (c === category) {
+          btn.className = "px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-primary text-white shadow-xs";
+        } else {
+          btn.className = "px-3.5 py-1.5 rounded-full text-xs font-bold bg-md-surface-container-high text-md-on-surface-variant hover:bg-md-surface-container-highest";
+        }
+      });
+      renderMCQs();
+    }
+
+    function renderMCQs() {
+      const container = document.getElementById('mcqListContainer');
+      const filtered = FULL_MCQS.filter(q => {
+        if (state.mcqFilter === 'all') return true;
+        return q.cat === state.mcqFilter;
+      });
+
+      container.innerHTML = filtered.map(q => {
+        const isAnswered = state.mcqAnswers.hasOwnProperty(q.id);
+        const answeredVal = state.mcqAnswers[q.id];
+
+        return `
+          <div class="bg-md-surface-container-lowest rounded-3xl p-5 sm:p-7 border border-md-surface-container-high shadow-sm transition-all" id="mcq-card-${q.id}">
+            <div class="flex items-center justify-between mb-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-md-surface-container text-md-primary text-[11px] font-black">
+                Soalan ${q.id} • ${q.bab}
+              </span>
+              <span class="text-xs font-black ${isAnswered ? (answeredVal ? 'text-emerald-700' : 'text-rose-700') : 'text-gray-400'}">
+                ${isAnswered ? (answeredVal ? '✓ 1 Markah' : '✗ 0 Markah') : '1 Markah'}
+              </span>
+            </div>
+
+            <p class="text-xs sm:text-sm font-bold text-md-on-surface leading-relaxed mb-4">
+              ${q.q}
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${q.options.map((opt, optIndex) => {
+                let btnClass = "p-3 rounded-2xl text-left text-xs font-semibold border-2 border-md-surface-container-high bg-md-surface hover:bg-md-surface-container flex items-start gap-2.5 transition-all active:scale-[0.98]";
+                
+                if (isAnswered) {
+                  if (optIndex === q.ans) {
+                    btnClass = "p-3 rounded-2xl text-left text-xs font-bold border-2 border-[#1B6C39] bg-[#E8F5E9] text-[#00210C] flex items-start gap-2.5";
+                  } else if (optIndex === answeredVal && optIndex !== q.ans) {
+                    btnClass = "p-3 rounded-2xl text-left text-xs font-bold border-2 border-[#BA1A1A] bg-[#FFDAD6] text-[#410002] flex items-start gap-2.5";
+                  } else {
+                    btnClass = "p-3 rounded-2xl text-left text-xs font-semibold border-2 border-md-surface-container bg-md-surface opacity-40 flex items-start gap-2.5";
+                  }
+                }
+
+                return `
+                  <button ${isAnswered ? 'disabled' : `onclick="handleSelectMCQ(${q.id}, ${optIndex})"`} class="${btnClass}">
+                    <span class="w-5 h-5 rounded-full bg-md-surface-container-high text-md-on-surface-variant flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                      ${['A', 'B', 'C', 'D'][optIndex]}
+                    </span>
+                    <span class="leading-snug">${opt}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- AnimateContentSize Drawer -->
+            <div class="animate-content-size ${isAnswered ? 'expanded' : ''}">
+              <div class="expand-wrapper">
+                <div class="mt-4 p-3.5 rounded-2xl ${isAnswered && answeredVal ? 'bg-emerald-50 text-emerald-950 border border-emerald-200' : 'bg-rose-50 text-rose-950 border border-rose-200'} text-xs leading-relaxed">
+                  <div class="flex items-center gap-1.5 font-bold mb-1">
+                    <span>${isAnswered && answeredVal ? '✓ Tepat Sekali!' : '✗ Kurang Tepat!'}</span>
+                    <span class="font-normal text-[11px]">— Rujukan KSSM:</span>
+                  </div>
+                  <div><strong>Jawapan: ${['A', 'B', 'C', 'D'][q.ans]}</strong>. ${q.exp}</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleSelectMCQ(qId, selectedOpt) {
+      const q = FULL_MCQS.find(item => item.id === qId);
+      const isCorrect = (selectedOpt === q.ans);
+      state.mcqAnswers[qId] = isCorrect;
+
+      renderMCQs();
+      updateAProgress();
+      updateTotalDashboardMarks();
+      notifyScoreUpdate(`Menjawab Soalan ${qId} Bahagian A`);
+    }
+
+    function updateAProgress() {
+      const count = Object.keys(state.mcqAnswers).length;
+      document.getElementById('progCountA').innerText = `${count} / 15`;
+      document.getElementById('badgeCountA').innerText = `${count}/15`;
+      document.getElementById('progBarA').style.width = `${(count / 15) * 100}%`;
+    }
+
+    /* -------------------------------------------------------------------------
+       8. BAHAGIAN B LOGIC (4 STRUCTURED TASKS)
+       ------------------------------------------------------------------------- */
+    function resetBItem(key) {
+      const card = document.getElementById(`b-card-${key}`);
+      const tag = document.getElementById(`b-tag-${key}`);
+      card.className = "p-4 rounded-2xl bg-md-surface-container-low border border-md-surface-container-highest transition-colors duration-300";
+      tag.className = "text-[11px] font-bold text-gray-400";
+      tag.innerText = "Belum Disemak";
+    }
+
+    function checkAllSectionB() {
+      const ben = document.getElementById('b-sel-ben').value === 'penasihat';
+      const tem = document.getElementById('b-sel-tem').value === 'polis';
+      const lak = document.getElementById('b-sel-lak').value === 'laut';
+      const hari = document.getElementById('b-sel-hari').value === 'khazanah';
+
+      applyBFeedback('ben', ben);
+      applyBFeedback('tem', tem);
+      applyBFeedback('lak', lak);
+      applyBFeedback('hari', hari);
+      const t1 = [ben, tem, lak, hari].filter(Boolean).length;
+      state.bScores.task1 = t1;
+      document.getElementById('scoreBadgeTask1').innerText = `${t1} / 4 Markah`;
+
+      const d1 = document.getElementById('sel-trade-1').value === 'kapur';
+      const d2 = document.getElementById('sel-trade-2').value === 'sutera';
+      const d3 = document.getElementById('sel-trade-3').value === 'tekstil';
+      const t2 = [d1, d2, d3].filter(Boolean).length;
+      state.bScores.task2 = t2;
+      document.getElementById('scoreBadgeTask2').innerText = `${t2} / 3 Markah`;
+
+      const a1 = document.getElementById('sel-adat-1').value === 'temenggung';
+      const a2 = document.getElementById('sel-adat-2').value === 'perpatih';
+      const a3 = document.getElementById('sel-adat-3').value === 'perpatih';
+      const a4 = document.getElementById('sel-adat-4').value === 'temenggung';
+      applyCardClass('adat-card-1', a1);
+      applyCardClass('adat-card-2', a2);
+      applyCardClass('adat-card-3', a3);
+      applyCardClass('adat-card-4', a4);
+      const t3 = [a1, a2, a3, a4].filter(Boolean).length;
+      state.bScores.task3 = t3;
+      document.getElementById('scoreBadgeTask3').innerText = `${t3} / 4 Markah`;
+
+      const c1 = document.getElementById('sel-candi-1').value === 'sailendra';
+      const c2 = document.getElementById('sel-candi-2').value === 'angkor';
+      const c3 = document.getElementById('sel-candi-3').value === 'kedah';
+      const c4 = document.getElementById('sel-candi-4').value === 'champa';
+      applyCardClass('candi-card-1', c1);
+      applyCardClass('candi-card-2', c2);
+      applyCardClass('candi-card-3', c3);
+      applyCardClass('candi-card-4', c4);
+      const t4 = [c1, c2, c3, c4].filter(Boolean).length;
+      state.bScores.task4 = t4;
+      document.getElementById('scoreBadgeTask4').innerText = `${t4} / 4 Markah`;
+
+      updateTotalDashboardMarks();
+      notifyScoreUpdate("Menyemak Bahagian B Struktur");
+      showToastAlert("Semua soalan Bahagian B berjaya disemak!");
+    }
+
+    function applyBFeedback(key, isCorrect) {
+      const card = document.getElementById(`b-card-${key}`);
+      const tag = document.getElementById(`b-tag-${key}`);
+      if (isCorrect) {
+        card.className = "p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 transition-colors duration-300";
+        tag.className = "text-[11px] font-black text-emerald-700";
+        tag.innerText = "✓ Betul";
+      } else {
+        card.className = "p-4 rounded-2xl border-2 border-rose-400 bg-rose-50/50 transition-colors duration-300";
+        tag.className = "text-[11px] font-black text-rose-700";
+        tag.innerText = "✗ Salah";
+      }
+    }
+
+    function applyCardClass(cardId, isCorrect) {
+      const card = document.getElementById(cardId);
+      if (isCorrect) {
+        card.classList.remove('border-md-surface-container-highest', 'border-rose-400', 'bg-rose-50/40');
+        card.classList.add('border-emerald-500', 'bg-emerald-50/50');
+      } else {
+        card.classList.remove('border-md-surface-container-highest', 'border-emerald-500', 'bg-emerald-50/50');
+        card.classList.add('border-rose-400', 'bg-rose-50/40');
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       9. BAHAGIAN C ESSAY LOGIC (PERAK & PIL VERBATIM ENGINE)
+       ------------------------------------------------------------------------- */
+    function initBahagianC() {
+      renderEssayQuestionPicker();
+      loadEssayQuestion(1);
+    }
+
+    function renderEssayQuestionPicker() {
+      const container = document.getElementById('essayQuestionPicker');
+      container.innerHTML = BAHAGIAN_C_QUESTIONS.map(q => {
+        const isSel = (state.selectedEssayQuestion === q.id);
+        return `
+          <button onclick="loadEssayQuestion(${q.id})" class="p-3.5 rounded-2xl border-2 text-left transition-all active:scale-[0.98] ${
+            isSel ? 'border-md-primary bg-md-primary/10 shadow-sm' : 'border-md-surface-container bg-md-surface-container-low hover:bg-md-surface-container'
+          }">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-black text-md-primary">${q.bab}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-white text-md-on-surface">${q.suggestedFormula.split(' ')[0]}</span>
+            </div>
+            <h4 class="font-extrabold text-xs sm:text-sm text-md-on-surface line-clamp-1">${q.title}</h4>
+            <p class="text-[11px] text-md-on-surface-variant line-clamp-2 mt-1">${q.prompt}</p>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function loadEssayQuestion(id) {
+      state.selectedEssayQuestion = id;
+      const q = BAHAGIAN_C_QUESTIONS.find(item => item.id === id);
+
+      document.getElementById('activeQuestionTag').innerText = q.title;
+      document.getElementById('activeQuestionBab').innerText = q.bab;
+      document.getElementById('activeQuestionStimulus').innerText = `"${q.stimulus}"`;
+      document.getElementById('activeQuestionPrompt').innerText = q.prompt;
+      document.getElementById('suggestedFormulaBadge').innerText = `Padanan: ${q.suggestedFormula}`;
+
+      renderEssayQuestionPicker();
+      setFrameworkMode(q.mode);
+    }
+
+    function setFrameworkMode(modeNum) {
+      state.currentFrameworkMode = modeNum;
+      state.selectedPointIds = [];
+
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`mode-btn-${i}`);
+        const dot = btn.querySelector('.rounded-full');
+        const tag = btn.querySelector('span:first-child');
+
+        if (i === modeNum) {
+          btn.className = "p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-md-primary bg-md-primary/10 shadow-sm active:scale-95";
+          dot.className = "w-2.5 h-2.5 rounded-full bg-md-primary";
+          tag.className = "text-xs font-black text-md-primary uppercase";
+        } else {
+          btn.className = "p-3.5 sm:p-4 rounded-2xl border-2 text-left transition-all flex flex-col justify-between border-transparent bg-md-surface-container hover:bg-md-surface-container-high active:scale-95";
+          dot.className = "w-2.5 h-2.5 rounded-full bg-transparent";
+          tag.className = "text-xs font-black text-md-on-surface-variant uppercase";
+        }
+      }
+
+      document.getElementById('kataTugasText').innerText = VERBATIM_LIBRARIES[modeNum].kataTugas;
+      renderSentenceBlocks();
+      assembleEssayOutput();
+    }
+
+    function renderSentenceBlocks() {
+      const container = document.getElementById('sentenceBlocksGrid');
+      const lib = VERBATIM_LIBRARIES[state.currentFrameworkMode];
+
+      container.innerHTML = lib.points.map(pt => {
+        const isSelected = state.selectedPointIds.includes(pt.id);
+        const orderNum = state.selectedPointIds.indexOf(pt.id) + 1;
+
+        return `
+          <button onclick="togglePointBlock('${pt.id}')" class="p-4 rounded-2xl border-2 text-left transition-all relative flex flex-col justify-between active:scale-[0.98] ${
+            isSelected 
+              ? 'border-md-primary bg-md-primary-container/30 shadow-md3-1 ring-2 ring-md-primary/20' 
+              : 'border-md-surface-container-high bg-md-surface-container-low hover:bg-md-surface-container'
+          }">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                  isSelected ? 'bg-md-primary text-white' : 'bg-md-surface-container-highest text-md-on-surface'
+                }">
+                  ${pt.badge}
+                </span>
+
+                ${
+                  isSelected 
+                    ? `<span class="w-5 h-5 rounded-full bg-md-primary text-white text-[10px] font-black flex items-center justify-center">#${orderNum}</span>` 
+                    : `<span class="text-[11px] font-bold text-md-primary">+ Masukkan</span>`
+                }
+              </div>
+
+              <h4 class="font-black text-xs sm:text-sm text-md-on-surface mb-1.5">${pt.label}</h4>
+              <p class="text-[11px] text-md-on-surface-variant line-clamp-3 italic">
+                "${pt.verbatim}"
+              </p>
+            </div>
+
+            <div class="mt-3 pt-2 border-t border-md-surface-container-high flex items-center justify-between text-[11px] font-bold text-md-on-surface-variant">
+              <span>+${pt.marks} Markah</span>
+              <span class="${isSelected ? 'text-md-primary font-black' : 'text-gray-400'}">
+                ${isSelected ? '✓ Terpilih' : 'Klik untuk pilih'}
+              </span>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function togglePointBlock(id) {
+      const idx = state.selectedPointIds.indexOf(id);
+      if (idx > -1) {
+        state.selectedPointIds.splice(idx, 1);
+      } else {
+        state.selectedPointIds.push(id);
+      }
+
+      renderSentenceBlocks();
+      assembleEssayOutput();
+      notifyScoreUpdate(`Menjana isi KBAT [${id}]`);
+    }
+
+    function resetSelectedPoints() {
+      state.selectedPointIds = [];
+      renderSentenceBlocks();
+      assembleEssayOutput();
+      showToastAlert("Pilihan blok dikosongkan.");
+    }
+
+    function assembleEssayOutput() {
+      const lib = VERBATIM_LIBRARIES[state.currentFrameworkMode];
+      const box = document.getElementById('essayLiveBox');
+      const badge = document.getElementById('markahBadge');
+      const scoreVal = document.getElementById('markahScoreVal');
+      const rubricBadge = document.getElementById('rubricArasBadge');
+      const checkIcon = document.getElementById('badgeCheckIcon');
+      const wordCountLabel = document.getElementById('statWordCount');
+      const pointCountLabel = document.getElementById('statPointCount');
+
+      if (state.selectedPointIds.length === 0) {
+        box.innerHTML = `<span class="text-gray-400 italic">Sila klik sekurang-kurangnya satu blok formula di Langkah 3 untuk menjana ayat esei lengkap anda...</span>`;
+        scoreVal.innerText = "0 / 8 Markah";
+        badge.className = "px-5 py-2 rounded-2xl bg-md-surface-container-high text-md-on-surface-variant flex items-center gap-3 transition-all duration-300";
+        rubricBadge.innerText = "Aras 1 (Permulaan)";
+        checkIcon.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>`;
+        wordCountLabel.innerText = "Jumlah Perkataan: 0";
+        pointCountLabel.innerText = `Isi Lengkap: 0 / ${lib.points.length}`;
+        updateTotalDashboardMarks();
+        return;
+      }
+
+      let marksEarned = 0;
+      const sentenceHTML = [];
+      const sentencePlain = [];
+
+      state.selectedPointIds.forEach(id => {
+        const pt = lib.points.find(p => p.id === id);
+        if (pt) {
+          marksEarned += pt.marks;
+          sentencePlain.push(pt.verbatim);
+          sentenceHTML.push(`
+            <span class="inline spring-pop">
+              <span class="inline-block px-1.5 py-0.2 rounded text-[10px] font-black bg-md-primary/10 text-md-primary mr-1">${pt.badge.split(' - ')[0]}</span>${pt.verbatim}
+            </span>
+          `);
+        }
+      });
+
+      if (marksEarned > 8) marksEarned = 8;
+
+      box.innerHTML = sentenceHTML.join(" ");
+      const plainText = sentencePlain.join(" ");
+      const words = plainText.trim().split(/\s+/).filter(Boolean).length;
+      wordCountLabel.innerText = `Jumlah Perkataan: ${words}`;
+      pointCountLabel.innerText = `Isi Lengkap: ${state.selectedPointIds.length} / ${lib.points.length}`;
+      scoreVal.innerText = `${marksEarned} / 8 Markah`;
+
+      if (marksEarned >= 8) {
+        rubricBadge.innerText = "Aras 4: Cemerlang (Penuh)";
+        rubricBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-900";
+        badge.className = "px-5 py-2 rounded-2xl bg-gradient-to-r from-md-primary to-[#7D66FF] text-white flex items-center gap-3 shadow-glow-purple transition-all duration-300";
+        checkIcon.className = "w-8 h-8 rounded-full bg-white text-md-primary flex items-center justify-center font-bold shadow-xs";
+        checkIcon.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+        triggerCelebration();
+      } else if (marksEarned >= 5) {
+        rubricBadge.innerText = "Aras 3: Kepujian";
+        rubricBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-md-secondary-container text-md-on-secondary-container";
+        badge.className = "px-5 py-2 rounded-2xl bg-md-secondary-container text-md-on-secondary-container flex items-center gap-3 transition-all duration-300";
+        checkIcon.className = "w-8 h-8 rounded-full bg-white/80 text-md-secondary flex items-center justify-center";
+        checkIcon.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+      } else {
+        rubricBadge.innerText = "Aras 2: Memuaskan";
+        rubricBadge.className = "px-2.5 py-0.5 rounded-full text-[11px] font-black bg-md-surface-container text-md-on-surface-variant";
+        badge.className = "px-5 py-2 rounded-2xl bg-md-surface-container-high text-md-on-surface-variant flex items-center gap-3 transition-all duration-300";
+        checkIcon.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>`;
+      }
+
+      updateTotalDashboardMarks();
+    }
+
+    function copyEssayText() {
+      const box = document.getElementById('essayLiveBox');
+      const text = box.innerText;
+      if (!text || text.includes('Sila klik')) {
+        showToastAlert("Tiada esei dijana lagi!");
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        showToastAlert("Esei verbatim berjaya disalin!");
+      });
+    }
+
+    /* -------------------------------------------------------------------------
+       10. SCORE ENGINE & UTILITIES
+       ------------------------------------------------------------------------- */
+    function computeTotalMarks() {
+      const a = Object.values(state.mcqAnswers).filter(Boolean).length;
+      const b = state.bScores.task1 + state.bScores.task2 + state.bScores.task3 + state.bScores.task4;
+      
+      let c = 0;
+      const lib = VERBATIM_LIBRARIES[state.currentFrameworkMode];
+      state.selectedPointIds.forEach(id => {
+        const pt = lib.points.find(p => p.id === id);
+        if (pt) c += pt.marks;
+      });
+      if (c > 8) c = 8;
+
+      return a + b + c;
+    }
+
+    function updateTotalDashboardMarks() {
+      const total = computeTotalMarks();
+      document.getElementById('headerScoreValue').innerText = total;
+    }
+
+    function triggerCelebration() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 85,
+          spread: 70,
+          origin: { y: 0.75 },
+          colors: ['#5B42F3', '#FFDDAF', '#006C4C', '#FF6B6B']
+        });
+      }
+    }
+
+    function showToastAlert(msg) {
+      const t = document.getElementById('toastAlert');
+      document.getElementById('toastAlertMsg').innerText = msg;
+      t.classList.remove('translate-y-24', 'opacity-0');
+      t.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        t.classList.remove('translate-y-0', 'opacity-100');
+        t.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
+    }
+
+    function openFormulaModal() {
+      document.getElementById('formulaModal').classList.remove('hidden');
+      document.getElementById('formulaModal').classList.add('flex');
+    }
+
+    function closeFormulaModal() {
+      document.getElementById('formulaModal').classList.add('hidden');
+      document.getElementById('formulaModal').classList.remove('flex');
+    }
+
+    /* -------------------------------------------------------------------------
+       11. INITIALIZATION
+       ------------------------------------------------------------------------- */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMCQs();
+      initBahagianC();
+      updateTotalDashboardMarks();
+      initAvatarPicker();
+    });
+  </script>
+</body>
+</html>
