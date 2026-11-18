@@ -99,7 +99,6 @@
       --inverse-surface: #dfe4dc; --inverse-on-surface: #2c322c;
     }
 
-    /* === RESET & ZERO MOBILE BLUE TAP/SELECT === */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -148,7 +147,6 @@
     }
     .ms.filled { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
 
-    /* === APP SHELL === */
     .app-shell { display: flex; min-height: 100dvh; width: 100%; }
 
     .nav-rail {
@@ -192,7 +190,6 @@
       flex: 1; margin-left: var(--rail-width); display: flex; flex-direction: column; min-width: 0; width: 100%;
     }
 
-    /* === TOP APP BAR === */
     .top-bar {
       position: sticky; top: 0; z-index: 30; height: var(--topbar-height);
       background: color-mix(in srgb, var(--surface-low) 88%, transparent);
@@ -237,7 +234,6 @@
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--tertiary); flex-shrink: 0; }
     .status-dot.offline { background: var(--error); }
 
-    /* === CONTENT === */
     .content-wrap { width: 100%; max-width: 1280px; margin: 0 auto; padding: 10px 28px 64px; }
     .view-section { display: none; animation: fadeSlideUp 260ms var(--spring-effects); }
     .view-section.active { display: block; }
@@ -246,7 +242,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* === HERO & SEARCH === */
     .hero-banner {
       background: linear-gradient(135deg,
         color-mix(in srgb, var(--primary-container) 55%, var(--surface)) 0%,
@@ -292,7 +287,6 @@
     }
     .clear-input-btn.visible { display: grid; }
 
-    /* Custom Material Storefront Pill Button (Replaces native <select>) */
     .storefront-btn {
       height: 36px; padding: 0 10px 0 12px; border-radius: 999px; border: none;
       background: var(--surface-container); color: var(--on-surface);
@@ -301,7 +295,6 @@
     }
     .storefront-btn:active { transform: scale(0.95); }
 
-    /* Split Button (MD3E) */
     .split-btn { display: inline-flex; height: 54px; gap: 2px; flex-shrink: 0; }
     .btn-primary-main {
       height: 100%; padding: 0 24px; border: none; cursor: pointer;
@@ -333,7 +326,6 @@
     .chip:hover { background: var(--primary-container); color: var(--on-primary-container); }
     .chip:active { transform: scale(0.95); }
 
-    /* === WORKSPACE === */
     .workspace-grid {
       display: grid;
       grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
@@ -370,7 +362,6 @@
     .seg-btn:last-child { border-radius: 8px 999px 999px 8px; }
     .seg-btn.active { background: var(--primary-container); color: var(--on-primary-container); border-radius: 999px; }
 
-    /* === ARTIST VIDEO STAGE === */
     .canvas-stage {
       position: relative; width: 100%; aspect-ratio: 9 / 14;
       border-radius: 22px; overflow: hidden; background: #0b0d12;
@@ -435,7 +426,6 @@
       100% { rx: 18px; transform: scale(0.96) rotate(90deg); }
     }
 
-    /* === INSPECTOR & ACTION BUTTONS === */
     .stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
     .artist-banner {
@@ -499,7 +489,6 @@
     .pill-tag.miss { background: var(--error-container); color: var(--on-error-container); }
     .trace-detail { font-family: var(--font-mono); font-size: 11.5px; color: var(--on-surface-variant); overflow-wrap: anywhere; }
 
-    /* === SETTINGS & HISTORY (FIXED: Strictly 1 column on mobile!) === */
     .settings-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -557,7 +546,7 @@
     }
     .history-card:active { transform: scale(0.97); }
 
-    /* === MD3 BOTTOM SHEET / MODAL (Resolution Picker & Storefront Picker) === */
+    /* === MD3 BOTTOM SHEET / MODAL === */
     .sheet-backdrop {
       position: fixed; inset: 0; background: rgba(0, 0, 0, 0.52);
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -591,7 +580,6 @@
       border: 1.5px solid color-mix(in srgb, var(--outline-variant) 55%, transparent);
       background: var(--surface-container); color: var(--on-surface);
       display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;
-      transition: border-color 160ms ease, transform 200ms var(--spring-spatial);
     }
     .res-option:hover { border-color: var(--primary); }
     .res-option:active { transform: scale(0.98); }
@@ -613,7 +601,6 @@
     }
     .sf-option.active { background: var(--primary-container); color: var(--on-primary-container); border-color: var(--primary); }
 
-    /* Snackbar */
     .snackbar {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(90px);
       max-width: calc(100vw - 32px); text-align: center;
@@ -690,7 +677,6 @@
 </head>
 <body>
   <div class="app-shell">
-    <!-- NAVIGATION RAIL (Sidebar on Desktop, Bottom Nav Bar on Mobile) -->
     <aside class="nav-rail" aria-label="Primary Navigation">
       <div class="rail-brand" title="AvidTune Canvas Studio" onclick="switchView('studio')">
         <span class="ms filled">graphic_eq</span>
@@ -720,7 +706,6 @@
     </aside>
 
     <div class="main-area">
-      <!-- TOP APP BAR -->
       <header class="top-bar">
         <div class="product-lockup">
           <div class="google-wordmark">
@@ -1029,7 +1014,7 @@
     </div>
   </div>
 
-  <!-- RESOLUTION PICKER SHEET (for .m3u8 HLS streams) -->
+  <!-- RESOLUTION PICKER SHEET -->
   <div class="sheet-backdrop" id="resSheet" onclick="if(event.target===this) closeSheet('resSheet')">
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
@@ -1046,7 +1031,7 @@
     </div>
   </div>
 
-  <!-- STOREFRONT PICKER SHEET (Replaces native <select>) -->
+  <!-- STOREFRONT PICKER SHEET -->
   <div class="sheet-backdrop" id="sfSheet" onclick="if(event.target===this) closeSheet('sfSheet')">
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
@@ -1089,7 +1074,7 @@
       hls: null,
       backendOnline: false,
       downloading: false,
-      hlsQualities: null, // Cached parsed HLS quality list for currentUrl
+      hlsQualities: null,
     };
 
     const videoEl = document.getElementById('artistVideo');
@@ -1419,7 +1404,7 @@
       document.getElementById('muteIcon').textContent = videoEl.muted ? 'volume_off' : 'volume_up';
     }
 
-    /* === RESOLUTION-AWARE DOWNLOADER === */
+    /* === RESOLUTION-AWARE HLS DOWNLOADER + fMP4 0:00 TIMESTAMP REBASER === */
     function formatBytesEstimate(bytes) {
       if (!bytes || !Number.isFinite(bytes)) return 'Size varies';
       const mb = bytes / (1024 * 1024);
@@ -1492,7 +1477,6 @@
         });
       }
 
-      // Fetch one media playlist to measure exact loop duration for accurate MB estimates
       let durationSec = 0;
       if (variants.length > 0) {
         try {
@@ -1505,7 +1489,6 @@
         }
       }
 
-      // Sort by resolution (or bandwidth) descending and deduplicate identical resolution+codec
       variants.sort((a, b) => (b.pixels - a.pixels) || (b.avgBandwidth - a.avgBandwidth));
 
       const seen = new Set();
@@ -1520,7 +1503,6 @@
         unique.push(v);
       }
 
-      // Mark best mobile-friendly stream (H.264 around 720p-1080p and <= 25 MB)
       let recIdx = unique.findIndex(v => v.codecLabel === 'H.264' && Math.min(v.width, v.height) <= 1080 && !v.isHeavy);
       if (recIdx === -1) recIdx = unique.findIndex(v => !v.isHeavy);
       if (recIdx === -1 && unique.length > 0) recIdx = unique.length - 1;
@@ -1540,7 +1522,6 @@
         return downloadDirectMp4(url);
       }
 
-      // Open MD3 Resolution Picker Sheet for .m3u8
       const sheet = document.getElementById('resSheet');
       const resList = document.getElementById('resList');
       const resSub = document.getElementById('resSheetSub');
@@ -1577,7 +1558,7 @@
               </div>
             </button>`;
         }).join('');
-      } catch (err) {
+      } catch {
         closeSheet('resSheet');
         showSnackbar('Could not parse playlist — opening URL');
         window.open(url, '_blank', 'noopener');
@@ -1624,7 +1605,9 @@
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const blob = await res.blob();
+        const buf = await res.arrayBuffer();
+        const rebased = rebaseFmp4Timestamps([buf]);
+        const blob = new Blob(rebased, { type: 'video/mp4' });
         triggerBlobDownload(blob, `${safeName}_canvas.mp4`);
         showSnackbar(`Saved ${safeName}_canvas.mp4`);
       } catch {
@@ -1633,6 +1616,168 @@
       } finally {
         setDownloadBusy(false, 'Download Video');
       }
+    }
+
+    function parseByteRange(str, prevEnd) {
+      const [lenStr, offStr] = str.split('@');
+      const length = Number(lenStr);
+      const start = offStr !== undefined ? Number(offStr) : prevEnd;
+      return { start, end: start + length - 1, nextOffset: start + length };
+    }
+
+    async function fetchPartBuffer(url, byteRange) {
+      const headers = byteRange ? { Range: `bytes=${byteRange.start}-${byteRange.end}` } : {};
+      const res = await fetch(url, { headers });
+      if (!res.ok) throw new Error(`Segment HTTP ${res.status}`);
+      return res.arrayBuffer();
+    }
+
+    /* === PURE-JS fMP4 BOX WALKER: SHIFTS APPLE 10s tfdt/sidx/elst OFFSET TO 0:00 === */
+    function readBoxType(view, pos) {
+      return String.fromCharCode(
+        view.getUint8(pos + 4),
+        view.getUint8(pos + 5),
+        view.getUint8(pos + 6),
+        view.getUint8(pos + 7)
+      );
+    }
+
+    function walkBoxes(view, start, end, onBox) {
+      let pos = start;
+      while (pos + 8 <= end) {
+        let size = view.getUint32(pos);
+        const type = readBoxType(view, pos);
+        let headerSize = 8;
+        if (size === 1) {
+          if (pos + 16 > end) break;
+          size = Number(view.getBigUint64(pos + 8));
+          headerSize = 16;
+        } else if (size === 0) {
+          size = end - pos;
+        }
+        if (size < headerSize || pos + size > end) break;
+        onBox(type, pos, headerSize, pos + size);
+        pos += size;
+      }
+    }
+
+    function rebaseFmp4Timestamps(buffers) {
+      const views = buffers.map(b => new DataView(b));
+      const minTfdtByTrack = new Map();
+
+      // Pass 1: find earliest tfdt per track_ID
+      for (const view of views) {
+        walkBoxes(view, 0, view.byteLength, (type, pos, hdr, boxEnd) => {
+          if (type !== 'moof') return;
+          walkBoxes(view, pos + hdr, boxEnd, (cType, cPos, cHdr, cEnd) => {
+            if (cType !== 'traf') return;
+            let trackId = 1;
+            let decodeTime = null;
+            walkBoxes(view, cPos + cHdr, cEnd, (tType, tPos) => {
+              if (tType === 'tfhd' && tPos + 16 <= cEnd) {
+                trackId = view.getUint32(tPos + 12);
+              } else if (tType === 'tfdt') {
+                const ver = view.getUint8(tPos + 8);
+                if (ver === 0 && tPos + 16 <= cEnd) {
+                  decodeTime = BigInt(view.getUint32(tPos + 12));
+                } else if (ver === 1 && tPos + 20 <= cEnd) {
+                  decodeTime = view.getBigUint64(tPos + 12);
+                }
+              }
+            });
+            if (decodeTime !== null) {
+              const prev = minTfdtByTrack.get(trackId);
+              if (prev === undefined || decodeTime < prev) {
+                minTfdtByTrack.set(trackId, decodeTime);
+              }
+            }
+          });
+        });
+      }
+
+      const hasOffset = [...minTfdtByTrack.values()].some(v => v > 0n);
+      if (!hasOffset) return buffers;
+
+      // Pass 2: shift tfdt, sidx, and matching elst entries back to 0:00
+      for (const view of views) {
+        walkBoxes(view, 0, view.byteLength, (type, pos, hdr, boxEnd) => {
+          if (type === 'moof') {
+            walkBoxes(view, pos + hdr, boxEnd, (cType, cPos, cHdr, cEnd) => {
+              if (cType !== 'traf') return;
+              let trackId = 1;
+              let tfdtPos = -1;
+              walkBoxes(view, cPos + cHdr, cEnd, (tType, tPos) => {
+                if (tType === 'tfhd' && tPos + 16 <= cEnd) trackId = view.getUint32(tPos + 12);
+                else if (tType === 'tfdt') tfdtPos = tPos;
+              });
+              const offset = minTfdtByTrack.get(trackId);
+              if (tfdtPos !== -1 && offset && offset > 0n) {
+                const ver = view.getUint8(tfdtPos + 8);
+                if (ver === 0 && tfdtPos + 16 <= cEnd) {
+                  const cur = BigInt(view.getUint32(tfdtPos + 12));
+                  view.setUint32(tfdtPos + 12, Number(cur >= offset ? cur - offset : 0n));
+                } else if (ver === 1 && tfdtPos + 20 <= cEnd) {
+                  const cur = view.getBigUint64(tfdtPos + 12);
+                  view.setBigUint64(tfdtPos + 12, cur >= offset ? cur - offset : 0n);
+                }
+              }
+            });
+          } else if (type === 'sidx' && pos + 24 <= boxEnd) {
+            const ver = view.getUint8(pos + 8);
+            const refId = view.getUint32(pos + 12);
+            const offset = minTfdtByTrack.get(refId);
+            if (offset && offset > 0n) {
+              if (ver === 0 && pos + 24 <= boxEnd) {
+                const ept = BigInt(view.getUint32(pos + 20));
+                if (ept >= offset) view.setUint32(pos + 20, Number(ept - offset));
+              } else if (ver === 1 && pos + 28 <= boxEnd) {
+                const ept = view.getBigUint64(pos + 20);
+                if (ept >= offset) view.setBigUint64(pos + 20, ept - offset);
+              }
+            }
+          } else if (type === 'moov') {
+            walkBoxes(view, pos + hdr, boxEnd, (mType, mPos, mHdr, mEnd) => {
+              if (mType !== 'trak') return;
+              let trackId = null;
+              let elstInfo = null;
+              walkBoxes(view, mPos + mHdr, mEnd, (tType, tPos, tHdr, tEnd) => {
+                if (tType === 'tkhd') {
+                  const ver = view.getUint8(tPos + 8);
+                  if (ver === 0 && tPos + 24 <= tEnd) trackId = view.getUint32(tPos + 20);
+                  else if (ver === 1 && tPos + 32 <= tEnd) trackId = view.getUint32(tPos + 28);
+                } else if (tType === 'edts') {
+                  walkBoxes(view, tPos + tHdr, tEnd, (eType, ePos, _eHdr, eEnd) => {
+                    if (eType === 'elst') elstInfo = { pos: ePos, end: eEnd };
+                  });
+                }
+              });
+              const offset = trackId !== null ? minTfdtByTrack.get(trackId) : undefined;
+              if (elstInfo && offset && offset > 0n && elstInfo.pos + 16 <= elstInfo.end) {
+                const ver = view.getUint8(elstInfo.pos + 8);
+                const count = view.getUint32(elstInfo.pos + 12);
+                const entrySize = ver === 1 ? 20 : 12;
+                let entryPos = elstInfo.pos + 16;
+                for (let i = 0; i < count && entryPos + entrySize <= elstInfo.end; i++) {
+                  if (ver === 0) {
+                    const mt = view.getInt32(entryPos + 4);
+                    if (mt > 0 && BigInt(mt) >= offset) {
+                      view.setInt32(entryPos + 4, Number(BigInt(mt) - offset));
+                    }
+                  } else {
+                    const mt = view.getBigInt64(entryPos + 8);
+                    if (mt > 0n && mt >= offset) {
+                      view.setBigInt64(entryPos + 8, mt - offset);
+                    }
+                  }
+                  entryPos += entrySize;
+                }
+              }
+            });
+          }
+        });
+      }
+
+      return buffers;
     }
 
     async function downloadHlsVariant(idx) {
@@ -1654,37 +1799,44 @@
         }
 
         const mediaLines = playlistText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-        const partUrls = [];
+        const parts = [];
         let isFmp4 = false;
+        let pendingRange = null;
+        let lastByteEnd = 0;
 
         for (const line of mediaLines) {
           if (line.startsWith('#EXT-X-MAP:')) {
             const uriMatch = line.match(/URI="([^"]+)"/);
+            const brMatch = line.match(/BYTERANGE="([^"]+)"/);
             if (uriMatch) {
-              partUrls.push(new URL(uriMatch[1], playlistUrl).href);
+              const range = brMatch ? parseByteRange(brMatch[1], 0) : null;
+              parts.push({ url: new URL(uriMatch[1], playlistUrl).href, range });
               isFmp4 = true;
             }
+          } else if (line.startsWith('#EXT-X-BYTERANGE:')) {
+            pendingRange = parseByteRange(line.slice(17).trim(), lastByteEnd);
+            lastByteEnd = pendingRange.nextOffset;
           } else if (!line.startsWith('#')) {
-            partUrls.push(new URL(line, playlistUrl).href);
+            parts.push({ url: new URL(line, playlistUrl).href, range: pendingRange });
+            pendingRange = null;
             if (line.toLowerCase().includes('.m4s') || line.toLowerCase().includes('.mp4')) {
               isFmp4 = true;
             }
           }
         }
 
-        if (partUrls.length === 0) throw new Error('No media segments');
+        if (parts.length === 0) throw new Error('No media segments');
 
         const chunks = [];
-        for (let i = 0; i < partUrls.length; i++) {
-          setDownloadBusy(true, `${i + 1}/${partUrls.length}...`);
-          const segRes = await fetch(partUrls[i]);
-          if (!segRes.ok) throw new Error(`Segment HTTP ${segRes.status}`);
-          chunks.push(await segRes.arrayBuffer());
+        for (let i = 0; i < parts.length; i++) {
+          setDownloadBusy(true, `${i + 1}/${parts.length}...`);
+          chunks.push(await fetchPartBuffer(parts[i].url, parts[i].range));
         }
 
+        const finalChunks = isFmp4 ? rebaseFmp4Timestamps(chunks) : chunks;
         const ext = isFmp4 ? 'mp4' : 'ts';
         const mime = isFmp4 ? 'video/mp4' : 'video/mp2t';
-        const finalBlob = new Blob(chunks, { type: mime });
+        const finalBlob = new Blob(finalChunks, { type: mime });
         const filename = `${safeName}_${resTag}_canvas.${ext}`;
         triggerBlobDownload(finalBlob, filename);
         showSnackbar(`Saved ${filename}`);
