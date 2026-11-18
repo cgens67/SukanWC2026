@@ -3,6 +3,18 @@
     {
       "source": "/api/proxy",
       "destination": "https://parents.chsmelaka.com/api/proxy"
+    },
+    {
+      "source": "/api/canvas",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/api/cache/clear",
+      "destination": "/api/index"
     }
   ]
 }
