@@ -1,0 +1,8 @@
+{
+  "name": "avidtune-canvas-web",
+  "version": "1.0.0",
+  "description": "Material Design 3 Expressive website for AvidCanvas & Apple Music Artist Canvas",
+  "engines": {
+    "node": "24.x"
+  }
+}
