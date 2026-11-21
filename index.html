@@ -66,7 +66,6 @@
             --m3-spring-spatial-fast: cubic-bezier(0.38, 1.4, 0.42, 1);
             --m3-spring-spatial: cubic-bezier(0.34, 1.45, 0.36, 1);
             --m3-spring-spatial-slow: cubic-bezier(0.28, 1.25, 0.3, 1);
-            /* Dedicated bounded curve for border-radius so shrinking never overshoots below 0px */
             --m3-shape-ease: cubic-bezier(0.22, 1, 0.36, 1);
             --m3-effects-standard: cubic-bezier(0.2, 0, 0, 1);
 
@@ -79,6 +78,16 @@
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        button:focus:not(:focus-visible),
+        label:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--md-primary);
+            outline-offset: 2px;
         }
 
         html, body {
@@ -125,11 +134,24 @@
             flex-shrink: 0;
         }
 
-        /* --- M3 Expressive Ripple Effect --- */
+        /* --- M3 Expressive Ripple Effect (isolated layer prevents border-radius clip bugs) --- */
         .m3-ripple {
             position: relative;
-            overflow: hidden;
             touch-action: manipulation;
+        }
+
+        .m3-ripple > :not(.m3-ripple-layer) {
+            position: relative;
+            z-index: 1;
+        }
+
+        .m3-ripple-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .m3-ripple-wave {
@@ -252,6 +274,7 @@
             padding: 8px 14px;
             border-radius: 20px;
             cursor: pointer;
+            transform: scale(1);
             transition: color 0.25s var(--m3-effects-standard), transform 0.22s var(--m3-spring-spatial-fast);
             user-select: none;
             display: inline-flex;
@@ -298,10 +321,11 @@
             font-weight: 500;
             cursor: pointer;
             user-select: none;
-            max-width: 215px;
+            max-width: 240px;
             min-height: 38px;
             flex-shrink: 0;
             border: 1px solid transparent;
+            transform: scale(1);
             transform-origin: center bottom;
             animation: m3TabEnter 0.42s var(--m3-spring-spatial) forwards;
             transition:
@@ -360,6 +384,7 @@
             justify-content: center;
             width: 24px;
             height: 24px;
+            flex-shrink: 0;
             border-radius: 12px;
             border: none;
             background: transparent;
@@ -397,6 +422,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            transform: scale(1);
             box-shadow: var(--m3-shadow-1);
             transition:
                 background-color 0.22s var(--m3-effects-standard),
@@ -516,6 +542,7 @@
             gap: 5px;
             white-space: nowrap;
             min-height: 34px;
+            transform: scale(1);
             box-shadow: var(--m3-shadow-1);
             transition:
                 border-radius 0.28s var(--m3-shape-ease),
@@ -537,7 +564,7 @@
 
         @media (hover: hover) {
             .header-btn:hover {
-                transform: translateY(-1.5px);
+                transform: translateY(-1.5px) scale(1);
                 box-shadow: var(--m3-shadow-2);
             }
         }
@@ -550,19 +577,19 @@
         }
 
         .paste-btn { background-color: var(--md-primary); color: var(--md-on-primary); }
-        .paste-btn:hover { background-color: var(--md-primary-hover); }
+        @media (hover: hover) { .paste-btn:hover { background-color: var(--md-primary-hover); } }
 
         .import-btn { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-        .import-btn:hover { background-color: #c7ddfd; }
+        @media (hover: hover) { .import-btn:hover { background-color: #c7ddfd; } }
 
         .clear-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        .clear-btn:hover { background-color: var(--md-surface-container-highest); }
+        @media (hover: hover) { .clear-btn:hover { background-color: var(--md-surface-container-highest); } }
 
         .export-btn { background-color: var(--md-secondary); color: #ffffff; }
-        .export-btn:hover { background-color: var(--md-secondary-hover); }
+        @media (hover: hover) { .export-btn:hover { background-color: var(--md-secondary-hover); } }
 
         .toggle-all-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        .toggle-all-btn:hover { background-color: var(--md-surface-container-highest); }
+        @media (hover: hover) { .toggle-all-btn:hover { background-color: var(--md-surface-container-highest); } }
         .toggle-all-btn.is-collapsed {
             background-color: var(--md-tertiary-container);
             color: var(--md-on-tertiary-container);
@@ -581,6 +608,7 @@
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
+            transform: scale(1);
             border: 1px solid var(--md-outline-variant);
             background: var(--md-surface-container-lowest);
             color: var(--md-on-surface-variant);
@@ -801,7 +829,9 @@
             font-weight: 600;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 5px;
+            transform: scale(1);
             transition:
                 background-color 0.2s var(--m3-effects-standard),
                 border-color 0.2s var(--m3-effects-standard),
@@ -810,6 +840,7 @@
                 transform 0.26s var(--m3-spring-spatial-fast);
         }
         .action-btn .material-symbols-rounded { font-size: 15px; }
+        .action-btn:focus-visible { outline-color: #93c5fd; }
 
         @media (hover: hover) {
             .action-btn:hover {
@@ -836,7 +867,6 @@
             border-color: var(--md-primary);
             color: #ffffff;
             border-radius: 17px;
-            transform: scale(1.03);
         }
 
         /* ZERO-LAG EXPRESSIVE ACCORDION */
@@ -1267,10 +1297,17 @@
         const renameCancelBtn = document.getElementById('btn-rename-cancel');
         const renameSaveBtn = document.getElementById('btn-rename-save');
 
-        // --- M3 Expressive Pointer Ripple (Event Delegation) ---
+        // --- M3 Expressive Pointer Ripple (uses isolated .m3-ripple-layer so parent buttons never need overflow:hidden) ---
         document.addEventListener('pointerdown', (e) => {
             const target = e.target.closest('.m3-ripple');
             if (!target) return;
+
+            let layer = target.querySelector(':scope > .m3-ripple-layer');
+            if (!layer) {
+                layer = document.createElement('span');
+                layer.className = 'm3-ripple-layer';
+                target.prepend(layer);
+            }
 
             const rect = target.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
@@ -1283,7 +1320,7 @@
             wave.style.height = `${size}px`;
             wave.style.left = `${x}px`;
             wave.style.top = `${y}px`;
-            target.appendChild(wave);
+            layer.appendChild(wave);
 
             wave.addEventListener('animationend', () => wave.remove());
         });
@@ -1783,7 +1820,6 @@
                         copyIcon.textContent = 'check';
                         copyLabel.textContent = 'Copied!';
                         copyBtn.classList.add('copied');
-                        showSnackbar('Code copied to clipboard');
                         copyTimer = setTimeout(() => {
                             copyIcon.textContent = 'content_copy';
                             copyLabel.textContent = 'Copy';
