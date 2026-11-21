@@ -61,6 +61,11 @@
             --md-tertiary-container: #e8def8;
             --md-on-tertiary-container: #21005d;
 
+            --md-error-container: #fee2e2;
+            --md-on-error-container: #991b1b;
+            --md-warn-container: #fef3c7;
+            --md-on-warn-container: #92400e;
+
             --md-inline-code-bg: #edf2ef;
             --md-inline-code-text: #b91c4a;
             --md-inline-code-border: #dce4df;
@@ -223,6 +228,11 @@
 
             --md-tertiary-container: #4a396b;
             --md-on-tertiary-container: #eaddff;
+
+            --md-error-container: #5c1919;
+            --md-on-error-container: #fecaca;
+            --md-warn-container: #54360a;
+            --md-on-warn-container: #fde68a;
 
             --md-inline-code-bg: #232b26;
             --md-inline-code-text: #fda4af;
@@ -422,7 +432,6 @@
             touch-action: manipulation;
         }
 
-        /* Keep hidden <input> out of relative flow so it doesn't shift flex children */
         .m3-ripple > :not(.m3-ripple-layer):not(input) {
             position: relative;
             z-index: 1;
@@ -604,7 +613,7 @@
             color: var(--md-on-surface-variant);
             font-size: 13px;
             font-weight: 600;
-            padding: 8px 14px;
+            padding: 8px 13px;
             border-radius: 20px;
             cursor: pointer;
             transform: scale(1);
@@ -887,9 +896,16 @@
                 transform 0.26s var(--m3-spring-spatial-fast),
                 background-color 0.2s var(--m3-effects-standard),
                 color 0.2s var(--m3-effects-standard),
-                box-shadow 0.2s var(--m3-effects-standard);
+                box-shadow 0.2s var(--m3-effects-standard),
+                opacity 0.2s var(--m3-effects-standard);
         }
         .header-btn .material-symbols-rounded { font-size: 16px; }
+        .header-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none !important;
+        }
 
         .m3-connected-group .header-btn:first-child:not(:last-child) {
             border-radius: 18px 8px 8px 18px;
@@ -902,33 +918,33 @@
         }
 
         @media (hover: hover) {
-            .header-btn:hover {
+            .header-btn:not(:disabled):hover {
                 transform: translateY(-1.5px) scale(1);
                 box-shadow: var(--m3-shadow-2);
             }
         }
 
-        .header-btn:active,
-        .m3-connected-group .header-btn:active {
+        .header-btn:not(:disabled):active,
+        .m3-connected-group .header-btn:not(:disabled):active {
             transform: scale(0.93);
             border-radius: 10px;
             box-shadow: none;
         }
 
         .paste-btn { background-color: var(--md-primary); color: var(--md-on-primary); }
-        @media (hover: hover) { .paste-btn:hover { background-color: var(--md-primary-hover); } }
+        @media (hover: hover) { .paste-btn:not(:disabled):hover { background-color: var(--md-primary-hover); } }
 
         .import-btn { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-        @media (hover: hover) { .import-btn:hover { filter: brightness(0.95); } }
+        @media (hover: hover) { .import-btn:not(:disabled):hover { filter: brightness(0.95); } }
 
         .clear-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        @media (hover: hover) { .clear-btn:hover { background-color: var(--md-surface-container-highest); } }
+        @media (hover: hover) { .clear-btn:not(:disabled):hover { background-color: var(--md-surface-container-highest); } }
 
         .export-btn { background-color: var(--md-secondary); color: var(--md-on-secondary); }
-        @media (hover: hover) { .export-btn:hover { background-color: var(--md-secondary-hover); } }
+        @media (hover: hover) { .export-btn:not(:disabled):hover { background-color: var(--md-secondary-hover); } }
 
         .toggle-all-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        @media (hover: hover) { .toggle-all-btn:hover { background-color: var(--md-surface-container-highest); } }
+        @media (hover: hover) { .toggle-all-btn:not(:disabled):hover { background-color: var(--md-surface-container-highest); } }
         .toggle-all-btn.is-collapsed {
             background-color: var(--md-tertiary-container);
             color: var(--md-on-tertiary-container);
@@ -1047,6 +1063,301 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* --- Find & Replace (Patcher) Workspace --- */
+        .patch-meta-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 7px 14px;
+            background: var(--md-surface-container);
+            border-bottom: 1px solid var(--md-surface-container-high);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--md-on-surface-variant);
+            flex-shrink: 0;
+        }
+
+        .patch-meta-file {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .patch-meta-file .material-symbols-rounded { font-size: 15px; color: var(--md-primary); }
+
+        .patch-ai-input-wrap {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--md-surface-container-high);
+            background: var(--md-surface-container-low);
+            flex-shrink: 0;
+        }
+
+        .patch-subbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--md-on-surface-variant);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .patch-subbar-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .patch-subbar-left .material-symbols-rounded { font-size: 16px; color: var(--md-primary); }
+
+        .patch-collapse-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 12px;
+            background: var(--md-surface-container-high);
+            color: var(--md-on-surface);
+            font-size: 11.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .patch-collapse-pill .material-symbols-rounded { font-size: 15px; }
+
+        .patch-ai-input-body {
+            display: flex;
+            flex-direction: column;
+            height: 150px;
+            border-top: 1px solid var(--md-surface-container-high);
+            transition: height 0.25s var(--m3-shape-ease), opacity 0.2s;
+            overflow: hidden;
+        }
+        .patch-ai-input-wrap.collapsed .patch-ai-input-body {
+            height: 0;
+            opacity: 0;
+            border-top-color: transparent;
+        }
+
+        #patch-ai-input {
+            padding: 12px 14px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .patch-summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--md-surface-container-low);
+            border-bottom: 1px solid var(--md-surface-container-high);
+            flex-shrink: 0;
+        }
+
+        .patch-stat-pills {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .patch-stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 700;
+            background: var(--md-surface-container-high);
+            color: var(--md-on-surface-variant);
+        }
+        .patch-stat-pill.ready {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+        }
+        .patch-stat-pill.applied {
+            background: var(--md-secondary-container);
+            color: var(--md-on-secondary-container);
+        }
+        .patch-stat-pill.warn {
+            background: var(--md-warn-container);
+            color: var(--md-on-warn-container);
+        }
+        .patch-stat-pill.missing {
+            background: var(--md-error-container);
+            color: var(--md-on-error-container);
+        }
+
+        #patch-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--md-surface-container-lowest);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .patch-empty {
+            text-align: center;
+            color: var(--md-on-surface-variant);
+            margin: auto;
+            padding: 28px 16px;
+            max-width: 380px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+        .patch-empty strong {
+            display: block;
+            font-size: 1.02rem;
+            color: var(--md-on-surface);
+            margin-bottom: 6px;
+        }
+        .patch-empty .header-btn {
+            margin-top: 14px;
+        }
+
+        .patch-card {
+            border-radius: 18px;
+            border: 1px solid var(--md-outline-variant);
+            background: var(--md-surface-container-low);
+            overflow: hidden;
+            box-shadow: var(--m3-shadow-1);
+            flex-shrink: 0;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .patch-card.is-ready { border-color: color-mix(in srgb, var(--md-primary) 45%, var(--md-outline-variant)); }
+        .patch-card.is-applied { border-color: color-mix(in srgb, var(--md-secondary) 45%, var(--md-outline-variant)); opacity: 0.88; }
+        .patch-card.is-missing { border-color: color-mix(in srgb, #ef4444 45%, var(--md-outline-variant)); }
+
+        .patch-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--md-surface-container);
+            border-bottom: 1px solid var(--md-surface-container-high);
+        }
+
+        .patch-card-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .patch-index-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 26px;
+            height: 24px;
+            padding: 0 7px;
+            border-radius: 10px;
+            background: var(--md-surface-container-highest);
+            color: var(--md-on-surface);
+            font-size: 11.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .patch-card-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--md-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .patch-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .patch-apply-btn {
+            border: none;
+            border-radius: 14px;
+            padding: 5px 11px;
+            min-height: 28px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            transition: transform 0.2s var(--m3-spring-spatial-fast), opacity 0.2s, background-color 0.2s;
+        }
+        .patch-apply-btn .material-symbols-rounded { font-size: 15px; }
+        .patch-apply-btn:active:not(:disabled) { transform: scale(0.93); }
+        .patch-apply-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .patch-diff-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--md-surface-container-high);
+        }
+
+        .patch-snippet-col {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 9px 11px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .patch-snippet-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10.5px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .patch-snippet-label.find { color: #fca5a5; }
+        .patch-snippet-label.replace { color: #6ee7b7; }
+
+        .patch-snippet-code {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11.8px;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 110px;
+            overflow: auto;
+            color: #e2e8f0;
+        }
+        .patch-snippet-code.is-empty {
+            font-style: italic;
+            opacity: 0.55;
+        }
+
         /* --- Markdown Elements & Math Styling --- */
         .markdown-text {
             line-height: 1.72;
@@ -1109,7 +1420,6 @@
             border: 1px solid var(--md-inline-code-border);
         }
 
-        /* LaTeX KaTeX container tweaks */
         .katex-display {
             overflow-x: auto;
             overflow-y: hidden;
@@ -1232,7 +1542,6 @@
             border-radius: 17px;
         }
 
-        /* ZERO-LAG EXPRESSIVE ACCORDION */
         .code-collapse-wrapper {
             position: relative;
             overflow: hidden;
@@ -1263,7 +1572,7 @@
             color: var(--code-text);
         }
 
-        /* --- M3 Expressive Dialogs (Rename & Theme Picker) --- */
+        /* --- M3 Expressive Dialogs --- */
         .m3-dialog-backdrop {
             position: fixed;
             inset: 0;
@@ -1333,7 +1642,6 @@
             margin-top: 20px;
         }
 
-        /* Theme Sheet Controls */
         .theme-section-label {
             font-size: 12px;
             font-weight: 700;
@@ -1464,7 +1772,6 @@
             transform: translateX(-50%) translateY(0) scale(1);
         }
 
-        /* Scrollbars */
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(128, 138, 132, 0.32); border-radius: 10px; }
@@ -1490,7 +1797,7 @@
                 gap: 8px;
             }
 
-            .brand-group h1 { font-size: 1.08rem; }
+            .brand-group h1 { font-size: 1.05rem; }
             .brand-group p.subtitle { display: none; }
 
             .theme-trigger-btn {
@@ -1500,8 +1807,8 @@
 
             .switcher-btn[data-view="split"] { display: none; }
             .switcher-btn {
-                padding: 7px 11px;
-                font-size: 12.5px;
+                padding: 7px 10px;
+                font-size: 12px;
             }
 
             .tab-bar-wrapper { margin-bottom: 8px; }
@@ -1514,6 +1821,11 @@
             .tab-icon-btn {
                 width: 28px;
                 height: 28px;
+            }
+
+            .container.patch-mode {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .pane { border-radius: 20px; }
@@ -1532,8 +1844,8 @@
 
             .header-btn {
                 min-height: 36px;
-                padding: 7px 11px;
-                font-size: 12.5px;
+                padding: 7px 10px;
+                font-size: 12px;
             }
 
             .m3-chip {
@@ -1546,12 +1858,15 @@
 
             .sync-chip { display: none; }
 
-            /* 16px prevents iOS Safari automatic zoom on textarea focus */
             textarea {
                 font-size: 16px;
                 padding: 14px;
                 line-height: 1.55;
             }
+
+            #patch-ai-input { font-size: 15px; }
+            .patch-ai-input-body { height: 112px; }
+            .patch-diff-grid { grid-template-columns: 1fr; }
 
             #output { padding: 14px; }
 
@@ -1575,7 +1890,6 @@
                 font-size: 13px !important;
             }
 
-            /* Mobile bottom-sheet style dialog (M3 Emphasized curves with zero bottom-edge bounce gap) */
             .m3-dialog-backdrop.mobile-sheet {
                 align-items: flex-end;
                 padding: 0;
@@ -1593,10 +1907,10 @@
             }
         }
 
-        @media (max-width: 400px) {
-            .brand-group h1 { font-size: 0.98rem; }
-            .switcher-btn { padding: 6px 9px; font-size: 12px; }
-            .switcher-btn .material-symbols-rounded { font-size: 15px; }
+        @media (max-width: 440px) {
+            .brand-group h1 { font-size: 0.94rem; }
+            .switcher-btn { padding: 6px 8px; font-size: 11.5px; gap: 3px; }
+            .switcher-btn .material-symbols-rounded { font-size: 14px; }
         }
     </style>
 </head>
@@ -1610,12 +1924,13 @@
     </div>
 
     <input type="file" id="file-upload-input" multiple hidden>
+    <input type="file" id="patch-file-input" hidden>
 
     <!-- Top App Bar -->
     <header class="app-top-bar">
         <div class="brand-group">
             <h1>Markdown Extractor & Reader</h1>
-            <p class="subtitle">Organize docs in tabs, collapse codeblocks, render LaTeX math & export ZIPs.</p>
+            <p class="subtitle">Organize docs in tabs, collapse codeblocks, render LaTeX math, export ZIPs & apply AI Find/Replace patches.</p>
         </div>
 
         <div class="top-bar-controls">
@@ -1636,6 +1951,10 @@
                 <button class="switcher-btn m3-ripple" data-view="preview" role="tab">
                     <span class="material-symbols-rounded">visibility</span>
                     <span>Preview</span>
+                </button>
+                <button class="switcher-btn m3-ripple" data-view="replace" role="tab">
+                    <span class="material-symbols-rounded">find_replace</span>
+                    <span>Replace</span>
                 </button>
             </div>
         </div>
@@ -1704,6 +2023,107 @@
                 <div class="empty-state">
                     <strong>Nothing rendered yet</strong>
                     Paste Markdown or import a code file to preview it here.
+                </div>
+            </div>
+        </section>
+
+        <!-- Find & Replace Pane 1: Original / Patched Code -->
+        <section class="pane hidden-pane" id="pane-patch-code">
+            <div class="pane-header">
+                <span class="pane-title">Original / Patched Code</span>
+                <div class="header-btn-group">
+                    <button id="btn-patch-import" class="header-btn import-btn m3-ripple" title="Import target code file">
+                        <span class="material-symbols-rounded">upload_file</span>
+                        <span>Import</span>
+                    </button>
+                    <div class="m3-connected-group">
+                        <button id="btn-patch-undo" class="header-btn clear-btn m3-ripple" title="Undo last replacement" disabled>
+                            <span class="material-symbols-rounded">undo</span>
+                            <span>Undo</span>
+                        </button>
+                        <button id="btn-patch-clear-code" class="header-btn clear-btn m3-ripple">
+                            <span class="material-symbols-rounded">delete_sweep</span>
+                            <span>Clear</span>
+                        </button>
+                        <button id="btn-patch-paste-code" class="header-btn paste-btn m3-ripple">
+                            <span class="material-symbols-rounded" id="patch-paste-code-icon">content_paste</span>
+                            <span id="patch-paste-code-label">Paste</span>
+                        </button>
+                    </div>
+                    <div class="m3-connected-group">
+                        <button id="btn-patch-copy-code" class="header-btn clear-btn m3-ripple" title="Copy patched code">
+                            <span class="material-symbols-rounded" id="patch-copy-icon">content_copy</span>
+                            <span id="patch-copy-label">Copy</span>
+                        </button>
+                        <button id="btn-patch-download" class="header-btn export-btn m3-ripple" title="Download patched file">
+                            <span class="material-symbols-rounded">download</span>
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="patch-meta-strip">
+                <span class="patch-meta-file">
+                    <span class="material-symbols-rounded">code</span>
+                    <span id="patch-file-label">Unsaved snippet</span>
+                </span>
+                <span id="patch-code-meta">0 lines · 0 chars</span>
+            </div>
+            <textarea id="patch-code-input" placeholder="Paste your original code here (or tap Import / drop a code file)..."></textarea>
+        </section>
+
+        <!-- Find & Replace Pane 2: AI Reply & Detected Patches -->
+        <section class="pane hidden-pane" id="pane-patch-ai">
+            <div class="pane-header">
+                <span class="pane-title">AI Reply & Patches</span>
+                <div class="header-btn-group">
+                    <button id="btn-patch-from-tab" class="header-btn import-btn m3-ripple" title="Load Markdown from the active tab">
+                        <span class="material-symbols-rounded">article</span>
+                        <span>From Tab</span>
+                    </button>
+                    <div class="m3-connected-group">
+                        <button id="btn-patch-clear-ai" class="header-btn clear-btn m3-ripple">
+                            <span class="material-symbols-rounded">delete_sweep</span>
+                            <span>Clear</span>
+                        </button>
+                        <button id="btn-patch-paste-ai" class="header-btn clear-btn m3-ripple">
+                            <span class="material-symbols-rounded" id="patch-paste-ai-icon">content_paste</span>
+                            <span id="patch-paste-ai-label">Paste</span>
+                        </button>
+                    </div>
+                    <button id="btn-patch-replace-all" class="header-btn paste-btn m3-ripple" disabled>
+                        <span class="material-symbols-rounded">done_all</span>
+                        <span id="patch-replace-all-label">Replace All</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="patch-ai-input-wrap" id="patch-ai-input-wrap">
+                <div class="patch-subbar" id="patch-ai-collapse-toggle">
+                    <span class="patch-subbar-left">
+                        <span class="material-symbols-rounded">smart_toy</span>
+                        <span>AI Find & Replace Reply</span>
+                    </span>
+                    <button type="button" class="patch-collapse-pill" id="patch-ai-collapse-btn">
+                        <span class="material-symbols-rounded" id="patch-ai-collapse-icon">unfold_less</span>
+                        <span id="patch-ai-collapse-label">Hide</span>
+                    </button>
+                </div>
+                <div class="patch-ai-input-body">
+                    <textarea id="patch-ai-input" placeholder="Paste the AI's reply containing Find / Replace with blocks here, or click 'From Tab'..."></textarea>
+                </div>
+            </div>
+
+            <div class="patch-summary-bar" id="patch-summary-bar">
+                <div class="patch-stat-pills" id="patch-stat-pills">
+                    <span class="patch-stat-pill">0 detected</span>
+                </div>
+            </div>
+
+            <div id="patch-list">
+                <div class="patch-empty">
+                    <strong>No Find & Replace instructions yet</strong>
+                    Paste an AI's reply above (with <code>Find:</code> and <code>Replace with:</code> code blocks) or pull one from your active tab, then click <strong>Replace All</strong>.
                 </div>
             </div>
         </section>
@@ -1802,6 +2222,7 @@
 
         const STORAGE_KEY = 'markdown_tabs_workspace_data';
         const THEME_STORAGE_KEY = 'markdown_reader_theme_prefs';
+        const PATCH_STORAGE_KEY = 'markdown_patcher_state_v1';
         const MOBILE_BREAKPOINT = 840;
 
         // --- Theme & M3 Palette System ---
@@ -1874,7 +2295,9 @@
         }
 
         function saveState() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
+            } catch (e) {}
         }
 
         function createIcon(name) {
@@ -1904,8 +2327,11 @@
         const syntaxHighlightChk = document.getElementById('syntax-highlight-chk');
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
+        const workspaceContainer = document.getElementById('workspace-container');
         const paneEditor = document.getElementById('pane-editor');
         const panePreview = document.getElementById('pane-preview');
+        const panePatchCode = document.getElementById('pane-patch-code');
+        const panePatchAi = document.getElementById('pane-patch-ai');
         const switcherPill = document.getElementById('switcher-pill');
         const switcherBtns = Array.from(document.querySelectorAll('.switcher-btn'));
         const snackbarEl = document.getElementById('m3-snackbar');
@@ -1920,7 +2346,7 @@
         // --- M3 Expressive Pointer Ripple ---
         document.addEventListener('pointerdown', (e) => {
             const target = e.target.closest('.m3-ripple');
-            if (!target) return;
+            if (!target || target.disabled) return;
 
             let layer = target.querySelector(':scope > .m3-ripple-layer');
             if (!layer) {
@@ -2007,19 +2433,38 @@
                 btn.classList.toggle('active', btn.dataset.view === mode);
             });
 
-            paneEditor.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
-            panePreview.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
+            workspaceContainer.classList.toggle('patch-mode', mode === 'replace');
+
+            [paneEditor, panePreview, panePatchCode, panePatchAi].forEach(p => {
+                p.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
+            });
 
             if (mode === 'editor') {
                 panePreview.classList.add('hidden-pane');
+                panePatchCode.classList.add('hidden-pane');
+                panePatchAi.classList.add('hidden-pane');
                 if (animate && prevView !== 'editor') {
                     paneEditor.classList.add('mobile-slide-in-left');
                 }
             } else if (mode === 'preview') {
                 paneEditor.classList.add('hidden-pane');
+                panePatchCode.classList.add('hidden-pane');
+                panePatchAi.classList.add('hidden-pane');
                 if (animate && prevView !== 'preview') {
                     panePreview.classList.add('mobile-slide-in-right');
                 }
+            } else if (mode === 'replace') {
+                paneEditor.classList.add('hidden-pane');
+                panePreview.classList.add('hidden-pane');
+                if (animate && prevView !== 'replace') {
+                    panePatchCode.classList.add('mobile-slide-in-left');
+                    panePatchAi.classList.add('mobile-slide-in-right');
+                }
+                refreshPatcherUI();
+            } else {
+                // split
+                panePatchCode.classList.add('hidden-pane');
+                panePatchAi.classList.add('hidden-pane');
             }
 
             requestAnimationFrame(updateSwitcherPill);
@@ -2084,7 +2529,6 @@
             if (e.key === 'Escape') { closeRenameModal(); }
         });
 
-        // Update syntax highlighting in-place after chip animation completes so it never janks or resets collapsed blocks
         let syntaxToggleTimer;
         syntaxHighlightChk.addEventListener('change', () => {
             clearTimeout(syntaxToggleTimer);
@@ -2209,6 +2653,7 @@
             saveState();
             renderTabs();
             renderMarkdown(inputArea.value, true);
+            if (currentView === 'replace') refreshPatcherUI();
         }
 
         function addTab(initialTitle, initialContent = '') {
@@ -2225,7 +2670,7 @@
             saveState();
             renderTabs();
             renderMarkdown(initialContent, true);
-            if (currentView !== 'preview') inputArea.focus();
+            if (currentView !== 'preview' && currentView !== 'replace') inputArea.focus();
         }
 
         function closeTab(id) {
@@ -2650,10 +3095,35 @@
             requestAnimationFrame(() => { isSyncingInput = false; });
         });
 
-        // --- Shared File Ingestion (Drag & Drop + Mobile Import) ---
-        function loadFiles(fileList) {
+        // --- Shared File Ingestion ---
+        function loadFiles(fileList, dropTargetEl = null) {
             const files = Array.from(fileList);
             if (!files.length) return;
+
+            if (currentView === 'replace') {
+                const file = files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const content = event.target.result;
+                    if (dropTargetEl && dropTargetEl.closest('#pane-patch-ai')) {
+                        patchAiInput.value = content;
+                        savePatcherState();
+                        refreshPatcherUI();
+                        showSnackbar(`Loaded AI instructions from "${file.name}"`);
+                    } else {
+                        patchUndoStack.push(patchCodeInput.value);
+                        if (patchUndoStack.length > 20) patchUndoStack.shift();
+                        patchFileName = file.name;
+                        patchAppliedCount = 0;
+                        patchCodeInput.value = content;
+                        savePatcherState();
+                        refreshPatcherUI();
+                        showSnackbar(`Loaded target file "${file.name}"`);
+                    }
+                };
+                reader.readAsText(file);
+                return;
+            }
 
             files.forEach((file) => {
                 const reader = new FileReader();
@@ -2696,7 +3166,7 @@
         window.addEventListener('drop', (e) => {
             e.preventDefault();
             dropOverlay.classList.remove('active');
-            loadFiles(e.dataTransfer.files);
+            loadFiles(e.dataTransfer.files, e.target);
         });
 
         // --- Paste & Clear ---
@@ -2741,10 +3211,645 @@
             }, 220); 
         });
 
+        // ============================================================
+        // --- AI Find & Replace (Patcher) Engine ---
+        // ============================================================
+        const patchFileInput = document.getElementById('patch-file-input');
+        const patchCodeInput = document.getElementById('patch-code-input');
+        const patchAiInput = document.getElementById('patch-ai-input');
+        const patchFileLabel = document.getElementById('patch-file-label');
+        const patchCodeMeta = document.getElementById('patch-code-meta');
+        const patchImportBtn = document.getElementById('btn-patch-import');
+        const patchUndoBtn = document.getElementById('btn-patch-undo');
+        const patchClearCodeBtn = document.getElementById('btn-patch-clear-code');
+        const patchPasteCodeBtn = document.getElementById('btn-patch-paste-code');
+        const patchPasteCodeIcon = document.getElementById('patch-paste-code-icon');
+        const patchPasteCodeLabel = document.getElementById('patch-paste-code-label');
+        const patchCopyCodeBtn = document.getElementById('btn-patch-copy-code');
+        const patchCopyIcon = document.getElementById('patch-copy-icon');
+        const patchCopyLabel = document.getElementById('patch-copy-label');
+        const patchDownloadBtn = document.getElementById('btn-patch-download');
+        const patchFromTabBtn = document.getElementById('btn-patch-from-tab');
+        const patchClearAiBtn = document.getElementById('btn-patch-clear-ai');
+        const patchPasteAiBtn = document.getElementById('btn-patch-paste-ai');
+        const patchPasteAiIcon = document.getElementById('patch-paste-ai-icon');
+        const patchPasteAiLabel = document.getElementById('patch-paste-ai-label');
+        const patchReplaceAllBtn = document.getElementById('btn-patch-replace-all');
+        const patchReplaceAllLabel = document.getElementById('patch-replace-all-label');
+        const patchAiWrap = document.getElementById('patch-ai-input-wrap');
+        const patchAiCollapseToggle = document.getElementById('patch-ai-collapse-toggle');
+        const patchAiCollapseIcon = document.getElementById('patch-ai-collapse-icon');
+        const patchAiCollapseLabel = document.getElementById('patch-ai-collapse-label');
+        const patchStatPills = document.getElementById('patch-stat-pills');
+        const patchListEl = document.getElementById('patch-list');
+
+        let patchFileName = '';
+        let patchUndoStack = [];
+        let patchAppliedCount = 0;
+
+        try {
+            const savedPatcher = localStorage.getItem(PATCH_STORAGE_KEY);
+            if (savedPatcher) {
+                const parsedP = JSON.parse(savedPatcher);
+                if (typeof parsedP.code === 'string') patchCodeInput.value = parsedP.code;
+                if (typeof parsedP.ai === 'string') patchAiInput.value = parsedP.ai;
+                if (typeof parsedP.fileName === 'string') patchFileName = parsedP.fileName;
+            }
+        } catch (e) {}
+
+        function savePatcherState() {
+            try {
+                const codeVal = patchCodeInput.value;
+                const aiVal = patchAiInput.value;
+                localStorage.setItem(PATCH_STORAGE_KEY, JSON.stringify({
+                    code: codeVal.length < 1500000 ? codeVal : '',
+                    ai: aiVal.length < 500000 ? aiVal : '',
+                    fileName: patchFileName
+                }));
+            } catch (e) {}
+        }
+
+        function stripMarkdownText(str) {
+            return String(str || '')
+                .replace(/`([^`]*)`/g, '$1')
+                .replace(/\*\*([^*]+)\*\*/g, '$1')
+                .replace(/__([^_]+)__/g, '$1')
+                .replace(/\*([^*]+)\*/g, '$1')
+                .replace(/_([^_]+)_/g, '$1')
+                .replace(/^\d+\.\s*/, '')
+                .trim();
+        }
+
+        const FIND_LABEL_RE = /^(?:find(?:\s+this)?|search(?:\s+for)?|original(?:\s+code)?|before|old(?:\s+code)?)(?:\s*\([^)]*\))?\s*[:：]?$/i;
+        const REPLACE_LABEL_RE = /^(?:replace(?:\s+with)?|replacement|new(?:\s+code)?|after|change\s+to)(?:\s*\([^)]*\))?\s*[:：]?$/i;
+        const INLINE_PAIR_RE = /^\s*(?:\*{1,2}|_{1,2})?(find(?:\s+this)?|search(?:\s+for)?|original(?:\s+code)?|replace(?:\s+with)?|replacement|new(?:\s+code)?)(?:\s*\([^)]*\))?(?:\*{1,2}|_{1,2})?\s*[:：]\s*`([^`]+)`\s*$/i;
+
+        function parseFindReplacePairs(markdownText) {
+            if (!markdownText || !markdownText.trim()) return [];
+            const normalized = markdownText.replace(/\r\n/g, '\n');
+
+            const pairs = [];
+            let currentSection = '';
+            let currentStep = '';
+            let pendingState = 'idle'; // 'idle' | 'expecting_find' | 'has_find' | 'expecting_replace'
+            let currentFind = null;
+            let currentLang = '';
+
+            function pushPair(findText, replaceText, lang, title) {
+                if (typeof findText !== 'string' || typeof replaceText !== 'string') return;
+                pairs.push({
+                    index: pairs.length + 1,
+                    title: title || currentStep || currentSection || `Replacement #${pairs.length + 1}`,
+                    find: findText.replace(/\r\n/g, '\n'),
+                    replace: replaceText.replace(/\r\n/g, '\n'),
+                    lang: lang || 'text'
+                });
+            }
+
+            function handleTextLine(rawLine) {
+                const inlineMatch = rawLine.match(INLINE_PAIR_RE);
+                if (inlineMatch) {
+                    const kw = inlineMatch[1].toLowerCase();
+                    const codeVal = inlineMatch[2];
+                    if (kw.startsWith('find') || kw.startsWith('search') || kw.startsWith('original')) {
+                        currentFind = codeVal;
+                        pendingState = 'has_find';
+                    } else if (pendingState === 'has_find' || pendingState === 'expecting_replace') {
+                        pushPair(currentFind, codeVal, 'text', currentStep || currentSection);
+                        currentFind = null;
+                        pendingState = 'idle';
+                    }
+                    return;
+                }
+
+                const clean = stripMarkdownText(rawLine);
+                if (!clean) return;
+
+                if (FIND_LABEL_RE.test(clean)) {
+                    pendingState = 'expecting_find';
+                    currentFind = null;
+                    return;
+                }
+                if (REPLACE_LABEL_RE.test(clean)) {
+                    if (currentFind !== null) {
+                        pendingState = 'expecting_replace';
+                    }
+                    return;
+                }
+
+                // Otherwise treat as descriptive step label if reasonably sized
+                if (clean.length >= 3 && clean.length <= 160) {
+                    currentStep = clean;
+                }
+            }
+
+            function walkTokens(tokens) {
+                if (!Array.isArray(tokens)) return;
+                for (const tok of tokens) {
+                    if (!tok) continue;
+                    if (tok.type === 'heading') {
+                        currentSection = stripMarkdownText(tok.text);
+                        currentStep = '';
+                    } else if (tok.type === 'paragraph' || tok.type === 'text') {
+                        const lines = String(tok.text || '').split('\n');
+                        for (const line of lines) {
+                            handleTextLine(line);
+                        }
+                    } else if (tok.type === 'code') {
+                        const codeBody = String(tok.text || '').replace(/\r\n/g, '\n');
+
+                        // Support <<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE inside code blocks
+                        if (pendingState === 'idle' && /^<{5,9}\s*SEARCH\b/m.test(codeBody)) {
+                            const conflictRe = /^<{5,9}\s*SEARCH[^\n]*\n([\s\S]*?)\n={5,9}\n([\s\S]*?)\n>{5,9}\s*REPLACE/gm;
+                            let cm;
+                            while ((cm = conflictRe.exec(codeBody)) !== null) {
+                                pushPair(cm[1], cm[2], tok.lang, currentStep || currentSection);
+                            }
+                            continue;
+                        }
+
+                        if (pendingState === 'expecting_find') {
+                            currentFind = codeBody;
+                            currentLang = tok.lang || 'text';
+                            pendingState = 'has_find';
+                        } else if (pendingState === 'expecting_replace') {
+                            pushPair(currentFind, codeBody, tok.lang || currentLang, currentStep || currentSection);
+                            currentFind = null;
+                            pendingState = 'idle';
+                        }
+                    } else if (tok.type === 'list' && Array.isArray(tok.items)) {
+                        for (const item of tok.items) {
+                            walkTokens(item.tokens);
+                        }
+                    } else if (tok.type === 'blockquote' && Array.isArray(tok.tokens)) {
+                        walkTokens(tok.tokens);
+                    }
+                }
+            }
+
+            if (typeof marked !== 'undefined' && marked.lexer) {
+                walkTokens(marked.lexer(normalized));
+            }
+
+            // Fallback: raw <<<<<<< SEARCH blocks outside fenced code
+            if (!pairs.length && /^<{5,9}\s*SEARCH\b/m.test(normalized)) {
+                const conflictRe = /^<{5,9}\s*SEARCH[^\n]*\n([\s\S]*?)\n={5,9}\n([\s\S]*?)\n>{5,9}\s*REPLACE/gm;
+                let cm;
+                while ((cm = conflictRe.exec(normalized)) !== null) {
+                    pushPair(cm[1], cm[2], 'text', `Search/Replace #${pairs.length + 1}`);
+                }
+            }
+
+            return pairs;
+        }
+
+        function countOccurrences(haystack, needle) {
+            if (!needle) return 0;
+            let count = 0;
+            let pos = 0;
+            while ((pos = haystack.indexOf(needle, pos)) !== -1) {
+                count++;
+                pos += needle.length;
+            }
+            return count;
+        }
+
+        function getLineNumber(text, index) {
+            if (index < 0) return null;
+            let line = 1;
+            for (let i = 0; i < index; i++) {
+                if (text.charCodeAt(i) === 10) line++;
+            }
+            return line;
+        }
+
+        function safeReplaceAll(source, findStr, replaceStr) {
+            if (!findStr) return source;
+            return source.split(findStr).join(replaceStr);
+        }
+
+        function evaluatePairStatus(code, pair) {
+            if (!pair.find) {
+                return { status: 'missing', count: 0, line: null };
+            }
+            const findIdx = code.indexOf(pair.find);
+            if (findIdx !== -1) {
+                const count = countOccurrences(code, pair.find);
+                const line = getLineNumber(code, findIdx);
+                return { status: 'ready', count, line };
+            }
+            if (pair.replace && code.indexOf(pair.replace) !== -1) {
+                return { status: 'applied', count: 0, line: null };
+            }
+            return { status: 'missing', count: 0, line: null };
+        }
+
+        function truncatePreview(str, maxLen = 420) {
+            if (str.length <= maxLen) return str;
+            return str.slice(0, maxLen) + `\n… (${str.length - maxLen} more chars)`;
+        }
+
+        function refreshPatcherUI() {
+            const code = patchCodeInput.value.replace(/\r\n/g, '\n');
+            const aiText = patchAiInput.value;
+
+            const lineCount = code ? code.split('\n').length : 0;
+            patchFileLabel.textContent = patchFileName || 'Unsaved snippet';
+            patchCodeMeta.textContent = `${lineCount.toLocaleString()} line${lineCount === 1 ? '' : 's'} · ${code.length.toLocaleString()} chars` + (patchAppliedCount > 0 ? ` · ${patchAppliedCount} applied` : '');
+            patchUndoBtn.disabled = patchUndoStack.length === 0;
+
+            const pairs = parseFindReplacePairs(aiText);
+
+            if (!aiText.trim()) {
+                patchReplaceAllBtn.disabled = true;
+                patchReplaceAllLabel.textContent = 'Replace All';
+                patchStatPills.innerHTML = `<span class="patch-stat-pill">0 detected</span>`;
+
+                const activeTab = tabs.find(t => t.id === activeTabId);
+                const tabPairs = activeTab ? parseFindReplacePairs(activeTab.content) : [];
+
+                patchListEl.innerHTML = '';
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'patch-empty';
+                const strong = document.createElement('strong');
+                strong.textContent = 'No Find & Replace instructions yet';
+                const desc = document.createElement('div');
+                desc.textContent = 'Paste an AI reply with Find and Replace with blocks above, or import from your active tab.';
+                emptyDiv.appendChild(strong);
+                emptyDiv.appendChild(desc);
+
+                if (tabPairs.length > 0) {
+                    const quickBtn = document.createElement('button');
+                    quickBtn.className = 'header-btn paste-btn m3-ripple';
+                    quickBtn.appendChild(createIcon('article'));
+                    const lbl = document.createElement('span');
+                    lbl.textContent = `Load from "${activeTab.title}" (${tabPairs.length} pair${tabPairs.length === 1 ? '' : 's'})`;
+                    quickBtn.appendChild(lbl);
+                    quickBtn.addEventListener('click', () => {
+                        patchAiInput.value = activeTab.content;
+                        savePatcherState();
+                        refreshPatcherUI();
+                        showSnackbar(`Loaded ${tabPairs.length} Find & Replace pair${tabPairs.length === 1 ? '' : 's'} from tab`);
+                    });
+                    emptyDiv.appendChild(quickBtn);
+                }
+
+                patchListEl.appendChild(emptyDiv);
+                return;
+            }
+
+            if (pairs.length === 0) {
+                patchReplaceAllBtn.disabled = true;
+                patchReplaceAllLabel.textContent = 'Replace All';
+                patchStatPills.innerHTML = `<span class="patch-stat-pill warn">0 pairs detected</span>`;
+                patchListEl.innerHTML = `
+                    <div class="patch-empty">
+                        <strong>No Find & Replace blocks found</strong>
+                        Make sure the AI reply uses labeled blocks like <code>Find:</code> followed by a code block and <code>Replace with:</code> followed by a code block.
+                    </div>`;
+                return;
+            }
+
+            let readyCount = 0;
+            let appliedCount = 0;
+            let missingCount = 0;
+
+            const evaluated = pairs.map(pair => {
+                const ev = evaluatePairStatus(code, pair);
+                if (ev.status === 'ready') readyCount++;
+                else if (ev.status === 'applied') appliedCount++;
+                else missingCount++;
+                return { pair, ev };
+            });
+
+            patchReplaceAllBtn.disabled = readyCount === 0 || !code;
+            patchReplaceAllLabel.textContent = readyCount > 0 ? `Replace All (${readyCount})` : 'Replace All';
+
+            patchStatPills.innerHTML = '';
+            const addPill = (text, cls = '') => {
+                const sp = document.createElement('span');
+                sp.className = `patch-stat-pill ${cls}`;
+                sp.textContent = text;
+                patchStatPills.appendChild(sp);
+            };
+            addPill(`${pairs.length} detected`);
+            if (readyCount > 0) addPill(`${readyCount} ready`, 'ready');
+            if (appliedCount > 0) addPill(`${appliedCount} applied`, 'applied');
+            if (missingCount > 0) addPill(`${missingCount} not found`, 'missing');
+
+            patchListEl.innerHTML = '';
+            evaluated.forEach(({ pair, ev }) => {
+                const card = document.createElement('div');
+                card.className = `patch-card is-${ev.status}`;
+
+                const header = document.createElement('div');
+                header.className = 'patch-card-header';
+
+                const titleWrap = document.createElement('div');
+                titleWrap.className = 'patch-card-title-wrap';
+
+                const idxBadge = document.createElement('span');
+                idxBadge.className = 'patch-index-badge';
+                idxBadge.textContent = `#${pair.index}`;
+
+                const titleEl = document.createElement('span');
+                titleEl.className = 'patch-card-title';
+                titleEl.textContent = pair.title;
+                titleEl.title = pair.title;
+
+                titleWrap.appendChild(idxBadge);
+                titleWrap.appendChild(titleEl);
+
+                const actions = document.createElement('div');
+                actions.className = 'patch-card-actions';
+
+                const statusPill = document.createElement('span');
+                if (ev.status === 'ready') {
+                    statusPill.className = ev.count > 1 ? 'patch-stat-pill warn' : 'patch-stat-pill ready';
+                    statusPill.textContent = ev.count > 1
+                        ? `×${ev.count} matches · Line ${ev.line}`
+                        : `Line ${ev.line}`;
+                } else if (ev.status === 'applied') {
+                    statusPill.className = 'patch-stat-pill applied';
+                    statusPill.textContent = 'Applied';
+                } else {
+                    statusPill.className = 'patch-stat-pill missing';
+                    statusPill.textContent = 'Not Found';
+                }
+
+                const applyBtn = document.createElement('button');
+                applyBtn.className = 'patch-apply-btn m3-ripple';
+                applyBtn.disabled = ev.status !== 'ready' || !code;
+                applyBtn.appendChild(createIcon(ev.status === 'applied' ? 'check' : 'play_arrow'));
+                const applyLbl = document.createElement('span');
+                applyLbl.textContent = ev.status === 'applied' ? 'Done' : 'Apply';
+                applyBtn.appendChild(applyLbl);
+
+                applyBtn.addEventListener('click', () => {
+                    const current = patchCodeInput.value.replace(/\r\n/g, '\n');
+                    const count = countOccurrences(current, pair.find);
+                    if (count === 0) {
+                        showSnackbar(`#${pair.index} target text was not found`);
+                        refreshPatcherUI();
+                        return;
+                    }
+                    patchUndoStack.push(patchCodeInput.value);
+                    if (patchUndoStack.length > 20) patchUndoStack.shift();
+                    patchCodeInput.value = safeReplaceAll(current, pair.find, pair.replace);
+                    patchAppliedCount += count;
+                    savePatcherState();
+                    refreshPatcherUI();
+                    showSnackbar(`Applied #${pair.index} (${count} occurrence${count > 1 ? 's' : ''})`);
+                });
+
+                actions.appendChild(statusPill);
+                actions.appendChild(applyBtn);
+                header.appendChild(titleWrap);
+                header.appendChild(actions);
+
+                const diffGrid = document.createElement('div');
+                diffGrid.className = 'patch-diff-grid';
+
+                const findCol = document.createElement('div');
+                findCol.className = 'patch-snippet-col';
+                const findLbl = document.createElement('div');
+                findLbl.className = 'patch-snippet-label find';
+                findLbl.innerHTML = `<span>Find</span><span>${pair.find.length} chars</span>`;
+                const findPre = document.createElement('pre');
+                findPre.className = 'patch-snippet-code';
+                findPre.textContent = truncatePreview(pair.find);
+                findCol.appendChild(findLbl);
+                findCol.appendChild(findPre);
+
+                const repCol = document.createElement('div');
+                repCol.className = 'patch-snippet-col';
+                const repLbl = document.createElement('div');
+                repLbl.className = 'patch-snippet-label replace';
+                repLbl.innerHTML = `<span>Replace With</span><span>${pair.replace.length} chars</span>`;
+                const repPre = document.createElement('pre');
+                repPre.className = `patch-snippet-code ${pair.replace === '' ? 'is-empty' : ''}`;
+                repPre.textContent = pair.replace === '' ? '(empty — deletes matched text)' : truncatePreview(pair.replace);
+                repCol.appendChild(repLbl);
+                repCol.appendChild(repPre);
+
+                diffGrid.appendChild(findCol);
+                diffGrid.appendChild(repCol);
+
+                card.appendChild(header);
+                card.appendChild(diffGrid);
+                patchListEl.appendChild(card);
+            });
+        }
+
+        // Replace All Execution
+        patchReplaceAllBtn.addEventListener('click', () => {
+            let working = patchCodeInput.value.replace(/\r\n/g, '\n');
+            if (!working) {
+                showSnackbar('Paste your original code first');
+                return;
+            }
+            const pairs = parseFindReplacePairs(patchAiInput.value);
+            if (!pairs.length) return;
+
+            let appliedSteps = 0;
+            let totalOccurrences = 0;
+            let missingSteps = 0;
+            const snapshot = patchCodeInput.value;
+
+            for (const pair of pairs) {
+                if (!pair.find) continue;
+                const count = countOccurrences(working, pair.find);
+                if (count > 0) {
+                    working = safeReplaceAll(working, pair.find, pair.replace);
+                    appliedSteps++;
+                    totalOccurrences += count;
+                } else if (!(pair.replace && working.indexOf(pair.replace) !== -1)) {
+                    missingSteps++;
+                }
+            }
+
+            if (appliedSteps === 0) {
+                showSnackbar('No matching Find blocks left to replace');
+                refreshPatcherUI();
+                return;
+            }
+
+            patchUndoStack.push(snapshot);
+            if (patchUndoStack.length > 20) patchUndoStack.shift();
+            patchCodeInput.value = working;
+            patchAppliedCount += totalOccurrences;
+            savePatcherState();
+            refreshPatcherUI();
+
+            if (missingSteps > 0) {
+                showSnackbar(`Applied ${appliedSteps} patch${appliedSteps > 1 ? 'es' : ''} (${totalOccurrences} replacements) · ${missingSteps} not found`);
+            } else {
+                showSnackbar(`Replaced all ${appliedSteps} patch${appliedSteps > 1 ? 'es' : ''} (${totalOccurrences} occurrence${totalOccurrences > 1 ? 's' : ''})!`);
+            }
+        });
+
+        // Patcher Code Input & Controls
+        let patchRenderTimer;
+        const schedulePatchRefresh = () => {
+            savePatcherState();
+            clearTimeout(patchRenderTimer);
+            patchRenderTimer = setTimeout(refreshPatcherUI, 160);
+        };
+
+        patchCodeInput.addEventListener('input', schedulePatchRefresh);
+        patchAiInput.addEventListener('input', schedulePatchRefresh);
+
+        patchImportBtn.addEventListener('click', () => patchFileInput.click());
+        patchFileInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                patchUndoStack.push(patchCodeInput.value);
+                if (patchUndoStack.length > 20) patchUndoStack.shift();
+                patchFileName = file.name;
+                patchAppliedCount = 0;
+                patchCodeInput.value = ev.target.result;
+                savePatcherState();
+                refreshPatcherUI();
+                showSnackbar(`Loaded "${file.name}"`);
+            };
+            reader.readAsText(file);
+            patchFileInput.value = '';
+        });
+
+        patchUndoBtn.addEventListener('click', () => {
+            if (!patchUndoStack.length) return;
+            patchCodeInput.value = patchUndoStack.pop();
+            patchAppliedCount = Math.max(0, patchAppliedCount - 1);
+            savePatcherState();
+            refreshPatcherUI();
+            showSnackbar('Reverted last change');
+        });
+
+        patchClearCodeBtn.addEventListener('click', () => {
+            if (!patchCodeInput.value) return;
+            patchUndoStack.push(patchCodeInput.value);
+            if (patchUndoStack.length > 20) patchUndoStack.shift();
+            patchCodeInput.value = '';
+            patchFileName = '';
+            patchAppliedCount = 0;
+            savePatcherState();
+            refreshPatcherUI();
+            showSnackbar('Target code cleared');
+        });
+
+        let patchPasteCodeTimer;
+        patchPasteCodeBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                patchUndoStack.push(patchCodeInput.value);
+                if (patchUndoStack.length > 20) patchUndoStack.shift();
+                patchAppliedCount = 0;
+                patchCodeInput.value = text;
+                savePatcherState();
+                refreshPatcherUI();
+                clearTimeout(patchPasteCodeTimer);
+                patchPasteCodeIcon.textContent = 'check';
+                patchPasteCodeLabel.textContent = 'Pasted!';
+                showSnackbar('Original code pasted');
+                patchPasteCodeTimer = setTimeout(() => {
+                    patchPasteCodeIcon.textContent = 'content_paste';
+                    patchPasteCodeLabel.textContent = 'Paste';
+                }, 1400);
+            } catch (err) {
+                showSnackbar('Allow clipboard access or paste directly');
+            }
+        });
+
+        let patchCopyTimer;
+        patchCopyCodeBtn.addEventListener('click', () => {
+            if (!patchCodeInput.value) {
+                showSnackbar('Nothing to copy');
+                return;
+            }
+            navigator.clipboard.writeText(patchCodeInput.value).then(() => {
+                clearTimeout(patchCopyTimer);
+                patchCopyIcon.textContent = 'check';
+                patchCopyLabel.textContent = 'Copied!';
+                showSnackbar('Patched code copied to clipboard');
+                patchCopyTimer = setTimeout(() => {
+                    patchCopyIcon.textContent = 'content_copy';
+                    patchCopyLabel.textContent = 'Copy';
+                }, 1600);
+            }).catch(() => {
+                showSnackbar('Unable to access clipboard');
+            });
+        });
+
+        patchDownloadBtn.addEventListener('click', () => {
+            if (!patchCodeInput.value) {
+                showSnackbar('Nothing to save');
+                return;
+            }
+            const blob = new Blob([patchCodeInput.value], { type: 'text/plain;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = patchFileName || 'patched_code.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showSnackbar(`Saved "${a.download}"`);
+        });
+
+        patchFromTabBtn.addEventListener('click', () => {
+            const activeTab = tabs.find(t => t.id === activeTabId);
+            const text = activeTab ? inputArea.value : '';
+            if (!text.trim()) {
+                showSnackbar('Active tab is empty');
+                return;
+            }
+            patchAiInput.value = text;
+            savePatcherState();
+            refreshPatcherUI();
+            const count = parseFindReplacePairs(text).length;
+            showSnackbar(`Loaded "${activeTab.title}" (${count} pair${count === 1 ? '' : 's'} detected)`);
+        });
+
+        patchClearAiBtn.addEventListener('click', () => {
+            if (!patchAiInput.value) return;
+            patchAiInput.value = '';
+            savePatcherState();
+            refreshPatcherUI();
+            showSnackbar('AI instructions cleared');
+        });
+
+        let patchPasteAiTimer;
+        patchPasteAiBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                patchAiInput.value = text;
+                savePatcherState();
+                refreshPatcherUI();
+                clearTimeout(patchPasteAiTimer);
+                patchPasteAiIcon.textContent = 'check';
+                patchPasteAiLabel.textContent = 'Pasted!';
+                const count = parseFindReplacePairs(text).length;
+                showSnackbar(`Pasted AI reply (${count} pair${count === 1 ? '' : 's'} detected)`);
+                patchPasteAiTimer = setTimeout(() => {
+                    patchPasteAiIcon.textContent = 'content_paste';
+                    patchPasteAiLabel.textContent = 'Paste';
+                }, 1400);
+            } catch (err) {
+                showSnackbar('Allow clipboard access or paste directly');
+            }
+        });
+
+        patchAiCollapseToggle.addEventListener('click', () => {
+            const isCollapsed = patchAiWrap.classList.toggle('collapsed');
+            patchAiCollapseIcon.textContent = isCollapsed ? 'unfold_more' : 'unfold_less';
+            patchAiCollapseLabel.textContent = isCollapsed ? 'Show' : 'Hide';
+        });
+
         // Initialize workspace
         renderTabs();
         renderMarkdown(inputArea.value, true);
         setViewMode(currentView, false);
+        refreshPatcherUI();
         window.addEventListener('load', updateSwitcherPill);
     </script>
 </body>
