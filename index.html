@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#f3f6f4">
     <title>Markdown Code Extractor & Reader</title>
     
     <!-- KaTeX for LaTeX Math Rendering -->
@@ -26,327 +27,1110 @@
 
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --text-color: #1e2022;
-            --code-bg: #1d1f21;
-            --code-header-bg: #282a2e;
+            /* Material Design 3 Tonal Palette */
+            --md-surface-dim: #e8edea;
+            --md-surface: #f4f7f5;
+            --md-surface-container-lowest: #ffffff;
+            --md-surface-container-low: #f8fbf9;
+            --md-surface-container: #edf2ef;
+            --md-surface-container-high: #e2e9e4;
+            --md-surface-container-highest: #d7e0da;
+
+            --md-on-surface: #181d1a;
+            --md-on-surface-variant: #4f5b54;
+            --md-outline: #79867e;
+            --md-outline-variant: #c4cec8;
+
+            --md-primary: #0b875b;
+            --md-primary-hover: #086f4b;
+            --md-on-primary: #ffffff;
+            --md-primary-container: #bff4dc;
+            --md-on-primary-container: #003824;
+
+            --md-secondary: #2563eb;
+            --md-secondary-hover: #1d4ed8;
+            --md-secondary-container: #dbeafe;
+            --md-on-secondary-container: #172554;
+
+            --md-tertiary-container: #e8def8;
+            --md-on-tertiary-container: #21005d;
+
+            --code-bg: #181a1f;
+            --code-header-bg: #22252c;
             --code-text: #c5c8c6;
-            --primary: #10b981;
-            --primary-hover: #059669;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --tab-bar-bg: #e2e5eb;
-            --tab-bg: #d3d7e0;
-            --tab-active-bg: #ffffff;
-            --tab-border: #cbd0db;
-            --pane-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* M3 Expressive Motion Tokens */
+            --m3-spring-spatial-fast: cubic-bezier(0.38, 1.4, 0.42, 1);
+            --m3-spring-spatial: cubic-bezier(0.34, 1.45, 0.36, 1);
+            --m3-spring-spatial-slow: cubic-bezier(0.28, 1.25, 0.3, 1);
+            --m3-effects-standard: cubic-bezier(0.2, 0, 0, 1);
+
+            /* M3 Elevation */
+            --m3-shadow-1: 0 1px 3px rgba(16, 24, 20, 0.06), 0 1px 2px rgba(16, 24, 20, 0.04);
+            --m3-shadow-2: 0 6px 20px -4px rgba(16, 24, 20, 0.08), 0 2px 6px -1px rgba(16, 24, 20, 0.04);
+            --m3-shadow-3: 0 14px 36px -6px rgba(16, 24, 20, 0.14), 0 4px 12px -2px rgba(16, 24, 20, 0.06);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100dvh;
+            padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
             -webkit-font-smoothing: antialiased;
+            overscroll-behavior-y: contain;
         }
 
-        h1 { margin-top: 0; margin-bottom: 6px; font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
-        p.subtitle { margin-top: 0; margin-bottom: 16px; color: #64748b; text-align: center; font-size: 0.95rem; }
+        /* --- M3 Expressive Ripple Effect --- */
+        .m3-ripple {
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .m3-ripple-wave {
+            position: absolute;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.16;
+            transform: scale(0);
+            pointer-events: none;
+            animation: m3RippleAnim 520ms var(--m3-effects-standard) forwards;
+        }
+
+        @keyframes m3RippleAnim {
+            0% { transform: scale(0); opacity: 0.2; }
+            60% { opacity: 0.12; }
+            100% { transform: scale(2.6); opacity: 0; }
+        }
 
         /* --- Drag & Drop Overlay --- */
         #drop-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(16, 185, 129, 0.12);
-            backdrop-filter: blur(4px);
-            border: 3px dashed var(--primary);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            pointer-events: none; opacity: 0; transition: opacity 0.25s var(--ease-spring);
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 135, 91, 0.14);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 3px dashed var(--md-primary);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s var(--m3-effects-standard);
         }
         #drop-overlay.active { opacity: 1; }
-        #drop-overlay span {
-            background: white; padding: 16px 32px; border-radius: 12px;
-            font-size: 1.2rem; font-weight: 600; color: var(--primary-hover);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        #drop-overlay .drop-card {
+            background: var(--md-surface-container-lowest);
+            padding: 20px 36px;
+            border-radius: 28px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--md-on-primary-container);
+            box-shadow: var(--m3-shadow-3);
+            transform: scale(0.88);
+            transition: transform 0.35s var(--m3-spring-spatial);
+        }
+        #drop-overlay.active .drop-card { transform: scale(1); }
+
+        /* --- Top App Header --- */
+        .app-top-bar {
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
-        /* --- Tab Bar --- */
-        .tab-bar-container {
-            width: 100%; max-width: 1400px; display: flex; align-items: center;
-            background: var(--tab-bar-bg); border: 1px solid var(--tab-border);
-            border-bottom: none; border-top-left-radius: 12px; border-top-right-radius: 12px;
-            padding: 8px 10px 0 10px; overflow-x: auto;
+        .brand-group {
+            min-width: 0;
+        }
+
+        .brand-group h1 {
+            margin: 0;
+            font-size: 1.45rem;
+            font-weight: 750;
+            letter-spacing: -0.025em;
+            color: var(--md-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .brand-group p.subtitle {
+            margin: 2px 0 0;
+            color: var(--md-on-surface-variant);
+            font-size: 0.86rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- M3 Expressive Segmented View Switcher --- */
+        .view-switcher {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            background: var(--md-surface-container-high);
+            padding: 4px;
+            border-radius: 999px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        .switcher-pill {
+            position: absolute;
+            top: 4px;
+            bottom: 4px;
+            left: 0;
+            background: var(--md-primary-container);
+            border-radius: 999px;
+            box-shadow: var(--m3-shadow-1);
+            transition: transform 0.42s var(--m3-spring-spatial), width 0.42s var(--m3-spring-spatial);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .switcher-btn {
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            border: none;
+            color: var(--md-on-surface-variant);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: color 0.25s var(--m3-effects-standard), transform 0.22s var(--m3-spring-spatial-fast);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .switcher-btn:active { transform: scale(0.94); }
+        .switcher-btn.active {
+            color: var(--md-on-primary-container);
+        }
+
+        /* --- Expressive Tab Bar --- */
+        .tab-bar-wrapper {
+            width: 100%;
+            max-width: 1440px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
 
         .tab-list {
-            display: flex; align-items: flex-end; gap: 6px; flex-grow: 1;
-            overflow-x: auto; scrollbar-width: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            overflow-x: auto;
+            padding: 4px 2px;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         .tab-list::-webkit-scrollbar { display: none; }
 
         .tab-item {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--tab-bg); padding: 8px 16px;
-            border: 1px solid var(--tab-border); border-bottom: none;
-            border-radius: 8px 8px 0 0; font-size: 13px; cursor: pointer;
-            user-select: none; color: #475569; max-width: 200px;
-            position: relative; transform-origin: bottom center;
-            animation: tabPop 0.3s var(--ease-bounce) forwards;
-            transition: background 0.25s var(--ease-spring), color 0.25s var(--ease-spring), transform 0.2s var(--ease-spring);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--md-surface-container);
+            color: var(--md-on-surface-variant);
+            padding: 7px 12px 7px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+            max-width: 210px;
+            min-height: 38px;
+            flex-shrink: 0;
+            border: 1px solid transparent;
+            transform-origin: center bottom;
+            animation: m3TabEnter 0.42s var(--m3-spring-spatial) forwards;
+            transition:
+                background-color 0.25s var(--m3-effects-standard),
+                color 0.25s var(--m3-effects-standard),
+                border-radius 0.35s var(--m3-spring-spatial),
+                transform 0.25s var(--m3-spring-spatial-fast),
+                box-shadow 0.25s var(--m3-effects-standard);
         }
 
-        @keyframes tabPop {
-            0% { opacity: 0; transform: scale(0.85) translateY(10px); }
+        @keyframes m3TabEnter {
+            0% { opacity: 0; transform: scale(0.75) translateY(8px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .tab-item:hover { background: #e9ecf2; color: #0f172a; transform: translateY(-1px); }
-        .tab-item.active { background: var(--tab-active-bg); color: #0f172a; font-weight: 600; }
-        .tab-item.active::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: var(--primary); border-radius: 8px 8px 0 0;
+        .tab-item.closing {
+            animation: m3TabExit 0.22s var(--m3-effects-standard) forwards;
+            pointer-events: none;
         }
 
-        .tab-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; }
-
-        .tab-close {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 18px; height: 18px; border-radius: 50%; border: none;
-            background: transparent; font-size: 13px; cursor: pointer;
-            color: #94a3b8; padding: 0; transition: all 0.2s var(--ease-bounce);
+        @keyframes m3TabExit {
+            to { opacity: 0; transform: scale(0.75); }
         }
-        .tab-close:hover { background: #cbd5e1; color: #0f172a; transform: rotate(90deg) scale(1.1); }
+
+        .tab-item:hover {
+            background: var(--md-surface-container-high);
+            color: var(--md-on-surface);
+        }
+
+        .tab-item:active {
+            transform: scale(0.95);
+            border-radius: 10px;
+        }
+
+        .tab-item.active {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            font-weight: 700;
+            border-radius: 999px; /* Expressive shape morph: squircle -> pill */
+            box-shadow: var(--m3-shadow-1);
+        }
+
+        .tab-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            outline: none;
+            max-width: 130px;
+        }
+
+        .tab-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: inherit;
+            opacity: 0.65;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            transition: background-color 0.2s, opacity 0.2s, transform 0.28s var(--m3-spring-spatial-fast);
+        }
+
+        .tab-icon-btn:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.08);
+            transform: scale(1.12);
+        }
+
+        .tab-icon-btn.tab-close:hover {
+            transform: rotate(90deg) scale(1.12);
+        }
+
+        .tab-edit-btn {
+            display: none;
+        }
+        .tab-item.active .tab-edit-btn {
+            display: inline-flex;
+        }
 
         .tab-add-btn {
-            background: transparent; border: none; font-size: 20px; font-weight: 500;
-            color: #64748b; cursor: pointer; width: 32px; height: 32px;
-            margin-bottom: 2px; border-radius: 6px; display: flex;
-            align-items: center; justify-content: center; transition: all 0.25s var(--ease-bounce);
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            border: none;
+            background: var(--md-surface-container-high);
+            color: var(--md-on-surface);
+            font-size: 22px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: var(--m3-shadow-1);
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                border-radius 0.35s var(--m3-spring-spatial),
+                transform 0.35s var(--m3-spring-spatial);
         }
-        .tab-add-btn:hover { background: #d3d7e0; color: #0f172a; transform: scale(1.15) rotate(90deg); }
 
-        /* --- Main Layout --- */
+        .tab-add-btn:hover {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            border-radius: 50%;
+            transform: rotate(90deg) scale(1.06);
+        }
+        .tab-add-btn:active {
+            transform: rotate(90deg) scale(0.92);
+        }
+
+        /* --- Main Workspace Container --- */
         .container {
-            display: flex; gap: 20px; width: 100%; max-width: 1400px;
-            height: 78vh; border-top: 1px solid var(--tab-border);
+            display: flex;
+            gap: 16px;
+            width: 100%;
+            max-width: 1440px;
+            flex: 1;
+            min-height: 0;
+            position: relative;
         }
 
         .pane {
-            flex: 1; display: flex; flex-direction: column; background: white;
-            border-radius: 0 0 12px 12px; box-shadow: var(--pane-shadow);
-            overflow: hidden; min-width: 0; border: 1px solid var(--tab-border); border-top: none;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--md-surface-container-lowest);
+            border-radius: 24px;
+            box-shadow: var(--m3-shadow-2);
+            overflow: hidden;
+            min-width: 0;
+            min-height: 0;
+            border: 1px solid rgba(196, 206, 200, 0.45);
+            transition: transform 0.38s var(--m3-spring-spatial), opacity 0.25s var(--m3-effects-standard);
+        }
+
+        .pane.hidden-pane {
+            display: none;
+        }
+
+        .pane.mobile-slide-in-right {
+            animation: paneSlideRight 0.38s var(--m3-spring-spatial) forwards;
+        }
+        .pane.mobile-slide-in-left {
+            animation: paneSlideLeft 0.38s var(--m3-spring-spatial) forwards;
+        }
+
+        @keyframes paneSlideRight {
+            from { opacity: 0; transform: translateX(26px) scale(0.985); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes paneSlideLeft {
+            from { opacity: 0; transform: translateX(-26px) scale(0.985); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
         }
 
         .pane-header {
-            background: #f8fafc; padding: 10px 16px; font-weight: 600;
-            border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between;
-            align-items: center; font-size: 0.9rem;
+            background: var(--md-surface-container-low);
+            padding: 10px 14px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--md-surface-container-high);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            min-height: 54px;
         }
 
-        .header-btn-group { display: flex; align-items: center; gap: 8px; }
+        .pane-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--md-on-surface);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .header-btn-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 2px 0;
+        }
+        .header-btn-group::-webkit-scrollbar { display: none; }
+
+        /* --- M3 Expressive Buttons & Connected Groups --- */
+        .m3-connected-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
 
         .header-btn {
-            color: white; border: none; border-radius: 6px; padding: 6px 12px;
-            cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex;
-            align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-            transition: all 0.2s var(--ease-spring);
+            color: var(--md-on-primary);
+            border: none;
+            border-radius: 20px;
+            padding: 7px 14px;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            min-height: 34px;
+            box-shadow: var(--m3-shadow-1);
+            transition:
+                border-radius 0.28s var(--m3-spring-spatial-fast),
+                transform 0.26s var(--m3-spring-spatial-fast),
+                background-color 0.2s var(--m3-effects-standard),
+                box-shadow 0.2s var(--m3-effects-standard);
         }
-        .header-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.12); }
-        .header-btn:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
-        .paste-btn { background-color: var(--primary); }
-        .paste-btn:hover { background-color: var(--primary-hover); }
-        .clear-btn { background-color: #64748b; }
-        .clear-btn:hover { background-color: #475569; }
-        .export-btn { background-color: var(--accent); }
-        .export-btn:hover { background-color: var(--accent-hover); }
-        .toggle-all-btn { background-color: #475569; color: white; }
-        .toggle-all-btn:hover { background-color: #334155; }
-
-        .sync-toggle-label {
-            font-size: 11.5px; font-weight: 500; color: #64748b; display: flex;
-            align-items: center; gap: 5px; cursor: pointer; user-select: none; margin-right: 6px;
+        .m3-connected-group .header-btn:first-child:not(:last-child) {
+            border-radius: 20px 8px 8px 20px;
         }
-        .sync-toggle-label input { cursor: pointer; }
+        .m3-connected-group .header-btn:last-child:not(:first-child) {
+            border-radius: 8px 20px 20px 8px;
+        }
+        .m3-connected-group .header-btn:not(:first-child):not(:last-child) {
+            border-radius: 8px;
+        }
 
+        .header-btn:hover {
+            transform: translateY(-1.5px);
+            box-shadow: var(--m3-shadow-2);
+        }
+
+        .header-btn:active,
+        .m3-connected-group .header-btn:active {
+            transform: scale(0.93);
+            border-radius: 12px;
+            box-shadow: none;
+        }
+
+        .paste-btn { background-color: var(--md-primary); color: var(--md-on-primary); }
+        .paste-btn:hover { background-color: var(--md-primary-hover); }
+
+        .import-btn { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+        .import-btn:hover { background-color: #c7ddfd; }
+
+        .clear-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
+        .clear-btn:hover { background-color: var(--md-surface-container-highest); }
+
+        .export-btn { background-color: var(--md-secondary); color: #ffffff; }
+        .export-btn:hover { background-color: var(--md-secondary-hover); }
+
+        .toggle-all-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
+        .toggle-all-btn:hover { background-color: var(--md-surface-container-highest); }
+        .toggle-all-btn.is-collapsed {
+            background-color: var(--md-tertiary-container);
+            color: var(--md-on-tertiary-container);
+        }
+
+        /* --- M3 Expressive Filter Chips (for Syntax & Sync) --- */
+        .m3-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            min-height: 34px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            border: 1px solid var(--md-outline-variant);
+            background: var(--md-surface-container-lowest);
+            color: var(--md-on-surface-variant);
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                color 0.22s var(--m3-effects-standard),
+                border-color 0.22s var(--m3-effects-standard),
+                border-radius 0.35s var(--m3-spring-spatial),
+                transform 0.22s var(--m3-spring-spatial-fast);
+        }
+
+        .m3-chip input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        .m3-chip .chip-check {
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+            display: inline-flex;
+            align-items: center;
+            transition: width 0.28s var(--m3-spring-spatial), opacity 0.2s;
+        }
+
+        .m3-chip:has(input:checked) {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            border-color: transparent;
+            border-radius: 999px;
+        }
+
+        .m3-chip:has(input:checked) .chip-check {
+            width: 14px;
+            opacity: 1;
+        }
+
+        .m3-chip:active {
+            transform: scale(0.93);
+        }
+
+        /* --- Textarea & Output --- */
         textarea {
-            flex: 1; border: none; padding: 18px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 13.5px; line-height: 1.6; resize: none; outline: none;
-            color: #1e293b; background: #ffffff;
+            flex: 1;
+            border: none;
+            padding: 18px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.65;
+            resize: none;
+            outline: none;
+            color: var(--md-on-surface);
+            background: var(--md-surface-container-lowest);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         #output {
-            flex: 1; padding: 22px; overflow-y: auto; overflow-x: hidden;
-            background: #ffffff; min-width: 0; width: 100%;
+            flex: 1;
+            padding: 22px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--md-surface-container-lowest);
+            min-width: 0;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
 
-        .content-fade { animation: viewFadeSlide 0.3s var(--ease-spring) forwards; }
+        .content-fade {
+            animation: viewFadeSlide 0.35s var(--m3-spring-spatial) forwards;
+        }
         @keyframes viewFadeSlide {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(10px) scale(0.99); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* --- Markdown Elements & Math Styling --- */
-        .markdown-text { line-height: 1.7; font-size: 15px; color: #334155; word-break: break-word; overflow-wrap: break-word; }
-        .markdown-text h1, .markdown-text h2, .markdown-text h3 { color: #0f172a; letter-spacing: -0.015em; margin-top: 1.2em; margin-bottom: 0.4em; }
-        .markdown-text p { margin: 8px 0; }
+        .markdown-text {
+            line-height: 1.72;
+            font-size: 15.5px;
+            color: #2b342f;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4 {
+            color: var(--md-on-surface);
+            letter-spacing: -0.02em;
+            margin-top: 1.3em;
+            margin-bottom: 0.45em;
+        }
+        .markdown-text h1:first-child, .markdown-text h2:first-child { margin-top: 0.2em; }
+        .markdown-text p { margin: 10px 0; }
+        .markdown-text a { color: var(--md-primary); font-weight: 500; }
+        .markdown-text blockquote {
+            margin: 14px 0;
+            padding: 10px 16px;
+            border-left: 4px solid var(--md-primary);
+            background: var(--md-surface-container-low);
+            border-radius: 0 12px 12px 0;
+            color: var(--md-on-surface-variant);
+        }
+        .markdown-text table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            border-collapse: collapse;
+            margin: 14px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .markdown-text th, .markdown-text td {
+            border: 1px solid var(--md-outline-variant);
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.92em;
+        }
+        .markdown-text th { background: var(--md-surface-container); font-weight: 700; }
+        .markdown-text img { max-width: 100%; height: auto; border-radius: 14px; }
         .markdown-text hr {
             border: 0;
             height: 1px;
-            background: #cbd5e1;
+            background: var(--md-outline-variant);
             margin: 22px 0;
         }
         .markdown-text ul, .markdown-text ol {
-            padding-left: 24px;
+            padding-left: 22px;
             margin: 10px 0;
         }
-        .markdown-text li {
-            margin-bottom: 6px;
-        }
+        .markdown-text li { margin-bottom: 6px; }
         .markdown-text code {
-            background-color: #f1f5f9; color: #e11d48; padding: 2px 5px;
-            border-radius: 4px; font-family: Consolas, Monaco, monospace; font-size: 0.88em; border: 1px solid #e2e8f0;
+            background-color: var(--md-surface-container);
+            color: #b91c4a;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.87em;
+            border: 1px solid var(--md-surface-container-high);
         }
 
         /* LaTeX KaTeX container tweaks */
         .katex-display {
             overflow-x: auto;
             overflow-y: hidden;
-            padding: 8px 0;
+            padding: 8px 4px;
             margin: 14px 0 !important;
+            -webkit-overflow-scrolling: touch;
         }
-        .katex {
-            font-size: 1.05em;
+        .katex { font-size: 1.05em; }
+
+        /* --- M3 Expressive Code Containers --- */
+        .code-container {
+            margin: 18px 0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--m3-shadow-2);
+            border: 1px solid #2a2e39;
+            background: var(--code-bg);
+            transition: box-shadow 0.3s var(--m3-effects-standard), transform 0.35s var(--m3-spring-spatial);
         }
 
-        /* --- Code Containers --- */
-        .code-container {
-            margin: 16px 0; border-radius: 8px; overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12); border: 1px solid #2f3549;
-            background: var(--code-bg); transition: box-shadow 0.3s var(--ease-spring);
+        .code-container.stagger-in {
+            animation: codeCardPop 0.44s var(--m3-spring-spatial) backwards;
         }
-        .code-container:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+
+        @keyframes codeCardPop {
+            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .code-container:hover {
+            box-shadow: var(--m3-shadow-3);
+        }
 
         .code-header {
-            display: flex; justify-content: space-between; align-items: center;
-            background-color: var(--code-header-bg); padding: 8px 14px;
-            color: #81a1c1; font-size: 12px; font-family: monospace;
-            gap: 10px; flex-wrap: wrap; border-bottom: 1px solid #202224;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--code-header-bg);
+            padding: 10px 14px;
+            color: #93c5fd;
+            font-size: 12.5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .code-header-title { flex: 1 1 auto; min-width: 0; word-break: break-word; }
-        .file-name { color: #ebcb8b; font-weight: bold; }
-        .lang-label { opacity: 0.65; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
+        .code-header-title {
+            flex: 1 1 140px;
+            min-width: 0;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+        .file-name { color: #fcd34d; font-weight: 700; }
+        .lang-label { opacity: 0.7; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
         
-        .button-group { display: flex; gap: 8px; flex-shrink: 0; margin-left: auto; }
+        .button-group {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
 
         .action-btn {
-            background-color: rgba(255, 255, 255, 0.06); color: #d8dee9;
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 5px;
-            padding: 4px 10px; cursor: pointer; font-size: 12px; font-weight: 500;
-            transition: all 0.2s var(--ease-spring);
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 14px;
+            padding: 6px 12px;
+            min-height: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition:
+                background-color 0.2s var(--m3-effects-standard),
+                border-radius 0.3s var(--m3-spring-spatial-fast),
+                transform 0.25s var(--m3-spring-spatial-fast),
+                color 0.2s;
         }
-        .action-btn:hover { background-color: rgba(255, 255, 255, 0.18); border-color: rgba(255, 255, 255, 0.3); color: #fff; transform: translateY(-1px); }
-        .action-btn:active { transform: translateY(1px); }
-        .action-btn.copied { background-color: var(--primary); border-color: var(--primary); color: #ffffff; }
+        .action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+            border-radius: 999px;
+        }
+        .action-btn:active {
+            transform: scale(0.91);
+            border-radius: 8px;
+        }
+        .action-btn.copied {
+            background-color: var(--md-primary);
+            border-color: var(--md-primary);
+            color: #ffffff;
+            border-radius: 999px;
+            transform: scale(1.04);
+        }
 
-        /* ZERO-LAG ACCORDION HACK */
+        /* ZERO-LAG EXPRESSIVE ACCORDION */
         .code-collapse-wrapper {
             position: relative;
             overflow: hidden;
-            transition: height 0.4s var(--ease-spring), opacity 0.3s ease;
+            transition: height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard);
             will-change: height, opacity;
             opacity: 1;
         }
 
-        .code-collapse-wrapper.minimized {
-            opacity: 0.3;
-        }
-
-        .code-collapse-inner {
-            width: 100%;
-        }
+        .code-collapse-wrapper.minimized { opacity: 0.2; }
+        .code-collapse-inner { width: 100%; }
 
         .code-collapse-inner pre {
-            margin: 0 !important; padding: 16px !important; border-radius: 0 !important;
-            background-color: var(--code-bg) !important; font-size: 13.5px !important;
-            line-height: 1.55 !important; box-shadow: none !important; overflow: auto !important;
+            margin: 0 !important;
+            padding: 16px !important;
+            border-radius: 0 !important;
+            background-color: var(--code-bg) !important;
+            font-size: 13.5px !important;
+            line-height: 1.58 !important;
+            box-shadow: none !important;
+            overflow: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
         .code-collapse-inner code { 
-            font-family: 'Consolas', 'Monaco', monospace !important; text-shadow: none !important; 
+            font-family: 'Consolas', 'Monaco', monospace !important;
+            text-shadow: none !important; 
         }
         .code-collapse-inner pre.language-none code.language-none {
             color: var(--code-text);
         }
 
+        /* --- M3 Expressive Dialog (Rename Tab) --- */
+        .m3-dialog-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(16, 24, 20, 0.42);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s var(--m3-effects-standard);
+        }
+
+        .m3-dialog-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .m3-dialog {
+            background: var(--md-surface-container-lowest);
+            width: 100%;
+            max-width: 360px;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: var(--m3-shadow-3);
+            transform: scale(0.86) translateY(16px);
+            transition: transform 0.38s var(--m3-spring-spatial);
+        }
+
+        .m3-dialog-backdrop.open .m3-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .m3-dialog h3 {
+            margin: 0 0 14px;
+            font-size: 1.2rem;
+            color: var(--md-on-surface);
+        }
+
+        .m3-text-field {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 16px;
+            border: 2px solid var(--md-outline-variant);
+            border-radius: 16px;
+            background: var(--md-surface-container-low);
+            color: var(--md-on-surface);
+            outline: none;
+            transition: border-color 0.2s, border-radius 0.3s var(--m3-spring-spatial);
+        }
+        .m3-text-field:focus {
+            border-color: var(--md-primary);
+            border-radius: 12px;
+        }
+
+        .m3-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        /* --- M3 Expressive Snackbar --- */
+        #m3-snackbar {
+            position: fixed;
+            bottom: calc(20px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%) translateY(28px) scale(0.9);
+            background: #242b27;
+            color: #f4f7f5;
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            font-weight: 500;
+            box-shadow: var(--m3-shadow-3);
+            z-index: 9800;
+            opacity: 0;
+            pointer-events: none;
+            max-width: calc(100vw - 32px);
+            text-align: center;
+            transition:
+                transform 0.4s var(--m3-spring-spatial),
+                opacity 0.22s var(--m3-effects-standard);
+        }
+
+        #m3-snackbar.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        /* Scrollbars */
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.25); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.45); }
+        ::-webkit-scrollbar-thumb { background: rgba(79, 91, 84, 0.24); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(79, 91, 84, 0.45); }
 
-        .empty-state { text-align: center; color: #94a3b8; margin-top: 60px; font-style: italic; }
+        .empty-state {
+            text-align: center;
+            color: var(--md-on-surface-variant);
+            margin-top: 64px;
+            font-size: 0.95rem;
+            padding: 0 16px;
+        }
+        .empty-state strong { display: block; font-size: 1.08rem; margin-bottom: 6px; color: var(--md-on-surface); }
 
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { flex-direction: column; height: auto; gap: 14px; }
-            .pane { height: 50vh; }
-            #output { padding: 14px; }
-            .sync-toggle-label { display: none; }
+        /* --- Responsive Mobile Optimization (<= 840px) --- */
+        @media (max-width: 840px) {
+            body {
+                padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+            }
+
+            .app-top-bar {
+                margin-bottom: 8px;
+                gap: 10px;
+            }
+
+            .brand-group h1 {
+                font-size: 1.12rem;
+            }
+            .brand-group p.subtitle {
+                display: none;
+            }
+
+            .switcher-btn[data-view="split"] {
+                display: none;
+            }
+            .switcher-btn {
+                padding: 7px 14px;
+                font-size: 12.5px;
+            }
+
+            .tab-bar-wrapper {
+                margin-bottom: 8px;
+            }
+
+            .tab-item {
+                min-height: 40px;
+                padding: 8px 10px 8px 14px;
+            }
+
+            .tab-icon-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 15px;
+            }
+
+            .pane {
+                border-radius: 20px;
+            }
+
+            .pane-header {
+                padding: 8px 12px;
+                min-height: 50px;
+            }
+
+            .pane-title {
+                display: none;
+            }
+
+            .header-btn-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .header-btn {
+                min-height: 36px;
+                padding: 7px 12px;
+                font-size: 12.5px;
+            }
+
+            .m3-chip {
+                min-height: 36px;
+                padding: 6px 11px;
+            }
+
+            .sync-chip {
+                display: none;
+            }
+
+            /* 16px prevents iOS Safari automatic zoom on textarea focus */
+            textarea {
+                font-size: 16px;
+                padding: 14px;
+                line-height: 1.55;
+            }
+
+            #output {
+                padding: 14px;
+            }
+
+            .code-container {
+                border-radius: 16px;
+                margin: 14px 0;
+            }
+
+            .code-header {
+                padding: 10px 12px;
+            }
+
+            .action-btn {
+                min-height: 34px;
+                padding: 6px 12px;
+            }
+
+            .code-collapse-inner pre {
+                padding: 12px !important;
+                font-size: 13px !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .brand-group h1 {
+                font-size: 1rem;
+            }
+            .switcher-btn {
+                padding: 6px 11px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="drop-overlay"><span>Drop Markdown / Code File Here</span></div>
-
-    <h1>Markdown Code Extractor & Reader</h1>
-    <p class="subtitle">Organize docs into tabs, collapse codeblocks, render LaTeX math, and export files.</p>
-
-    <div class="tab-bar-container">
-        <div class="tab-list" id="tab-list"></div>
-        <button class="tab-add-btn" id="btn-add-tab" title="New Tab">+</button>
+    <div id="drop-overlay">
+        <div class="drop-card">Drop Markdown / Code File Here</div>
     </div>
 
-    <div class="container">
-        <div class="pane">
-            <div class="pane-header">
-                <span id="editor-tab-indicator">Raw Text / Markdown</span>
-                <div class="header-btn-group">
-                    <button id="btn-clear" class="header-btn clear-btn">Clear</button>
-                    <button id="btn-paste" class="header-btn paste-btn">Paste</button>
-                </div>
-            </div>
-            <textarea id="markdown-input" placeholder="Paste your markdown here or drop files..."></textarea>
+    <input type="file" id="file-upload-input" multiple hidden>
+
+    <!-- Top App Bar -->
+    <header class="app-top-bar">
+        <div class="brand-group">
+            <h1>Markdown Extractor & Reader</h1>
+            <p class="subtitle">Organize docs in tabs, collapse codeblocks, render LaTeX math & export ZIPs.</p>
         </div>
 
-        <div class="pane">
+        <div class="view-switcher" id="view-switcher" role="tablist" aria-label="Workspace View">
+            <div class="switcher-pill" id="switcher-pill"></div>
+            <button class="switcher-btn m3-ripple" data-view="editor" role="tab">Editor</button>
+            <button class="switcher-btn m3-ripple" data-view="split" role="tab">Split</button>
+            <button class="switcher-btn m3-ripple" data-view="preview" role="tab">Preview</button>
+        </div>
+    </header>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar-wrapper">
+        <div class="tab-list" id="tab-list"></div>
+        <button class="tab-add-btn m3-ripple" id="btn-add-tab" title="New Tab" aria-label="New Tab">+</button>
+    </div>
+
+    <!-- Main Panes -->
+    <main class="container" id="workspace-container">
+        <section class="pane" id="pane-editor">
             <div class="pane-header">
-                <span>Formatted View</span>
+                <span class="pane-title" id="editor-tab-indicator">Raw Text / Markdown</span>
                 <div class="header-btn-group">
-                    <label class="sync-toggle-label" title="Enable/Disable Syntax Highlighting (Disabling fixes lag on massive files)">
-                        <input type="checkbox" id="syntax-highlight-chk" checked> Syntax Highlighting
+                    <button id="btn-import" class="header-btn import-btn m3-ripple" title="Upload or import files">Import</button>
+                    <div class="m3-connected-group">
+                        <button id="btn-clear" class="header-btn clear-btn m3-ripple">Clear</button>
+                        <button id="btn-paste" class="header-btn paste-btn m3-ripple">Paste</button>
+                    </div>
+                </div>
+            </div>
+            <textarea id="markdown-input" placeholder="Paste your markdown here, tap Import, or drop files..."></textarea>
+        </section>
+
+        <section class="pane" id="pane-preview">
+            <div class="pane-header">
+                <span class="pane-title">Formatted View</span>
+                <div class="header-btn-group">
+                    <label class="m3-chip m3-ripple" title="Toggle Syntax Highlighting (Disable for huge files)">
+                        <input type="checkbox" id="syntax-highlight-chk" checked>
+                        <span class="chip-check">✓</span>
+                        <span>Syntax</span>
                     </label>
-                    <label class="sync-toggle-label" title="Synchronize editor & view scrolling">
-                        <input type="checkbox" id="sync-scroll-chk" checked> Sync Scroll
+                    <label class="m3-chip sync-chip m3-ripple" title="Synchronize editor & preview scrolling">
+                        <input type="checkbox" id="sync-scroll-chk" checked>
+                        <span class="chip-check">✓</span>
+                        <span>Sync</span>
                     </label>
-                    <button id="btn-toggle-all" class="header-btn toggle-all-btn">Collapse All</button>
-                    <button id="btn-export" class="header-btn export-btn">Export</button>
+                    <div class="m3-connected-group">
+                        <button id="btn-toggle-all" class="header-btn toggle-all-btn m3-ripple">Collapse All</button>
+                        <button id="btn-export" class="header-btn export-btn m3-ripple">Export</button>
+                    </div>
                 </div>
             </div>
             <div id="output">
-                <div class="empty-state">Waiting for text...</div>
+                <div class="empty-state">
+                    <strong>Nothing rendered yet</strong>
+                    Paste Markdown or import a code file to preview it here.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- M3 Rename Tab Dialog -->
+    <div class="m3-dialog-backdrop" id="rename-modal" role="dialog" aria-modal="true" aria-labelledby="rename-dialog-title">
+        <div class="m3-dialog">
+            <h3 id="rename-dialog-title">Rename Document</h3>
+            <input type="text" id="rename-input" class="m3-text-field" placeholder="Document title" maxlength="60">
+            <div class="m3-dialog-actions">
+                <button id="btn-rename-cancel" class="header-btn clear-btn m3-ripple">Cancel</button>
+                <button id="btn-rename-save" class="header-btn paste-btn m3-ripple">Save</button>
             </div>
         </div>
     </div>
+
+    <!-- M3 Expressive Snackbar -->
+    <div id="m3-snackbar" role="status" aria-live="polite"></div>
 
     <script>
         // Configure marked with KaTeX support
@@ -358,10 +1142,13 @@
         }
 
         const STORAGE_KEY = 'markdown_tabs_workspace_data';
-        
+        const MOBILE_BREAKPOINT = 840;
+
         let tabs = [];
         let activeTabId = null;
         let allCollapsedState = false;
+        let currentView = window.innerWidth <= MOBILE_BREAKPOINT ? 'editor' : 'split';
+        let lastMobileView = 'editor';
 
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
@@ -384,34 +1171,179 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
         }
 
+        // DOM Elements
         const tabListEl = document.getElementById('tab-list');
         const addTabBtn = document.getElementById('btn-add-tab');
         const inputArea = document.getElementById('markdown-input');
         const outputArea = document.getElementById('output');
         const pasteBtn = document.getElementById('btn-paste');
         const clearBtn = document.getElementById('btn-clear');
+        const importBtn = document.getElementById('btn-import');
+        const fileUploadInput = document.getElementById('file-upload-input');
         const exportBtn = document.getElementById('btn-export');
         const toggleAllBtn = document.getElementById('btn-toggle-all');
         const syncScrollChk = document.getElementById('sync-scroll-chk');
         const syntaxHighlightChk = document.getElementById('syntax-highlight-chk');
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
+        const paneEditor = document.getElementById('pane-editor');
+        const panePreview = document.getElementById('pane-preview');
+        const viewSwitcher = document.getElementById('view-switcher');
+        const switcherPill = document.getElementById('switcher-pill');
+        const switcherBtns = Array.from(document.querySelectorAll('.switcher-btn'));
+        const snackbarEl = document.getElementById('m3-snackbar');
+        const renameModal = document.getElementById('rename-modal');
+        const renameInput = document.getElementById('rename-input');
+        const renameCancelBtn = document.getElementById('btn-rename-cancel');
+        const renameSaveBtn = document.getElementById('btn-rename-save');
+
+        // --- M3 Expressive Pointer Ripple (Event Delegation) ---
+        document.addEventListener('pointerdown', (e) => {
+            const target = e.target.closest('.m3-ripple');
+            if (!target) return;
+
+            const rect = target.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = (e.clientX ? e.clientX - rect.left : rect.width / 2) - size / 2;
+            const y = (e.clientY ? e.clientY - rect.top : rect.height / 2) - size / 2;
+
+            const wave = document.createElement('span');
+            wave.className = 'm3-ripple-wave';
+            wave.style.width = `${size}px`;
+            wave.style.height = `${size}px`;
+            wave.style.left = `${x}px`;
+            wave.style.top = `${y}px`;
+            target.appendChild(wave);
+
+            wave.addEventListener('animationend', () => wave.remove());
+        });
+
+        // --- M3 Snackbar ---
+        let snackbarTimer;
+        function showSnackbar(message) {
+            snackbarEl.textContent = message;
+            snackbarEl.classList.add('show');
+            clearTimeout(snackbarTimer);
+            snackbarTimer = setTimeout(() => {
+                snackbarEl.classList.remove('show');
+            }, 2400);
+        }
+
+        // --- View Mode Switcher & Sliding Pill ---
+        function updateSwitcherPill() {
+            const activeBtn = switcherBtns.find(btn => btn.dataset.view === currentView);
+            if (!activeBtn || activeBtn.offsetParent === null) return;
+            switcherPill.style.width = `${activeBtn.offsetWidth}px`;
+            switcherPill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+        }
+
+        function setViewMode(mode, animate = true) {
+            const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+            if (isMobile && mode === 'split') {
+                mode = lastMobileView;
+            }
+            const prevView = currentView;
+            currentView = mode;
+            if (mode !== 'split') lastMobileView = mode;
+
+            switcherBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === mode);
+            });
+
+            paneEditor.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
+            panePreview.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
+
+            if (mode === 'editor') {
+                panePreview.classList.add('hidden-pane');
+                if (animate && prevView !== 'editor') {
+                    paneEditor.classList.add('mobile-slide-in-left');
+                }
+            } else if (mode === 'preview') {
+                paneEditor.classList.add('hidden-pane');
+                if (animate && prevView !== 'preview') {
+                    panePreview.classList.add('mobile-slide-in-right');
+                }
+            }
+
+            requestAnimationFrame(updateSwitcherPill);
+        }
+
+        switcherBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.dataset.view !== currentView) {
+                    setViewMode(btn.dataset.view, true);
+                }
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+            if (isMobile && currentView === 'split') {
+                setViewMode(lastMobileView, false);
+            } else {
+                updateSwitcherPill();
+            }
+        });
+
+        // --- M3 Rename Modal ---
+        let renamingTabId = null;
+
+        function openRenameModal(tabId) {
+            const tab = tabs.find(t => t.id === tabId);
+            if (!tab) return;
+            renamingTabId = tabId;
+            renameInput.value = tab.title;
+            renameModal.classList.add('open');
+            setTimeout(() => {
+                renameInput.focus();
+                renameInput.select();
+            }, 80);
+        }
+
+        function closeRenameModal() {
+            renameModal.classList.remove('open');
+            renamingTabId = null;
+        }
+
+        function confirmRenameModal() {
+            if (!renamingTabId) return;
+            const tab = tabs.find(t => t.id === renamingTabId);
+            if (tab) {
+                tab.title = renameInput.value.trim() || 'Untitled';
+                saveState();
+                renderTabs();
+                showSnackbar(`Renamed to "${tab.title}"`);
+            }
+            closeRenameModal();
+        }
+
+        renameCancelBtn.addEventListener('click', closeRenameModal);
+        renameSaveBtn.addEventListener('click', confirmRenameModal);
+        renameModal.addEventListener('click', (e) => {
+            if (e.target === renameModal) closeRenameModal();
+        });
+        renameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); confirmRenameModal(); }
+            if (e.key === 'Escape') { closeRenameModal(); }
+        });
 
         syntaxHighlightChk.addEventListener('change', () => {
             renderMarkdown(inputArea.value, false);
         });
 
+        // --- Tab Management ---
         function renderTabs() {
             tabListEl.innerHTML = '';
             tabs.forEach(tab => {
                 const tabEl = document.createElement('div');
-                tabEl.className = `tab-item ${tab.id === activeTabId ? 'active' : ''}`;
+                tabEl.className = `tab-item m3-ripple ${tab.id === activeTabId ? 'active' : ''}`;
                 
                 const titleSpan = document.createElement('span');
                 titleSpan.className = 'tab-title';
                 titleSpan.textContent = tab.title;
-                titleSpan.title = "Double-click to rename";
+                titleSpan.title = "Double-click or tap edit to rename";
 
+                // Desktop double-click inline rename
                 titleSpan.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     titleSpan.contentEditable = 'true';
@@ -419,7 +1351,7 @@
                     document.execCommand('selectAll', false, null);
                 });
 
-                const saveTitle = () => {
+                const saveInlineTitle = () => {
                     titleSpan.contentEditable = 'false';
                     tab.title = titleSpan.textContent.trim() || 'Untitled';
                     titleSpan.textContent = tab.title;
@@ -427,26 +1359,55 @@
                     saveState();
                 };
 
-                titleSpan.addEventListener('blur', saveTitle);
+                titleSpan.addEventListener('blur', saveInlineTitle);
                 titleSpan.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
                 });
+
+                // Mobile long-press to rename
+                let pressTimer;
+                tabEl.addEventListener('touchstart', () => {
+                    pressTimer = setTimeout(() => openRenameModal(tab.id), 550);
+                }, { passive: true });
+                tabEl.addEventListener('touchend', () => clearTimeout(pressTimer));
+                tabEl.addEventListener('touchmove', () => clearTimeout(pressTimer));
 
                 tabEl.addEventListener('click', () => {
                     if (activeTabId !== tab.id) switchTab(tab.id);
                 });
 
+                // Mobile-friendly Edit button on active tab
+                const editBtn = document.createElement('button');
+                editBtn.className = 'tab-icon-btn tab-edit-btn';
+                editBtn.innerHTML = '✎';
+                editBtn.title = 'Rename tab';
+                editBtn.setAttribute('aria-label', 'Rename tab');
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openRenameModal(tab.id);
+                });
+
                 const closeBtn = document.createElement('button');
-                closeBtn.className = 'tab-close';
+                closeBtn.className = 'tab-icon-btn tab-close';
                 closeBtn.innerHTML = '&times;';
                 closeBtn.title = 'Close tab';
+                closeBtn.setAttribute('aria-label', 'Close tab');
                 closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); closeTab(tab.id);
+                    e.stopPropagation();
+                    tabEl.classList.add('closing');
+                    setTimeout(() => closeTab(tab.id), 180);
                 });
 
                 tabEl.appendChild(titleSpan);
+                tabEl.appendChild(editBtn);
                 if (tabs.length > 1) tabEl.appendChild(closeBtn);
                 tabListEl.appendChild(tabEl);
+
+                if (tab.id === activeTabId) {
+                    requestAnimationFrame(() => {
+                        tabEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    });
+                }
             });
 
             const activeTab = tabs.find(t => t.id === activeTabId);
@@ -463,6 +1424,7 @@
             activeTabId = id;
             allCollapsedState = false;
             toggleAllBtn.textContent = 'Collapse All';
+            toggleAllBtn.classList.remove('is-collapsed');
             saveState();
             renderTabs();
             renderMarkdown(inputArea.value, true);
@@ -479,10 +1441,11 @@
             activeTabId = newId;
             allCollapsedState = false;
             toggleAllBtn.textContent = 'Collapse All';
+            toggleAllBtn.classList.remove('is-collapsed');
             saveState();
             renderTabs();
             renderMarkdown(initialContent, true);
-            inputArea.focus();
+            if (currentView !== 'preview') inputArea.focus();
         }
 
         function closeTab(id) {
@@ -503,6 +1466,7 @@
 
         addTabBtn.addEventListener('click', () => addTab());
 
+        // --- Code Extraction & Markdown Rendering ---
         const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
 
         let activeBlockTogglers = [];
@@ -543,12 +1507,17 @@
             }
 
             if (!text.trim()) {
-                outputArea.innerHTML = '<div class="empty-state">Waiting for text...</div>';
+                outputArea.innerHTML = `
+                    <div class="empty-state">
+                        <strong>Nothing rendered yet</strong>
+                        Paste Markdown or import a code file to preview it here.
+                    </div>`;
                 return;
             }
 
             let match;
             let lastIndex = 0;
+            let blockIndex = 0;
             tokenRegex.lastIndex = 0;
 
             const markerCleanupRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*(?:START OF FILE|END OF FILE).*?(?:\r?\n|$)/gim;
@@ -568,7 +1537,6 @@
                 let fileName = '';
                 let codeContent = '';
 
-                // Standard markdown code blocks (```)
                 if (match[1] !== undefined) {
                     language = match[1].trim() || 'plaintext';
                     codeContent = match[2];
@@ -579,11 +1547,8 @@
                         fileName = startMatch[1].trim();
                         codeContent = codeContent.replace(startRegex, '');
                     }
-                    
                     codeContent = cleanCodeBlockContent(codeContent);
-                } 
-                // Raw START OF FILE markers
-                else if (match[3] !== undefined) {
+                } else if (match[3] !== undefined) {
                     fileName = match[3].trim();
                     codeContent = match[4];
                     language = getLanguageFromFilename(fileName);
@@ -604,21 +1569,39 @@
 
                 const container = document.createElement('div');
                 container.className = 'code-container';
+                if (triggerTransition && blockIndex < 8) {
+                    container.classList.add('stagger-in');
+                    container.style.animationDelay = `${blockIndex * 45}ms`;
+                }
+                blockIndex++;
 
                 const header = document.createElement('div');
                 header.className = 'code-header';
 
                 const langSpan = document.createElement('div');
                 langSpan.className = 'code-header-title';
-                langSpan.innerHTML = fileName 
-                    ? `<span class="file-name">${fileName}</span> <span class="lang-label">(${language})</span>`
-                    : `<span class="lang-label" style="margin-left: 0;">${language}</span>`;
+                if (fileName) {
+                    const fnEl = document.createElement('span');
+                    fnEl.className = 'file-name';
+                    fnEl.textContent = fileName;
+                    const lgEl = document.createElement('span');
+                    lgEl.className = 'lang-label';
+                    lgEl.textContent = `(${language})`;
+                    langSpan.appendChild(fnEl);
+                    langSpan.appendChild(lgEl);
+                } else {
+                    const lgEl = document.createElement('span');
+                    lgEl.className = 'lang-label';
+                    lgEl.style.marginLeft = '0';
+                    lgEl.textContent = language;
+                    langSpan.appendChild(lgEl);
+                }
 
                 const btnGroup = document.createElement('div');
                 btnGroup.className = 'button-group';
 
                 const minimizeBtn = document.createElement('button');
-                minimizeBtn.className = 'action-btn';
+                minimizeBtn.className = 'action-btn m3-ripple';
                 minimizeBtn.textContent = 'Minimize';
                 
                 const collapseWrapper = document.createElement('div');
@@ -655,7 +1638,9 @@
                     isMinimized = nextState;
 
                     clearTimeout(transitionTimeout);
-                    collapseWrapper.style.transition = instant ? 'none' : 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+                    collapseWrapper.style.transition = instant
+                        ? 'none'
+                        : 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
 
                     if (isMinimized) {
                         const currentHeight = collapseWrapper.scrollHeight;
@@ -669,7 +1654,7 @@
                             collapseWrapper.style.height = '0px';
                             collapseWrapper.classList.add('minimized');
                             requestAnimationFrame(() => {
-                                collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+                                collapseWrapper.style.transition = 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
                             });
                         } else {
                             void collapseWrapper.offsetHeight; 
@@ -685,7 +1670,7 @@
                             collapseInner.style.position = 'relative';
                             collapseWrapper.style.height = 'auto';
                             requestAnimationFrame(() => {
-                                collapseWrapper.style.transition = 'height 0.4s var(--ease-spring), opacity 0.3s ease';
+                                collapseWrapper.style.transition = 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
                             });
                         } else {
                             transitionTimeout = setTimeout(() => {
@@ -693,7 +1678,7 @@
                                     collapseInner.style.position = 'relative';
                                     collapseWrapper.style.height = 'auto';
                                 }
-                            }, 400); 
+                            }, 440); 
                         }
                     }
                     minimizeBtn.textContent = isMinimized ? 'Expand' : 'Minimize';
@@ -703,17 +1688,20 @@
                 activeBlockTogglers.push(toggleBlock);
 
                 const copyBtn = document.createElement('button');
-                copyBtn.className = 'action-btn';
-                copyBtn.textContent = 'Copy Code';
+                copyBtn.className = 'action-btn m3-ripple';
+                copyBtn.textContent = 'Copy';
 
                 copyBtn.addEventListener('click', () => {
                     navigator.clipboard.writeText(codeContent).then(() => {
                         copyBtn.textContent = 'Copied!';
                         copyBtn.classList.add('copied');
+                        showSnackbar('Code copied to clipboard');
                         setTimeout(() => {
-                            copyBtn.textContent = 'Copy Code';
+                            copyBtn.textContent = 'Copy';
                             copyBtn.classList.remove('copied');
                         }, 1800);
+                    }).catch(() => {
+                        showSnackbar('Unable to access clipboard');
                     });
                 });
 
@@ -746,7 +1734,6 @@
                 Prism.highlightAllUnder(outputArea);
             }
 
-            // Run KaTeX auto-render on math elements not captured during tokenization
             if (window.renderMathInElement) {
                 try {
                     renderMathInElement(outputArea, {
@@ -764,7 +1751,7 @@
             }
 
             if (!triggerTransition) {
-                if (isAtBottom && syncScrollChk.checked) {
+                if (isAtBottom && syncScrollChk.checked && currentView === 'split') {
                     outputArea.scrollTop = outputArea.scrollHeight;
                 } else {
                     outputArea.scrollTop = prevScroll;
@@ -776,13 +1763,17 @@
             allCollapsedState = !allCollapsedState;
             activeBlockTogglers.forEach(fn => fn(allCollapsedState, false));
             toggleAllBtn.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
+            toggleAllBtn.classList.toggle('is-collapsed', allCollapsedState);
         });
 
         exportBtn.addEventListener('click', async () => {
             const currentTab = tabs.find(t => t.id === activeTabId);
             const text = inputArea.value;
 
-            if (!text.trim()) { alert('Document is empty!'); return; }
+            if (!text.trim()) {
+                showSnackbar('Document is empty!');
+                return;
+            }
 
             const zip = new JSZip();
             let extractedCount = 0;
@@ -825,6 +1816,7 @@
                 a.download = `${(currentTab ? currentTab.title : 'workspace').replace(/[^a-z0-9_-]/gi, '_')}_files.zip`;
                 a.click();
                 URL.revokeObjectURL(a.href);
+                showSnackbar(`Exported ${extractedCount} file${extractedCount > 1 ? 's' : ''} as ZIP`);
             } else {
                 const blob = new Blob([text], { type: 'text/markdown;charset=utf-8;' });
                 const a = document.createElement('a');
@@ -832,41 +1824,39 @@
                 a.download = `${(currentTab ? currentTab.title : 'document').replace(/[^a-z0-9_-]/gi, '_')}.md`;
                 a.click();
                 URL.revokeObjectURL(a.href);
+                showSnackbar('Exported as Markdown file');
             }
         });
 
-        // --- Synchronized Scrolling logic ---
+        // --- Synchronized Scrolling logic (Split Mode) ---
         let isSyncingInput = false;
         let isSyncingOutput = false;
 
         inputArea.addEventListener('scroll', () => {
-            if (!syncScrollChk.checked || isSyncingInput || window.innerWidth <= 768) return;
+            if (!syncScrollChk.checked || isSyncingInput || currentView !== 'split' || window.innerWidth <= MOBILE_BREAKPOINT) return;
+            const maxInput = inputArea.scrollHeight - inputArea.clientHeight;
+            const maxOutput = outputArea.scrollHeight - outputArea.clientHeight;
+            if (maxInput <= 0 || maxOutput <= 0) return;
+
             isSyncingOutput = true;
-            const percentage = inputArea.scrollTop / (inputArea.scrollHeight - inputArea.clientHeight);
-            outputArea.scrollTop = percentage * (outputArea.scrollHeight - outputArea.clientHeight);
+            outputArea.scrollTop = (inputArea.scrollTop / maxInput) * maxOutput;
             requestAnimationFrame(() => { isSyncingOutput = false; });
         });
 
         outputArea.addEventListener('scroll', () => {
-            if (!syncScrollChk.checked || isSyncingOutput || window.innerWidth <= 768) return;
+            if (!syncScrollChk.checked || isSyncingOutput || currentView !== 'split' || window.innerWidth <= MOBILE_BREAKPOINT) return;
+            const maxInput = inputArea.scrollHeight - inputArea.clientHeight;
+            const maxOutput = outputArea.scrollHeight - outputArea.clientHeight;
+            if (maxInput <= 0 || maxOutput <= 0) return;
+
             isSyncingInput = true;
-            const percentage = outputArea.scrollTop / (outputArea.scrollHeight - outputArea.clientHeight);
-            inputArea.scrollTop = percentage * (inputArea.scrollHeight - inputArea.clientHeight);
+            inputArea.scrollTop = (outputArea.scrollTop / maxOutput) * maxInput;
             requestAnimationFrame(() => { isSyncingInput = false; });
         });
 
-        // --- Drag & Drop ---
-        window.addEventListener('dragover', (e) => {
-            e.preventDefault(); dropOverlay.classList.add('active');
-        });
-
-        window.addEventListener('dragleave', (e) => {
-            if (e.relatedTarget === null) dropOverlay.classList.remove('active');
-        });
-
-        window.addEventListener('drop', (e) => {
-            e.preventDefault(); dropOverlay.classList.remove('active');
-            const files = Array.from(e.dataTransfer.files);
+        // --- Shared File Ingestion (Drag & Drop + Mobile Import) ---
+        function loadFiles(fileList) {
+            const files = Array.from(fileList);
             if (!files.length) return;
 
             files.forEach((file) => {
@@ -877,32 +1867,63 @@
                     if (currentTab && !currentTab.content.trim()) {
                         currentTab.title = file.name;
                         currentTab.content = content;
-                        saveState(); renderTabs(); renderMarkdown(content, true);
+                        saveState();
+                        renderTabs();
+                        renderMarkdown(content, true);
                     } else {
                         addTab(file.name, content);
+                    }
+                    showSnackbar(`Loaded "${file.name}"`);
+                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                        setViewMode('preview', true);
                     }
                 };
                 reader.readAsText(file);
             });
+        }
+
+        importBtn.addEventListener('click', () => fileUploadInput.click());
+        fileUploadInput.addEventListener('change', (e) => {
+            loadFiles(e.target.files);
+            fileUploadInput.value = '';
         });
 
+        window.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropOverlay.classList.add('active');
+        });
+
+        window.addEventListener('dragleave', (e) => {
+            if (e.relatedTarget === null) dropOverlay.classList.remove('active');
+        });
+
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropOverlay.classList.remove('active');
+            loadFiles(e.dataTransfer.files);
+        });
+
+        // --- Paste & Clear ---
         pasteBtn.addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
                 inputArea.value = text;
                 inputArea.dispatchEvent(new Event('input'));
                 
-                const originalText = pasteBtn.innerHTML;
-                pasteBtn.innerHTML = 'Pasted!';
-                setTimeout(() => { pasteBtn.innerHTML = originalText; }, 1500);
+                const originalText = pasteBtn.textContent;
+                pasteBtn.textContent = 'Pasted!';
+                showSnackbar('Pasted from clipboard');
+                setTimeout(() => { pasteBtn.textContent = originalText; }, 1400);
             } catch (err) {
-                alert('Please allow clipboard access or use Ctrl+V / Cmd+V directly.');
+                showSnackbar('Allow clipboard access or paste directly');
             }
         });
 
         clearBtn.addEventListener('click', () => {
+            if (!inputArea.value) return;
             inputArea.value = '';
             inputArea.dispatchEvent(new Event('input')); 
+            showSnackbar('Editor cleared');
         });
 
         let renderTimeout;
@@ -916,11 +1937,14 @@
             clearTimeout(renderTimeout);
             renderTimeout = setTimeout(() => {
                 renderMarkdown(inputArea.value);
-            }, 250); 
+            }, 220); 
         });
 
+        // Initialize workspace
         renderTabs();
-        renderMarkdown(inputArea.value);
+        renderMarkdown(inputArea.value, true);
+        setViewMode(currentView, false);
+        window.addEventListener('load', updateSwitcherPill);
     </script>
 </body>
 </html>
