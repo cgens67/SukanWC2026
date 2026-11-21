@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f4f7f5">
+    <meta name="theme-color" content="#f4f7f5" id="meta-theme-color">
     <title>Markdown Code Extractor & Reader</title>
 
     <!-- Material Symbols Rounded -->
@@ -30,7 +30,7 @@
 
     <style>
         :root {
-            /* Material Design 3 Tonal Palette */
+            /* Default: Light + Emerald */
             --md-surface-dim: #e8edea;
             --md-surface: #f4f7f5;
             --md-surface-container-lowest: #ffffff;
@@ -41,8 +41,10 @@
 
             --md-on-surface: #181d1a;
             --md-on-surface-variant: #4f5b54;
+            --md-prose-text: #2b342f;
             --md-outline: #79867e;
             --md-outline-variant: #c4cec8;
+            --md-pane-border: rgba(196, 206, 200, 0.5);
 
             --md-primary: #0b875b;
             --md-primary-hover: #086f4b;
@@ -52,14 +54,23 @@
 
             --md-secondary: #2563eb;
             --md-secondary-hover: #1d4ed8;
+            --md-on-secondary: #ffffff;
             --md-secondary-container: #dbeafe;
             --md-on-secondary-container: #172554;
 
             --md-tertiary-container: #e8def8;
             --md-on-tertiary-container: #21005d;
 
+            --md-inline-code-bg: #edf2ef;
+            --md-inline-code-text: #b91c4a;
+            --md-inline-code-border: #dce4df;
+
+            --md-inverse-surface: #242b27;
+            --md-inverse-on-surface: #f4f7f5;
+
             --code-bg: #181a1f;
             --code-header-bg: #22252c;
+            --code-border: #2a2e39;
             --code-text: #c5c8c6;
 
             /* M3 Expressive Motion Tokens */
@@ -72,7 +83,275 @@
             /* M3 Elevation */
             --m3-shadow-1: 0 1px 3px rgba(16, 24, 20, 0.06), 0 1px 2px rgba(16, 24, 20, 0.04);
             --m3-shadow-2: 0 6px 20px -4px rgba(16, 24, 20, 0.08), 0 2px 6px -1px rgba(16, 24, 20, 0.04);
-            --m3-shadow-3: 0 14px 36px -6px rgba(16, 24, 20, 0.14), 0 4px 12px -2px rgba(16, 24, 20, 0.06);
+            --m3-shadow-3: 0 14px 36px -6px rgba(16, 24, 20, 0.16), 0 4px 12px -2px rgba(16, 24, 20, 0.08);
+        }
+
+        /* --- M3 Color Accents (Light) --- */
+        [data-accent="ocean"] {
+            --md-surface: #f3f6fc;
+            --md-surface-container-low: #f7f9fe;
+            --md-surface-container: #ebeef6;
+            --md-surface-container-high: #e1e6f0;
+            --md-surface-container-highest: #d5dce9;
+            --md-on-surface: #181c23;
+            --md-on-surface-variant: #4c5566;
+            --md-prose-text: #272e3a;
+            --md-outline-variant: #c4cad8;
+            --md-pane-border: rgba(196, 202, 216, 0.55);
+
+            --md-primary: #1d5fe6;
+            --md-primary-hover: #154cc2;
+            --md-primary-container: #d8e4ff;
+            --md-on-primary-container: #001a4d;
+
+            --md-secondary: #0f766e;
+            --md-secondary-hover: #0d5e58;
+            --md-secondary-container: #ccfbf1;
+            --md-on-secondary-container: #042f2e;
+
+            --md-inline-code-bg: #ebeef6;
+            --md-inline-code-border: #dbe0ec;
+        }
+
+        [data-accent="violet"] {
+            --md-surface: #f7f4fc;
+            --md-surface-container-low: #faf8fe;
+            --md-surface-container: #f0ecf7;
+            --md-surface-container-high: #e6e0f0;
+            --md-surface-container-highest: #dbd3e9;
+            --md-on-surface: #1d1924;
+            --md-on-surface-variant: #564e64;
+            --md-prose-text: #2e2938;
+            --md-outline-variant: #ccc4d8;
+            --md-pane-border: rgba(204, 196, 216, 0.55);
+
+            --md-primary: #6d4aff;
+            --md-primary-hover: #5634e6;
+            --md-primary-container: #e6deff;
+            --md-on-primary-container: #21005d;
+
+            --md-secondary: #0284c7;
+            --md-secondary-hover: #0369a1;
+            --md-secondary-container: #e0f2fe;
+            --md-on-secondary-container: #082f49;
+
+            --md-inline-code-bg: #f0ecf7;
+            --md-inline-code-border: #e2dbef;
+        }
+
+        [data-accent="rose"] {
+            --md-surface: #fcf4f6;
+            --md-surface-container-low: #fef8f9;
+            --md-surface-container: #f7ecf0;
+            --md-surface-container-high: #f0e1e6;
+            --md-surface-container-highest: #e7d4db;
+            --md-on-surface: #23181c;
+            --md-on-surface-variant: #634d54;
+            --md-prose-text: #38282d;
+            --md-outline-variant: #d8c3ca;
+            --md-pane-border: rgba(216, 195, 202, 0.55);
+
+            --md-primary: #c83264;
+            --md-primary-hover: #a7234f;
+            --md-primary-container: #ffd9e2;
+            --md-on-primary-container: #3e0019;
+
+            --md-secondary: #4f46e5;
+            --md-secondary-hover: #4338ca;
+            --md-secondary-container: #e0e7ff;
+            --md-on-secondary-container: #1e1b4b;
+
+            --md-inline-code-bg: #f7ecf0;
+            --md-inline-code-border: #ecdbe1;
+        }
+
+        [data-accent="amber"] {
+            --md-surface: #fbf6f1;
+            --md-surface-container-low: #fefaf6;
+            --md-surface-container: #f5ede5;
+            --md-surface-container-high: #ece1d6;
+            --md-surface-container-highest: #e2d4c7;
+            --md-on-surface: #221b15;
+            --md-on-surface-variant: #615346;
+            --md-prose-text: #362c24;
+            --md-outline-variant: #d6c8ba;
+            --md-pane-border: rgba(214, 200, 186, 0.55);
+
+            --md-primary: #b85d00;
+            --md-primary-hover: #964b00;
+            --md-primary-container: #ffdfc2;
+            --md-on-primary-container: #381800;
+
+            --md-secondary: #0d9488;
+            --md-secondary-hover: #0f766e;
+            --md-secondary-container: #ccfbf1;
+            --md-on-secondary-container: #042f2e;
+
+            --md-inline-code-bg: #f5ede5;
+            --md-inline-code-border: #e8dccf;
+        }
+
+        /* --- Dark Mode Base & Tonal Accents --- */
+        [data-theme="dark"] {
+            --md-surface: #0f1411;
+            --md-surface-container-lowest: #161c18;
+            --md-surface-container-low: #1a211d;
+            --md-surface-container: #202823;
+            --md-surface-container-high: #29322c;
+            --md-surface-container-highest: #333e37;
+
+            --md-on-surface: #e4ebe6;
+            --md-on-surface-variant: #a8b5ad;
+            --md-prose-text: #d7e0da;
+            --md-outline: #79867e;
+            --md-outline-variant: #3c4740;
+            --md-pane-border: rgba(255, 255, 255, 0.08);
+
+            --md-primary: #4ade9e;
+            --md-primary-hover: #6ee7b7;
+            --md-on-primary: #003822;
+            --md-primary-container: #0a5237;
+            --md-on-primary-container: #bff4dc;
+
+            --md-secondary: #60a5fa;
+            --md-secondary-hover: #93c5fd;
+            --md-on-secondary: #0a254d;
+            --md-secondary-container: #1e3a5f;
+            --md-on-secondary-container: #dbeafe;
+
+            --md-tertiary-container: #4a396b;
+            --md-on-tertiary-container: #eaddff;
+
+            --md-inline-code-bg: #232b26;
+            --md-inline-code-text: #fda4af;
+            --md-inline-code-border: #333e37;
+
+            --md-inverse-surface: #e4ebe6;
+            --md-inverse-on-surface: #181d1a;
+
+            --code-bg: #0c0e12;
+            --code-header-bg: #151920;
+            --code-border: rgba(255, 255, 255, 0.09);
+
+            --m3-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
+            --m3-shadow-2: 0 8px 24px -4px rgba(0, 0, 0, 0.36), 0 2px 8px -1px rgba(0, 0, 0, 0.24);
+            --m3-shadow-3: 0 18px 40px -6px rgba(0, 0, 0, 0.52), 0 6px 14px -2px rgba(0, 0, 0, 0.34);
+        }
+
+        [data-theme="dark"][data-accent="ocean"] {
+            --md-surface: #0f131a;
+            --md-surface-container-lowest: #161b24;
+            --md-surface-container-low: #1a202b;
+            --md-surface-container: #212835;
+            --md-surface-container-high: #2a3342;
+            --md-surface-container-highest: #343e50;
+            --md-on-surface: #e3e8f2;
+            --md-on-surface-variant: #a6b1c4;
+            --md-prose-text: #d6deec;
+            --md-outline-variant: #3b4559;
+
+            --md-primary: #7aa7ff;
+            --md-primary-hover: #9ec0ff;
+            --md-on-primary: #002366;
+            --md-primary-container: #183d8a;
+            --md-on-primary-container: #d8e4ff;
+
+            --md-secondary: #5eead4;
+            --md-secondary-hover: #99f6e4;
+            --md-on-secondary: #042f2e;
+            --md-secondary-container: #134e4a;
+            --md-on-secondary-container: #ccfbf1;
+
+            --md-inline-code-bg: #222936;
+            --md-inline-code-border: #343e50;
+            --md-inverse-surface: #e3e8f2;
+        }
+
+        [data-theme="dark"][data-accent="violet"] {
+            --md-surface: #13111a;
+            --md-surface-container-lowest: #1a1724;
+            --md-surface-container-low: #1f1c2b;
+            --md-surface-container: #262235;
+            --md-surface-container-high: #302b42;
+            --md-surface-container-highest: #3b3550;
+            --md-on-surface: #eae5f4;
+            --md-on-surface-variant: #b3abc4;
+            --md-prose-text: #ded7ec;
+            --md-outline-variant: #443d59;
+
+            --md-primary: #b5a0ff;
+            --md-primary-hover: #cabaff;
+            --md-on-primary: #29007a;
+            --md-primary-container: #4527a0;
+            --md-on-primary-container: #e6deff;
+
+            --md-secondary: #38bdf8;
+            --md-secondary-hover: #7dd3fc;
+            --md-on-secondary: #082f49;
+            --md-secondary-container: #0c4a6e;
+            --md-on-secondary-container: #e0f2fe;
+
+            --md-inline-code-bg: #272336;
+            --md-inline-code-border: #3b3550;
+            --md-inverse-surface: #eae5f4;
+        }
+
+        [data-theme="dark"][data-accent="rose"] {
+            --md-surface: #181114;
+            --md-surface-container-lowest: #20171b;
+            --md-surface-container-low: #261b20;
+            --md-surface-container: #2e2127;
+            --md-surface-container-high: #392a31;
+            --md-surface-container-highest: #45333c;
+            --md-on-surface: #f3e4e9;
+            --md-on-surface-variant: #c2aab2;
+            --md-prose-text: #ead7de;
+            --md-outline-variant: #533e47;
+
+            --md-primary: #ff80a8;
+            --md-primary-hover: #ffa6c2;
+            --md-on-primary: #4d001e;
+            --md-primary-container: #7c173b;
+            --md-on-primary-container: #ffd9e2;
+
+            --md-secondary: #818cf8;
+            --md-secondary-hover: #a5b4fc;
+            --md-on-secondary: #1e1b4b;
+            --md-secondary-container: #312e81;
+            --md-on-secondary-container: #e0e7ff;
+
+            --md-inline-code-bg: #2f2228;
+            --md-inline-code-border: #45333c;
+            --md-inverse-surface: #f3e4e9;
+        }
+
+        [data-theme="dark"][data-accent="amber"] {
+            --md-surface: #16120e;
+            --md-surface-container-lowest: #1e1813;
+            --md-surface-container-low: #241d17;
+            --md-surface-container: #2c231c;
+            --md-surface-container-high: #362c23;
+            --md-surface-container-highest: #42362b;
+            --md-on-surface: #f0e6dc;
+            --md-on-surface-variant: #bfb0a1;
+            --md-prose-text: #e5d9cd;
+            --md-outline-variant: #4f4134;
+
+            --md-primary: #ffb76b;
+            --md-primary-hover: #ffc991;
+            --md-on-primary: #452100;
+            --md-primary-container: #703900;
+            --md-on-primary-container: #ffdfc2;
+
+            --md-secondary: #5eead4;
+            --md-secondary-hover: #99f6e4;
+            --md-on-secondary: #042f2e;
+            --md-secondary-container: #134e4a;
+            --md-on-secondary-container: #ccfbf1;
+
+            --md-inline-code-bg: #2d241d;
+            --md-inline-code-border: #42362b;
+            --md-inverse-surface: #f0e6dc;
         }
 
         * {
@@ -108,6 +387,7 @@
             padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
             -webkit-font-smoothing: antialiased;
             overscroll-behavior-y: contain;
+            transition: background-color 0.3s var(--m3-effects-standard), color 0.25s var(--m3-effects-standard);
         }
 
         /* --- Material Symbols --- */
@@ -134,7 +414,7 @@
             flex-shrink: 0;
         }
 
-        /* --- M3 Expressive Ripple Effect (isolated layer prevents border-radius clip bugs) --- */
+        /* --- M3 Expressive Ripple Effect --- */
         .m3-ripple {
             position: relative;
             touch-action: manipulation;
@@ -211,12 +491,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
+            gap: 12px;
             margin-bottom: 12px;
             flex-shrink: 0;
         }
 
-        .brand-group { min-width: 0; }
+        .brand-group { min-width: 0; flex: 1; }
 
         .brand-group h1 {
             margin: 0;
@@ -238,6 +518,52 @@
             text-overflow: ellipsis;
         }
 
+        .top-bar-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Theme Icon Button */
+        .theme-trigger-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            border: none;
+            background: var(--md-surface-container-high);
+            color: var(--md-on-surface);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transform: scale(1);
+            box-shadow: var(--m3-shadow-1);
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                color 0.22s var(--m3-effects-standard),
+                border-radius 0.3s var(--m3-shape-ease),
+                transform 0.28s var(--m3-spring-spatial-fast);
+        }
+        .theme-trigger-btn .material-symbols-rounded { font-size: 20px; }
+
+        @media (hover: hover) {
+            .theme-trigger-btn:hover {
+                background: var(--md-primary-container);
+                color: var(--md-on-primary-container);
+                border-radius: 20px;
+            }
+        }
+        .theme-trigger-btn:active {
+            transform: scale(0.92);
+            border-radius: 10px;
+        }
+        .theme-trigger-btn.is-open {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            border-radius: 20px;
+        }
+
         /* --- M3 Expressive Segmented View Switcher --- */
         .view-switcher {
             position: relative;
@@ -246,8 +572,9 @@
             background: var(--md-surface-container-high);
             padding: 4px;
             border-radius: 24px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
             flex-shrink: 0;
+            transition: background-color 0.3s var(--m3-effects-standard);
         }
 
         .switcher-pill {
@@ -258,7 +585,10 @@
             background: var(--md-primary-container);
             border-radius: 20px;
             box-shadow: var(--m3-shadow-1);
-            transition: transform 0.42s var(--m3-spring-spatial), width 0.42s var(--m3-spring-spatial);
+            transition:
+                transform 0.42s var(--m3-spring-spatial),
+                width 0.42s var(--m3-spring-spatial),
+                background-color 0.25s var(--m3-effects-standard);
             z-index: 0;
             pointer-events: none;
         }
@@ -399,7 +729,7 @@
         @media (hover: hover) {
             .tab-icon-btn:hover {
                 opacity: 1;
-                background: rgba(0, 0, 0, 0.08);
+                background: rgba(128, 128, 128, 0.16);
                 transform: scale(1.12);
             }
             .tab-icon-btn.tab-close:hover {
@@ -465,8 +795,12 @@
             overflow: hidden;
             min-width: 0;
             min-height: 0;
-            border: 1px solid rgba(196, 206, 200, 0.45);
-            transition: transform 0.38s var(--m3-spring-spatial), opacity 0.25s var(--m3-effects-standard);
+            border: 1px solid var(--md-pane-border);
+            transition:
+                background-color 0.3s var(--m3-effects-standard),
+                border-color 0.3s var(--m3-effects-standard),
+                transform 0.38s var(--m3-spring-spatial),
+                opacity 0.25s var(--m3-effects-standard);
         }
 
         .pane.hidden-pane { display: none; }
@@ -499,6 +833,7 @@
             font-size: 0.9rem;
             flex-shrink: 0;
             min-height: 54px;
+            transition: background-color 0.3s var(--m3-effects-standard), border-color 0.3s var(--m3-effects-standard);
         }
 
         .pane-title {
@@ -548,6 +883,7 @@
                 border-radius 0.28s var(--m3-shape-ease),
                 transform 0.26s var(--m3-spring-spatial-fast),
                 background-color 0.2s var(--m3-effects-standard),
+                color 0.2s var(--m3-effects-standard),
                 box-shadow 0.2s var(--m3-effects-standard);
         }
         .header-btn .material-symbols-rounded { font-size: 16px; }
@@ -580,12 +916,12 @@
         @media (hover: hover) { .paste-btn:hover { background-color: var(--md-primary-hover); } }
 
         .import-btn { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-        @media (hover: hover) { .import-btn:hover { background-color: #c7ddfd; } }
+        @media (hover: hover) { .import-btn:hover { filter: brightness(0.95); } }
 
         .clear-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
         @media (hover: hover) { .clear-btn:hover { background-color: var(--md-surface-container-highest); } }
 
-        .export-btn { background-color: var(--md-secondary); color: #ffffff; }
+        .export-btn { background-color: var(--md-secondary); color: var(--md-on-secondary); }
         @media (hover: hover) { .export-btn:hover { background-color: var(--md-secondary-hover); } }
 
         .toggle-all-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
@@ -668,6 +1004,12 @@
             background: var(--md-surface-container-lowest);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            transition: background-color 0.3s var(--m3-effects-standard), color 0.25s var(--m3-effects-standard);
+        }
+
+        textarea::placeholder {
+            color: var(--md-on-surface-variant);
+            opacity: 0.7;
         }
 
         #output {
@@ -679,6 +1021,7 @@
             min-width: 0;
             width: 100%;
             -webkit-overflow-scrolling: touch;
+            transition: background-color 0.3s var(--m3-effects-standard);
         }
 
         .content-fade {
@@ -693,7 +1036,7 @@
         .markdown-text {
             line-height: 1.72;
             font-size: 15.5px;
-            color: #2b342f;
+            color: var(--md-prose-text);
             word-break: break-word;
             overflow-wrap: break-word;
         }
@@ -728,7 +1071,7 @@
             text-align: left;
             font-size: 0.92em;
         }
-        .markdown-text th { background: var(--md-surface-container); font-weight: 700; }
+        .markdown-text th { background: var(--md-surface-container); font-weight: 700; color: var(--md-on-surface); }
         .markdown-text img { max-width: 100%; height: auto; border-radius: 14px; }
         .markdown-text hr {
             border: 0;
@@ -742,13 +1085,13 @@
         }
         .markdown-text li { margin-bottom: 6px; }
         .markdown-text code {
-            background-color: var(--md-surface-container);
-            color: #b91c4a;
+            background-color: var(--md-inline-code-bg);
+            color: var(--md-inline-code-text);
             padding: 2px 6px;
             border-radius: 6px;
             font-family: Consolas, Monaco, monospace;
             font-size: 0.87em;
-            border: 1px solid var(--md-surface-container-high);
+            border: 1px solid var(--md-inline-code-border);
         }
 
         /* LaTeX KaTeX container tweaks */
@@ -759,7 +1102,7 @@
             margin: 14px 0 !important;
             -webkit-overflow-scrolling: touch;
         }
-        .katex { font-size: 1.05em; }
+        .katex { font-size: 1.05em; color: var(--md-on-surface); }
 
         /* --- M3 Expressive Code Containers --- */
         .code-container {
@@ -767,7 +1110,7 @@
             border-radius: 18px;
             overflow: hidden;
             box-shadow: var(--m3-shadow-2);
-            border: 1px solid #2a2e39;
+            border: 1px solid var(--code-border);
             background: var(--code-bg);
             transition: box-shadow 0.3s var(--m3-effects-standard), transform 0.35s var(--m3-spring-spatial);
         }
@@ -796,13 +1139,13 @@
             color: #93c5fd;
             font-size: 12.5px;
             font-family: 'Consolas', 'Monaco', monospace;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .code-header-title {
-            flex: 1 1 130px;
+            flex: 1 1 56px;
             min-width: 0;
             word-break: break-word;
             line-height: 1.35;
@@ -822,7 +1165,7 @@
             color: #e2e8f0;
             border: 1px solid rgba(255, 255, 255, 0.14);
             border-radius: 10px;
-            padding: 6px 12px;
+            padding: 6px 11px;
             min-height: 32px;
             cursor: pointer;
             font-size: 12px;
@@ -831,6 +1174,7 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+            white-space: nowrap;
             transform: scale(1);
             transition:
                 background-color 0.2s var(--m3-effects-standard),
@@ -841,6 +1185,11 @@
         }
         .action-btn .material-symbols-rounded { font-size: 15px; }
         .action-btn:focus-visible { outline-color: #93c5fd; }
+
+        /* Fixed min-width on Copy button prevents layout jump & row wrapping when morphing Copy <-> Copied! */
+        .action-btn.copy-btn {
+            min-width: 86px;
+        }
 
         @media (hover: hover) {
             .action-btn:hover {
@@ -865,7 +1214,7 @@
         .action-btn.copied {
             background-color: var(--md-primary);
             border-color: var(--md-primary);
-            color: #ffffff;
+            color: var(--md-on-primary);
             border-radius: 17px;
         }
 
@@ -900,13 +1249,13 @@
             color: var(--code-text);
         }
 
-        /* --- M3 Expressive Dialog (Rename Tab) --- */
+        /* --- M3 Expressive Dialogs (Rename & Theme Picker) --- */
         .m3-dialog-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(16, 24, 20, 0.42);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: rgba(10, 14, 12, 0.48);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             z-index: 9500;
             display: flex;
             align-items: center;
@@ -923,14 +1272,15 @@
         }
 
         .m3-dialog {
-            background: var(--md-surface-container-lowest);
+            background: var(--md-surface-container-low);
             width: 100%;
-            max-width: 360px;
+            max-width: 380px;
             border-radius: 28px;
             padding: 24px;
+            border: 1px solid var(--md-pane-border);
             box-shadow: var(--m3-shadow-3);
             transform: scale(0.86) translateY(16px);
-            transition: transform 0.38s var(--m3-spring-spatial);
+            transition: transform 0.38s var(--m3-spring-spatial), background-color 0.25s;
         }
 
         .m3-dialog-backdrop.open .m3-dialog {
@@ -938,9 +1288,12 @@
         }
 
         .m3-dialog h3 {
-            margin: 0 0 14px;
+            margin: 0 0 16px;
             font-size: 1.2rem;
             color: var(--md-on-surface);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .m3-text-field {
@@ -949,7 +1302,7 @@
             font-size: 16px;
             border: 2px solid var(--md-outline-variant);
             border-radius: 16px;
-            background: var(--md-surface-container-low);
+            background: var(--md-surface-container-lowest);
             color: var(--md-on-surface);
             outline: none;
             transition: border-color 0.2s, border-radius 0.28s var(--m3-shape-ease);
@@ -966,14 +1319,117 @@
             margin-top: 20px;
         }
 
+        /* Theme Sheet Controls */
+        .theme-section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--md-on-surface-variant);
+            margin: 14px 0 8px;
+        }
+        .theme-section-label:first-of-type { margin-top: 4px; }
+
+        .mode-segmented {
+            display: flex;
+            gap: 6px;
+            background: var(--md-surface-container-high);
+            padding: 4px;
+            border-radius: 20px;
+        }
+
+        .mode-opt-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--md-on-surface-variant);
+            padding: 9px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transform: scale(1);
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                color 0.22s var(--m3-effects-standard),
+                transform 0.24s var(--m3-spring-spatial-fast);
+        }
+        .mode-opt-btn .material-symbols-rounded { font-size: 17px; }
+        .mode-opt-btn:active { transform: scale(0.94); }
+        .mode-opt-btn.active {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            box-shadow: var(--m3-shadow-1);
+        }
+
+        .swatch-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .swatch-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: none;
+            padding: 4px 0;
+            cursor: pointer;
+            color: var(--md-on-surface-variant);
+            font-size: 11.5px;
+            font-weight: 600;
+            transform: scale(1);
+            transition: transform 0.24s var(--m3-spring-spatial-fast), color 0.2s;
+        }
+        .swatch-btn:active { transform: scale(0.92); }
+        .swatch-btn.active { color: var(--md-on-surface); font-weight: 700; }
+
+        .swatch-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: var(--m3-shadow-1);
+            border: 3px solid transparent;
+            transition:
+                border-radius 0.34s var(--m3-shape-ease),
+                transform 0.34s var(--m3-spring-spatial),
+                border-color 0.2s;
+        }
+        .swatch-circle .material-symbols-rounded {
+            font-size: 20px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.2s, transform 0.32s var(--m3-spring-spatial);
+        }
+        .swatch-btn.active .swatch-circle {
+            border-radius: 14px; /* Expressive circle -> squircle morph */
+            border-color: var(--md-on-surface);
+            transform: scale(1.06);
+        }
+        .swatch-btn.active .swatch-circle .material-symbols-rounded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         /* --- M3 Expressive Snackbar --- */
         #m3-snackbar {
             position: fixed;
             bottom: calc(20px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%) translateY(28px) scale(0.9);
-            background: #242b27;
-            color: #f4f7f5;
+            background: var(--md-inverse-surface);
+            color: var(--md-inverse-on-surface);
             padding: 12px 20px;
             border-radius: 16px;
             font-size: 13.5px;
@@ -997,8 +1453,8 @@
         /* Scrollbars */
         ::-webkit-scrollbar { width: 7px; height: 7px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(79, 91, 84, 0.24); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(79, 91, 84, 0.45); }
+        ::-webkit-scrollbar-thumb { background: rgba(128, 138, 132, 0.32); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(128, 138, 132, 0.5); }
 
         .empty-state {
             text-align: center;
@@ -1017,15 +1473,20 @@
 
             .app-top-bar {
                 margin-bottom: 8px;
-                gap: 10px;
+                gap: 8px;
             }
 
-            .brand-group h1 { font-size: 1.12rem; }
+            .brand-group h1 { font-size: 1.08rem; }
             .brand-group p.subtitle { display: none; }
+
+            .theme-trigger-btn {
+                width: 38px;
+                height: 38px;
+            }
 
             .switcher-btn[data-view="split"] { display: none; }
             .switcher-btn {
-                padding: 7px 12px;
+                padding: 7px 11px;
                 font-size: 12.5px;
             }
 
@@ -1082,22 +1543,40 @@
                 margin: 14px 0;
             }
 
-            .code-header { padding: 10px 12px; }
+            .code-header { padding: 9px 12px; }
 
             .action-btn {
                 min-height: 34px;
-                padding: 6px 11px;
+                padding: 6px 10px;
+            }
+            .action-btn.copy-btn {
+                min-width: 82px;
             }
 
             .code-collapse-inner pre {
                 padding: 12px !important;
                 font-size: 13px !important;
             }
+
+            /* Mobile bottom-sheet style dialog */
+            .m3-dialog-backdrop.mobile-sheet {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .m3-dialog-backdrop.mobile-sheet .m3-dialog {
+                max-width: 100%;
+                border-radius: 28px 28px 0 0;
+                padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+                transform: translateY(100%);
+            }
+            .m3-dialog-backdrop.mobile-sheet.open .m3-dialog {
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 400px) {
-            .brand-group h1 { font-size: 1rem; }
-            .switcher-btn { padding: 6px 10px; font-size: 12px; }
+            .brand-group h1 { font-size: 0.98rem; }
+            .switcher-btn { padding: 6px 9px; font-size: 12px; }
             .switcher-btn .material-symbols-rounded { font-size: 15px; }
         }
     </style>
@@ -1120,20 +1599,26 @@
             <p class="subtitle">Organize docs in tabs, collapse codeblocks, render LaTeX math & export ZIPs.</p>
         </div>
 
-        <div class="view-switcher" id="view-switcher" role="tablist" aria-label="Workspace View">
-            <div class="switcher-pill" id="switcher-pill"></div>
-            <button class="switcher-btn m3-ripple" data-view="editor" role="tab">
-                <span class="material-symbols-rounded">edit_note</span>
-                <span>Editor</span>
+        <div class="top-bar-controls">
+            <button class="theme-trigger-btn m3-ripple" id="btn-theme" title="Appearance & Color Theme" aria-label="Appearance & Color Theme">
+                <span class="material-symbols-rounded" id="theme-trigger-icon">palette</span>
             </button>
-            <button class="switcher-btn m3-ripple" data-view="split" role="tab">
-                <span class="material-symbols-rounded">vertical_split</span>
-                <span>Split</span>
-            </button>
-            <button class="switcher-btn m3-ripple" data-view="preview" role="tab">
-                <span class="material-symbols-rounded">visibility</span>
-                <span>Preview</span>
-            </button>
+
+            <div class="view-switcher" id="view-switcher" role="tablist" aria-label="Workspace View">
+                <div class="switcher-pill" id="switcher-pill"></div>
+                <button class="switcher-btn m3-ripple" data-view="editor" role="tab">
+                    <span class="material-symbols-rounded">edit_note</span>
+                    <span>Editor</span>
+                </button>
+                <button class="switcher-btn m3-ripple" data-view="split" role="tab">
+                    <span class="material-symbols-rounded">vertical_split</span>
+                    <span>Split</span>
+                </button>
+                <button class="switcher-btn m3-ripple" data-view="preview" role="tab">
+                    <span class="material-symbols-rounded">visibility</span>
+                    <span>Preview</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -1208,11 +1693,78 @@
     <!-- M3 Rename Tab Dialog -->
     <div class="m3-dialog-backdrop" id="rename-modal" role="dialog" aria-modal="true" aria-labelledby="rename-dialog-title">
         <div class="m3-dialog">
-            <h3 id="rename-dialog-title">Rename Document</h3>
+            <h3 id="rename-dialog-title">
+                <span class="material-symbols-rounded">edit</span>
+                <span>Rename Document</span>
+            </h3>
             <input type="text" id="rename-input" class="m3-text-field" placeholder="Document title" maxlength="60">
             <div class="m3-dialog-actions">
                 <button id="btn-rename-cancel" class="header-btn clear-btn m3-ripple">Cancel</button>
                 <button id="btn-rename-save" class="header-btn paste-btn m3-ripple">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- M3 Expressive Theme & Color Picker Sheet/Dialog -->
+    <div class="m3-dialog-backdrop mobile-sheet" id="theme-modal" role="dialog" aria-modal="true" aria-labelledby="theme-dialog-title">
+        <div class="m3-dialog">
+            <h3 id="theme-dialog-title">
+                <span class="material-symbols-rounded">palette</span>
+                <span>Appearance</span>
+            </h3>
+
+            <div class="theme-section-label">Theme Mode</div>
+            <div class="mode-segmented" id="mode-segmented">
+                <button class="mode-opt-btn m3-ripple" data-mode="system">
+                    <span class="material-symbols-rounded">brightness_auto</span>
+                    <span>Auto</span>
+                </button>
+                <button class="mode-opt-btn m3-ripple" data-mode="light">
+                    <span class="material-symbols-rounded">light_mode</span>
+                    <span>Light</span>
+                </button>
+                <button class="mode-opt-btn m3-ripple" data-mode="dark">
+                    <span class="material-symbols-rounded">dark_mode</span>
+                    <span>Dark</span>
+                </button>
+            </div>
+
+            <div class="theme-section-label">M3 Color Theme</div>
+            <div class="swatch-grid" id="swatch-grid">
+                <button class="swatch-btn" data-accent="emerald">
+                    <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #0b875b, #34d399);">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                    <span>Emerald</span>
+                </button>
+                <button class="swatch-btn" data-accent="ocean">
+                    <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #1d5fe6, #60a5fa);">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                    <span>Ocean</span>
+                </button>
+                <button class="swatch-btn" data-accent="violet">
+                    <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #6d4aff, #a78bfa);">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                    <span>Violet</span>
+                </button>
+                <button class="swatch-btn" data-accent="rose">
+                    <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #c83264, #fb7185);">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                    <span>Rose</span>
+                </button>
+                <button class="swatch-btn" data-accent="amber">
+                    <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #b85d00, #fbbf24);">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                    <span>Amber</span>
+                </button>
+            </div>
+
+            <div class="m3-dialog-actions">
+                <button id="btn-theme-done" class="header-btn paste-btn m3-ripple">Done</button>
             </div>
         </div>
     </div>
@@ -1230,8 +1782,56 @@
         }
 
         const STORAGE_KEY = 'markdown_tabs_workspace_data';
+        const THEME_STORAGE_KEY = 'markdown_reader_theme_prefs';
         const MOBILE_BREAKPOINT = 840;
 
+        // --- Theme & M3 Palette System ---
+        let themePrefs = { mode: 'system', accent: 'emerald' };
+        try {
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+            if (savedTheme) {
+                const parsedTheme = JSON.parse(savedTheme);
+                if (['system', 'light', 'dark'].includes(parsedTheme.mode)) themePrefs.mode = parsedTheme.mode;
+                if (['emerald', 'ocean', 'violet', 'rose', 'amber'].includes(parsedTheme.accent)) themePrefs.accent = parsedTheme.accent;
+            }
+        } catch (e) {}
+
+        const systemDarkMedia = window.matchMedia('(prefers-color-scheme: dark)');
+        const metaThemeColor = document.getElementById('meta-theme-color');
+
+        function applyTheme() {
+            const resolvedTheme = themePrefs.mode === 'system'
+                ? (systemDarkMedia.matches ? 'dark' : 'light')
+                : themePrefs.mode;
+
+            document.documentElement.setAttribute('data-theme', resolvedTheme);
+            document.documentElement.setAttribute('data-accent', themePrefs.accent);
+
+            // Sync browser address bar color with M3 surface
+            requestAnimationFrame(() => {
+                const surfaceColor = getComputedStyle(document.documentElement).getPropertyValue('--md-surface').trim();
+                if (surfaceColor && metaThemeColor) {
+                    metaThemeColor.setAttribute('content', surfaceColor);
+                }
+            });
+
+            document.querySelectorAll('.mode-opt-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === themePrefs.mode);
+            });
+            document.querySelectorAll('.swatch-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.accent === themePrefs.accent);
+            });
+
+            localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themePrefs));
+        }
+
+        systemDarkMedia.addEventListener('change', () => {
+            if (themePrefs.mode === 'system') applyTheme();
+        });
+
+        applyTheme();
+
+        // --- Workspace Tabs State ---
         let tabs = [];
         let activeTabId = null;
         let allCollapsedState = false;
@@ -1296,8 +1896,11 @@
         const renameInput = document.getElementById('rename-input');
         const renameCancelBtn = document.getElementById('btn-rename-cancel');
         const renameSaveBtn = document.getElementById('btn-rename-save');
+        const themeBtn = document.getElementById('btn-theme');
+        const themeModal = document.getElementById('theme-modal');
+        const themeDoneBtn = document.getElementById('btn-theme-done');
 
-        // --- M3 Expressive Pointer Ripple (uses isolated .m3-ripple-layer so parent buttons never need overflow:hidden) ---
+        // --- M3 Expressive Pointer Ripple (isolated .m3-ripple-layer prevents border-radius clip bugs) ---
         document.addEventListener('pointerdown', (e) => {
             const target = e.target.closest('.m3-ripple');
             if (!target) return;
@@ -1335,6 +1938,36 @@
                 snackbarEl.classList.remove('show');
             }, 2400);
         }
+
+        // --- Theme Picker Dialog ---
+        function openThemeModal() {
+            themeModal.classList.add('open');
+            themeBtn.classList.add('is-open');
+        }
+        function closeThemeModal() {
+            themeModal.classList.remove('open');
+            themeBtn.classList.remove('is-open');
+        }
+
+        themeBtn.addEventListener('click', openThemeModal);
+        themeDoneBtn.addEventListener('click', closeThemeModal);
+        themeModal.addEventListener('click', (e) => {
+            if (e.target === themeModal) closeThemeModal();
+        });
+
+        document.querySelectorAll('.mode-opt-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                themePrefs.mode = btn.dataset.mode;
+                applyTheme();
+            });
+        });
+
+        document.querySelectorAll('.swatch-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                themePrefs.accent = btn.dataset.accent;
+                applyTheme();
+            });
+        });
 
         // --- View Mode Switcher & Sliding Pill ---
         function updateSwitcherPill() {
@@ -1456,7 +2089,6 @@
                 titleSpan.textContent = tab.title;
                 titleSpan.title = "Double-click or tap edit to rename";
 
-                // Desktop double-click inline rename
                 titleSpan.addEventListener('dblclick', (e) => {
                     e.stopPropagation();
                     titleSpan.contentEditable = 'true';
@@ -1477,7 +2109,6 @@
                     if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
                 });
 
-                // Mobile long-press to rename
                 let pressTimer;
                 tabEl.addEventListener('touchstart', () => {
                     pressTimer = setTimeout(() => openRenameModal(tab.id), 550);
@@ -1489,7 +2120,6 @@
                     if (activeTabId !== tab.id) switchTab(tab.id);
                 });
 
-                // Material Symbol Edit button on active tab
                 const editBtn = document.createElement('button');
                 editBtn.className = 'tab-icon-btn tab-edit-btn';
                 editBtn.title = 'Rename tab';
@@ -1500,7 +2130,6 @@
                     openRenameModal(tab.id);
                 });
 
-                // Material Symbol Close button
                 const closeBtn = document.createElement('button');
                 closeBtn.className = 'tab-icon-btn tab-close';
                 closeBtn.title = 'Close tab';
@@ -1806,7 +2435,7 @@
                 activeBlockTogglers.push(toggleBlock);
 
                 const copyBtn = document.createElement('button');
-                copyBtn.className = 'action-btn m3-ripple';
+                copyBtn.className = 'action-btn copy-btn m3-ripple';
                 const copyIcon = createIcon('content_copy');
                 const copyLabel = document.createElement('span');
                 copyLabel.textContent = 'Copy';
