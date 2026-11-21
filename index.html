@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f3f6f4">
+    <meta name="theme-color" content="#f4f7f5">
     <title>Markdown Code Extractor & Reader</title>
+
+    <!-- Material Symbols Rounded -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,-50..200&display=block" />
     
     <!-- KaTeX for LaTeX Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
@@ -63,6 +66,8 @@
             --m3-spring-spatial-fast: cubic-bezier(0.38, 1.4, 0.42, 1);
             --m3-spring-spatial: cubic-bezier(0.34, 1.45, 0.36, 1);
             --m3-spring-spatial-slow: cubic-bezier(0.28, 1.25, 0.3, 1);
+            /* Dedicated bounded curve for border-radius so shrinking never overshoots below 0px */
+            --m3-shape-ease: cubic-bezier(0.22, 1, 0.36, 1);
             --m3-effects-standard: cubic-bezier(0.2, 0, 0, 1);
 
             /* M3 Elevation */
@@ -94,6 +99,30 @@
             padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
             -webkit-font-smoothing: antialiased;
             overscroll-behavior-y: contain;
+        }
+
+        /* --- Material Symbols --- */
+        .material-symbols-rounded {
+            font-family: 'Material Symbols Rounded';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 18px;
+            line-height: 1;
+            width: 1em;
+            height: 1em;
+            overflow: hidden;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+            user-select: none;
+            flex-shrink: 0;
         }
 
         /* --- M3 Expressive Ripple Effect --- */
@@ -138,15 +167,19 @@
         #drop-overlay.active { opacity: 1; }
         #drop-overlay .drop-card {
             background: var(--md-surface-container-lowest);
-            padding: 20px 36px;
+            padding: 20px 32px;
             border-radius: 28px;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--md-on-primary-container);
             box-shadow: var(--m3-shadow-3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             transform: scale(0.88);
             transition: transform 0.35s var(--m3-spring-spatial);
         }
+        #drop-overlay .drop-card .material-symbols-rounded { font-size: 24px; }
         #drop-overlay.active .drop-card { transform: scale(1); }
 
         /* --- Top App Header --- */
@@ -161,9 +194,7 @@
             flex-shrink: 0;
         }
 
-        .brand-group {
-            min-width: 0;
-        }
+        .brand-group { min-width: 0; }
 
         .brand-group h1 {
             margin: 0;
@@ -192,7 +223,7 @@
             align-items: center;
             background: var(--md-surface-container-high);
             padding: 4px;
-            border-radius: 999px;
+            border-radius: 24px;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
         }
@@ -203,7 +234,7 @@
             bottom: 4px;
             left: 0;
             background: var(--md-primary-container);
-            border-radius: 999px;
+            border-radius: 20px;
             box-shadow: var(--m3-shadow-1);
             transition: transform 0.42s var(--m3-spring-spatial), width 0.42s var(--m3-spring-spatial);
             z-index: 0;
@@ -218,19 +249,18 @@
             color: var(--md-on-surface-variant);
             font-size: 13px;
             font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 999px;
+            padding: 8px 14px;
+            border-radius: 20px;
             cursor: pointer;
             transition: color 0.25s var(--m3-effects-standard), transform 0.22s var(--m3-spring-spatial-fast);
             user-select: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
+        .switcher-btn .material-symbols-rounded { font-size: 16px; }
         .switcher-btn:active { transform: scale(0.94); }
-        .switcher-btn.active {
-            color: var(--md-on-primary-container);
-        }
+        .switcher-btn.active { color: var(--md-on-primary-container); }
 
         /* --- Expressive Tab Bar --- */
         .tab-bar-wrapper {
@@ -262,13 +292,13 @@
             gap: 6px;
             background: var(--md-surface-container);
             color: var(--md-on-surface-variant);
-            padding: 7px 12px 7px 14px;
+            padding: 7px 10px 7px 14px;
             border-radius: 14px;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             user-select: none;
-            max-width: 210px;
+            max-width: 215px;
             min-height: 38px;
             flex-shrink: 0;
             border: 1px solid transparent;
@@ -277,7 +307,7 @@
             transition:
                 background-color 0.25s var(--m3-effects-standard),
                 color 0.25s var(--m3-effects-standard),
-                border-radius 0.35s var(--m3-spring-spatial),
+                border-radius 0.32s var(--m3-shape-ease),
                 transform 0.25s var(--m3-spring-spatial-fast),
                 box-shadow 0.25s var(--m3-effects-standard);
         }
@@ -296,9 +326,11 @@
             to { opacity: 0; transform: scale(0.75); }
         }
 
-        .tab-item:hover {
-            background: var(--md-surface-container-high);
-            color: var(--md-on-surface);
+        @media (hover: hover) {
+            .tab-item:hover {
+                background: var(--md-surface-container-high);
+                color: var(--md-on-surface);
+            }
         }
 
         .tab-item:active {
@@ -310,7 +342,7 @@
             background: var(--md-primary-container);
             color: var(--md-on-primary-container);
             font-weight: 700;
-            border-radius: 999px; /* Expressive shape morph: squircle -> pill */
+            border-radius: 20px;
             box-shadow: var(--m3-shadow-1);
         }
 
@@ -328,33 +360,30 @@
             justify-content: center;
             width: 24px;
             height: 24px;
-            border-radius: 50%;
+            border-radius: 12px;
             border: none;
             background: transparent;
             color: inherit;
-            opacity: 0.65;
+            opacity: 0.7;
             cursor: pointer;
             padding: 0;
-            font-size: 14px;
             transition: background-color 0.2s, opacity 0.2s, transform 0.28s var(--m3-spring-spatial-fast);
         }
+        .tab-icon-btn .material-symbols-rounded { font-size: 16px; }
 
-        .tab-icon-btn:hover {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.08);
-            transform: scale(1.12);
+        @media (hover: hover) {
+            .tab-icon-btn:hover {
+                opacity: 1;
+                background: rgba(0, 0, 0, 0.08);
+                transform: scale(1.12);
+            }
+            .tab-icon-btn.tab-close:hover {
+                transform: rotate(90deg) scale(1.12);
+            }
         }
 
-        .tab-icon-btn.tab-close:hover {
-            transform: rotate(90deg) scale(1.12);
-        }
-
-        .tab-edit-btn {
-            display: none;
-        }
-        .tab-item.active .tab-edit-btn {
-            display: inline-flex;
-        }
+        .tab-edit-btn { display: none; }
+        .tab-item.active .tab-edit-btn { display: inline-flex; }
 
         .tab-add-btn {
             width: 40px;
@@ -363,8 +392,6 @@
             border: none;
             background: var(--md-surface-container-high);
             color: var(--md-on-surface);
-            font-size: 22px;
-            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -373,17 +400,21 @@
             box-shadow: var(--m3-shadow-1);
             transition:
                 background-color 0.22s var(--m3-effects-standard),
-                border-radius 0.35s var(--m3-spring-spatial),
+                border-radius 0.32s var(--m3-shape-ease),
                 transform 0.35s var(--m3-spring-spatial);
         }
+        .tab-add-btn .material-symbols-rounded { font-size: 22px; }
 
-        .tab-add-btn:hover {
-            background: var(--md-primary-container);
-            color: var(--md-on-primary-container);
-            border-radius: 50%;
-            transform: rotate(90deg) scale(1.06);
+        @media (hover: hover) {
+            .tab-add-btn:hover {
+                background: var(--md-primary-container);
+                color: var(--md-on-primary-container);
+                border-radius: 20px;
+                transform: rotate(90deg) scale(1.06);
+            }
         }
         .tab-add-btn:active {
+            border-radius: 10px;
             transform: rotate(90deg) scale(0.92);
         }
 
@@ -412,9 +443,7 @@
             transition: transform 0.38s var(--m3-spring-spatial), opacity 0.25s var(--m3-effects-standard);
         }
 
-        .pane.hidden-pane {
-            display: none;
-        }
+        .pane.hidden-pane { display: none; }
 
         .pane.mobile-slide-in-right {
             animation: paneSlideRight 0.38s var(--m3-spring-spatial) forwards;
@@ -476,8 +505,8 @@
         .header-btn {
             color: var(--md-on-primary);
             border: none;
-            border-radius: 20px;
-            padding: 7px 14px;
+            border-radius: 18px;
+            padding: 7px 13px;
             cursor: pointer;
             font-size: 12.5px;
             font-weight: 600;
@@ -489,31 +518,34 @@
             min-height: 34px;
             box-shadow: var(--m3-shadow-1);
             transition:
-                border-radius 0.28s var(--m3-spring-spatial-fast),
+                border-radius 0.28s var(--m3-shape-ease),
                 transform 0.26s var(--m3-spring-spatial-fast),
                 background-color 0.2s var(--m3-effects-standard),
                 box-shadow 0.2s var(--m3-effects-standard);
         }
+        .header-btn .material-symbols-rounded { font-size: 16px; }
 
         .m3-connected-group .header-btn:first-child:not(:last-child) {
-            border-radius: 20px 8px 8px 20px;
+            border-radius: 18px 8px 8px 18px;
         }
         .m3-connected-group .header-btn:last-child:not(:first-child) {
-            border-radius: 8px 20px 20px 8px;
+            border-radius: 8px 18px 18px 8px;
         }
         .m3-connected-group .header-btn:not(:first-child):not(:last-child) {
             border-radius: 8px;
         }
 
-        .header-btn:hover {
-            transform: translateY(-1.5px);
-            box-shadow: var(--m3-shadow-2);
+        @media (hover: hover) {
+            .header-btn:hover {
+                transform: translateY(-1.5px);
+                box-shadow: var(--m3-shadow-2);
+            }
         }
 
         .header-btn:active,
         .m3-connected-group .header-btn:active {
             transform: scale(0.93);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: none;
         }
 
@@ -536,7 +568,7 @@
             color: var(--md-on-tertiary-container);
         }
 
-        /* --- M3 Expressive Filter Chips (for Syntax & Sync) --- */
+        /* --- M3 Expressive Filter Chips (Syntax & Sync) --- */
         .m3-chip {
             display: inline-flex;
             align-items: center;
@@ -544,7 +576,7 @@
             padding: 6px 12px;
             min-height: 34px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
             user-select: none;
@@ -556,8 +588,8 @@
                 background-color 0.22s var(--m3-effects-standard),
                 color 0.22s var(--m3-effects-standard),
                 border-color 0.22s var(--m3-effects-standard),
-                border-radius 0.35s var(--m3-spring-spatial),
-                transform 0.22s var(--m3-spring-spatial-fast);
+                border-radius 0.3s var(--m3-shape-ease),
+                transform 0.26s var(--m3-spring-spatial-fast);
         }
 
         .m3-chip input {
@@ -569,28 +601,29 @@
         }
 
         .m3-chip .chip-check {
+            font-size: 15px;
             width: 0;
             overflow: hidden;
             opacity: 0;
-            display: inline-flex;
-            align-items: center;
-            transition: width 0.28s var(--m3-spring-spatial), opacity 0.2s;
+            font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 20;
+            transition: width 0.26s var(--m3-shape-ease), opacity 0.2s var(--m3-effects-standard);
         }
 
         .m3-chip:has(input:checked) {
             background: var(--md-primary-container);
             color: var(--md-on-primary-container);
             border-color: transparent;
-            border-radius: 999px;
+            border-radius: 18px;
         }
 
         .m3-chip:has(input:checked) .chip-check {
-            width: 14px;
+            width: 15px;
             opacity: 1;
         }
 
         .m3-chip:active {
             transform: scale(0.93);
+            border-radius: 8px;
         }
 
         /* --- Textarea & Output --- */
@@ -720,8 +753,10 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .code-container:hover {
-            box-shadow: var(--m3-shadow-3);
+        @media (hover: hover) {
+            .code-container:hover {
+                box-shadow: var(--m3-shadow-3);
+            }
         }
 
         .code-header {
@@ -739,13 +774,13 @@
         }
 
         .code-header-title {
-            flex: 1 1 140px;
+            flex: 1 1 130px;
             min-width: 0;
             word-break: break-word;
             line-height: 1.35;
         }
         .file-name { color: #fcd34d; font-weight: 700; }
-        .lang-label { opacity: 0.7; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
+        .lang-label { opacity: 0.72; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
         
         .button-group {
             display: flex;
@@ -755,36 +790,53 @@
         }
 
         .action-btn {
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.09);
             color: #e2e8f0;
             border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 14px;
+            border-radius: 10px;
             padding: 6px 12px;
-            min-height: 30px;
+            min-height: 32px;
             cursor: pointer;
             font-size: 12px;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             transition:
                 background-color 0.2s var(--m3-effects-standard),
-                border-radius 0.3s var(--m3-spring-spatial-fast),
-                transform 0.25s var(--m3-spring-spatial-fast),
-                color 0.2s;
+                border-color 0.2s var(--m3-effects-standard),
+                color 0.2s var(--m3-effects-standard),
+                border-radius 0.28s var(--m3-shape-ease),
+                transform 0.26s var(--m3-spring-spatial-fast);
         }
-        .action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.16);
-            color: #ffffff;
-            border-radius: 999px;
+        .action-btn .material-symbols-rounded { font-size: 15px; }
+
+        @media (hover: hover) {
+            .action-btn:hover {
+                background-color: rgba(255, 255, 255, 0.17);
+                color: #ffffff;
+                border-radius: 17px;
+            }
         }
+
         .action-btn:active {
-            transform: scale(0.91);
-            border-radius: 8px;
+            transform: scale(0.92);
+            border-radius: 7px;
         }
+
+        .action-btn.is-active {
+            background-color: rgba(147, 197, 253, 0.16);
+            border-color: rgba(147, 197, 253, 0.32);
+            color: #dbeafe;
+            border-radius: 17px;
+        }
+
         .action-btn.copied {
             background-color: var(--md-primary);
             border-color: var(--md-primary);
             color: #ffffff;
-            border-radius: 999px;
-            transform: scale(1.04);
+            border-radius: 17px;
+            transform: scale(1.03);
         }
 
         /* ZERO-LAG EXPRESSIVE ACCORDION */
@@ -870,7 +922,7 @@
             background: var(--md-surface-container-low);
             color: var(--md-on-surface);
             outline: none;
-            transition: border-color 0.2s, border-radius 0.3s var(--m3-spring-spatial);
+            transition: border-color 0.2s, border-radius 0.28s var(--m3-shape-ease);
         }
         .m3-text-field:focus {
             border-color: var(--md-primary);
@@ -938,24 +990,16 @@
                 gap: 10px;
             }
 
-            .brand-group h1 {
-                font-size: 1.12rem;
-            }
-            .brand-group p.subtitle {
-                display: none;
-            }
+            .brand-group h1 { font-size: 1.12rem; }
+            .brand-group p.subtitle { display: none; }
 
-            .switcher-btn[data-view="split"] {
-                display: none;
-            }
+            .switcher-btn[data-view="split"] { display: none; }
             .switcher-btn {
-                padding: 7px 14px;
+                padding: 7px 12px;
                 font-size: 12.5px;
             }
 
-            .tab-bar-wrapper {
-                margin-bottom: 8px;
-            }
+            .tab-bar-wrapper { margin-bottom: 8px; }
 
             .tab-item {
                 min-height: 40px;
@@ -965,21 +1009,16 @@
             .tab-icon-btn {
                 width: 28px;
                 height: 28px;
-                font-size: 15px;
             }
 
-            .pane {
-                border-radius: 20px;
-            }
+            .pane { border-radius: 20px; }
 
             .pane-header {
                 padding: 8px 12px;
                 min-height: 50px;
             }
 
-            .pane-title {
-                display: none;
-            }
+            .pane-title { display: none; }
 
             .header-btn-group {
                 width: 100%;
@@ -988,7 +1027,7 @@
 
             .header-btn {
                 min-height: 36px;
-                padding: 7px 12px;
+                padding: 7px 11px;
                 font-size: 12.5px;
             }
 
@@ -997,9 +1036,7 @@
                 padding: 6px 11px;
             }
 
-            .sync-chip {
-                display: none;
-            }
+            .sync-chip { display: none; }
 
             /* 16px prevents iOS Safari automatic zoom on textarea focus */
             textarea {
@@ -1008,22 +1045,18 @@
                 line-height: 1.55;
             }
 
-            #output {
-                padding: 14px;
-            }
+            #output { padding: 14px; }
 
             .code-container {
                 border-radius: 16px;
                 margin: 14px 0;
             }
 
-            .code-header {
-                padding: 10px 12px;
-            }
+            .code-header { padding: 10px 12px; }
 
             .action-btn {
                 min-height: 34px;
-                padding: 6px 12px;
+                padding: 6px 11px;
             }
 
             .code-collapse-inner pre {
@@ -1033,20 +1066,19 @@
         }
 
         @media (max-width: 400px) {
-            .brand-group h1 {
-                font-size: 1rem;
-            }
-            .switcher-btn {
-                padding: 6px 11px;
-                font-size: 12px;
-            }
+            .brand-group h1 { font-size: 1rem; }
+            .switcher-btn { padding: 6px 10px; font-size: 12px; }
+            .switcher-btn .material-symbols-rounded { font-size: 15px; }
         }
     </style>
 </head>
 <body>
 
     <div id="drop-overlay">
-        <div class="drop-card">Drop Markdown / Code File Here</div>
+        <div class="drop-card">
+            <span class="material-symbols-rounded">upload_file</span>
+            <span>Drop Markdown / Code File Here</span>
+        </div>
     </div>
 
     <input type="file" id="file-upload-input" multiple hidden>
@@ -1060,16 +1092,27 @@
 
         <div class="view-switcher" id="view-switcher" role="tablist" aria-label="Workspace View">
             <div class="switcher-pill" id="switcher-pill"></div>
-            <button class="switcher-btn m3-ripple" data-view="editor" role="tab">Editor</button>
-            <button class="switcher-btn m3-ripple" data-view="split" role="tab">Split</button>
-            <button class="switcher-btn m3-ripple" data-view="preview" role="tab">Preview</button>
+            <button class="switcher-btn m3-ripple" data-view="editor" role="tab">
+                <span class="material-symbols-rounded">edit_note</span>
+                <span>Editor</span>
+            </button>
+            <button class="switcher-btn m3-ripple" data-view="split" role="tab">
+                <span class="material-symbols-rounded">vertical_split</span>
+                <span>Split</span>
+            </button>
+            <button class="switcher-btn m3-ripple" data-view="preview" role="tab">
+                <span class="material-symbols-rounded">visibility</span>
+                <span>Preview</span>
+            </button>
         </div>
     </header>
 
     <!-- Tab Bar -->
     <div class="tab-bar-wrapper">
         <div class="tab-list" id="tab-list"></div>
-        <button class="tab-add-btn m3-ripple" id="btn-add-tab" title="New Tab" aria-label="New Tab">+</button>
+        <button class="tab-add-btn m3-ripple" id="btn-add-tab" title="New Tab" aria-label="New Tab">
+            <span class="material-symbols-rounded">add</span>
+        </button>
     </div>
 
     <!-- Main Panes -->
@@ -1078,10 +1121,19 @@
             <div class="pane-header">
                 <span class="pane-title" id="editor-tab-indicator">Raw Text / Markdown</span>
                 <div class="header-btn-group">
-                    <button id="btn-import" class="header-btn import-btn m3-ripple" title="Upload or import files">Import</button>
+                    <button id="btn-import" class="header-btn import-btn m3-ripple" title="Upload or import files">
+                        <span class="material-symbols-rounded">upload_file</span>
+                        <span>Import</span>
+                    </button>
                     <div class="m3-connected-group">
-                        <button id="btn-clear" class="header-btn clear-btn m3-ripple">Clear</button>
-                        <button id="btn-paste" class="header-btn paste-btn m3-ripple">Paste</button>
+                        <button id="btn-clear" class="header-btn clear-btn m3-ripple">
+                            <span class="material-symbols-rounded">delete_sweep</span>
+                            <span>Clear</span>
+                        </button>
+                        <button id="btn-paste" class="header-btn paste-btn m3-ripple">
+                            <span class="material-symbols-rounded" id="paste-btn-icon">content_paste</span>
+                            <span id="paste-btn-label">Paste</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1094,17 +1146,23 @@
                 <div class="header-btn-group">
                     <label class="m3-chip m3-ripple" title="Toggle Syntax Highlighting (Disable for huge files)">
                         <input type="checkbox" id="syntax-highlight-chk" checked>
-                        <span class="chip-check">✓</span>
+                        <span class="chip-check material-symbols-rounded">check</span>
                         <span>Syntax</span>
                     </label>
                     <label class="m3-chip sync-chip m3-ripple" title="Synchronize editor & preview scrolling">
                         <input type="checkbox" id="sync-scroll-chk" checked>
-                        <span class="chip-check">✓</span>
+                        <span class="chip-check material-symbols-rounded">check</span>
                         <span>Sync</span>
                     </label>
                     <div class="m3-connected-group">
-                        <button id="btn-toggle-all" class="header-btn toggle-all-btn m3-ripple">Collapse All</button>
-                        <button id="btn-export" class="header-btn export-btn m3-ripple">Export</button>
+                        <button id="btn-toggle-all" class="header-btn toggle-all-btn m3-ripple">
+                            <span class="material-symbols-rounded" id="toggle-all-icon">unfold_less</span>
+                            <span id="toggle-all-label">Collapse All</span>
+                        </button>
+                        <button id="btn-export" class="header-btn export-btn m3-ripple">
+                            <span class="material-symbols-rounded">download</span>
+                            <span>Export</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1171,24 +1229,36 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
         }
 
+        // Helper for creating Material Symbol icon spans
+        function createIcon(name) {
+            const span = document.createElement('span');
+            span.className = 'material-symbols-rounded';
+            span.textContent = name;
+            span.setAttribute('aria-hidden', 'true');
+            return span;
+        }
+
         // DOM Elements
         const tabListEl = document.getElementById('tab-list');
         const addTabBtn = document.getElementById('btn-add-tab');
         const inputArea = document.getElementById('markdown-input');
         const outputArea = document.getElementById('output');
         const pasteBtn = document.getElementById('btn-paste');
+        const pasteBtnIcon = document.getElementById('paste-btn-icon');
+        const pasteBtnLabel = document.getElementById('paste-btn-label');
         const clearBtn = document.getElementById('btn-clear');
         const importBtn = document.getElementById('btn-import');
         const fileUploadInput = document.getElementById('file-upload-input');
         const exportBtn = document.getElementById('btn-export');
         const toggleAllBtn = document.getElementById('btn-toggle-all');
+        const toggleAllIcon = document.getElementById('toggle-all-icon');
+        const toggleAllLabel = document.getElementById('toggle-all-label');
         const syncScrollChk = document.getElementById('sync-scroll-chk');
         const syntaxHighlightChk = document.getElementById('syntax-highlight-chk');
         const editorTabIndicator = document.getElementById('editor-tab-indicator');
         const dropOverlay = document.getElementById('drop-overlay');
         const paneEditor = document.getElementById('pane-editor');
         const panePreview = document.getElementById('pane-preview');
-        const viewSwitcher = document.getElementById('view-switcher');
         const switcherPill = document.getElementById('switcher-pill');
         const switcherBtns = Array.from(document.querySelectorAll('.switcher-btn'));
         const snackbarEl = document.getElementById('m3-snackbar');
@@ -1331,6 +1401,12 @@
             renderMarkdown(inputArea.value, false);
         });
 
+        function updateToggleAllUI() {
+            toggleAllIcon.textContent = allCollapsedState ? 'unfold_more' : 'unfold_less';
+            toggleAllLabel.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
+            toggleAllBtn.classList.toggle('is-collapsed', allCollapsedState);
+        }
+
         // --- Tab Management ---
         function renderTabs() {
             tabListEl.innerHTML = '';
@@ -1376,22 +1452,23 @@
                     if (activeTabId !== tab.id) switchTab(tab.id);
                 });
 
-                // Mobile-friendly Edit button on active tab
+                // Material Symbol Edit button on active tab
                 const editBtn = document.createElement('button');
                 editBtn.className = 'tab-icon-btn tab-edit-btn';
-                editBtn.innerHTML = '✎';
                 editBtn.title = 'Rename tab';
                 editBtn.setAttribute('aria-label', 'Rename tab');
+                editBtn.appendChild(createIcon('edit'));
                 editBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     openRenameModal(tab.id);
                 });
 
+                // Material Symbol Close button
                 const closeBtn = document.createElement('button');
                 closeBtn.className = 'tab-icon-btn tab-close';
-                closeBtn.innerHTML = '&times;';
                 closeBtn.title = 'Close tab';
                 closeBtn.setAttribute('aria-label', 'Close tab');
+                closeBtn.appendChild(createIcon('close'));
                 closeBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     tabEl.classList.add('closing');
@@ -1423,8 +1500,7 @@
 
             activeTabId = id;
             allCollapsedState = false;
-            toggleAllBtn.textContent = 'Collapse All';
-            toggleAllBtn.classList.remove('is-collapsed');
+            updateToggleAllUI();
             saveState();
             renderTabs();
             renderMarkdown(inputArea.value, true);
@@ -1440,8 +1516,7 @@
             tabs.push(newTab);
             activeTabId = newId;
             allCollapsedState = false;
-            toggleAllBtn.textContent = 'Collapse All';
-            toggleAllBtn.classList.remove('is-collapsed');
+            updateToggleAllUI();
             saveState();
             renderTabs();
             renderMarkdown(initialContent, true);
@@ -1602,7 +1677,11 @@
 
                 const minimizeBtn = document.createElement('button');
                 minimizeBtn.className = 'action-btn m3-ripple';
-                minimizeBtn.textContent = 'Minimize';
+                const minIcon = createIcon('unfold_less');
+                const minLabel = document.createElement('span');
+                minLabel.textContent = 'Minimize';
+                minimizeBtn.appendChild(minIcon);
+                minimizeBtn.appendChild(minLabel);
                 
                 const collapseWrapper = document.createElement('div');
                 collapseWrapper.className = 'code-collapse-wrapper';
@@ -1681,7 +1760,9 @@
                             }, 440); 
                         }
                     }
-                    minimizeBtn.textContent = isMinimized ? 'Expand' : 'Minimize';
+                    minIcon.textContent = isMinimized ? 'unfold_more' : 'unfold_less';
+                    minLabel.textContent = isMinimized ? 'Expand' : 'Minimize';
+                    minimizeBtn.classList.toggle('is-active', isMinimized);
                 };
 
                 minimizeBtn.addEventListener('click', () => toggleBlock(null, false));
@@ -1689,15 +1770,23 @@
 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'action-btn m3-ripple';
-                copyBtn.textContent = 'Copy';
+                const copyIcon = createIcon('content_copy');
+                const copyLabel = document.createElement('span');
+                copyLabel.textContent = 'Copy';
+                copyBtn.appendChild(copyIcon);
+                copyBtn.appendChild(copyLabel);
 
+                let copyTimer;
                 copyBtn.addEventListener('click', () => {
                     navigator.clipboard.writeText(codeContent).then(() => {
-                        copyBtn.textContent = 'Copied!';
+                        clearTimeout(copyTimer);
+                        copyIcon.textContent = 'check';
+                        copyLabel.textContent = 'Copied!';
                         copyBtn.classList.add('copied');
                         showSnackbar('Code copied to clipboard');
-                        setTimeout(() => {
-                            copyBtn.textContent = 'Copy';
+                        copyTimer = setTimeout(() => {
+                            copyIcon.textContent = 'content_copy';
+                            copyLabel.textContent = 'Copy';
                             copyBtn.classList.remove('copied');
                         }, 1800);
                     }).catch(() => {
@@ -1762,8 +1851,7 @@
         toggleAllBtn.addEventListener('click', () => {
             allCollapsedState = !allCollapsedState;
             activeBlockTogglers.forEach(fn => fn(allCollapsedState, false));
-            toggleAllBtn.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
-            toggleAllBtn.classList.toggle('is-collapsed', allCollapsedState);
+            updateToggleAllUI();
         });
 
         exportBtn.addEventListener('click', async () => {
@@ -1904,16 +1992,21 @@
         });
 
         // --- Paste & Clear ---
+        let pasteTimer;
         pasteBtn.addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
                 inputArea.value = text;
                 inputArea.dispatchEvent(new Event('input'));
                 
-                const originalText = pasteBtn.textContent;
-                pasteBtn.textContent = 'Pasted!';
+                clearTimeout(pasteTimer);
+                pasteBtnIcon.textContent = 'check';
+                pasteBtnLabel.textContent = 'Pasted!';
                 showSnackbar('Pasted from clipboard');
-                setTimeout(() => { pasteBtn.textContent = originalText; }, 1400);
+                pasteTimer = setTimeout(() => {
+                    pasteBtnIcon.textContent = 'content_paste';
+                    pasteBtnLabel.textContent = 'Paste';
+                }, 1400);
             } catch (err) {
                 showSnackbar('Allow clipboard access or paste directly');
             }
