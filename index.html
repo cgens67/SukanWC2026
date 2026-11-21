@@ -77,6 +77,8 @@
             --m3-spring-spatial-fast: cubic-bezier(0.38, 1.4, 0.42, 1);
             --m3-spring-spatial: cubic-bezier(0.34, 1.45, 0.36, 1);
             --m3-spring-spatial-slow: cubic-bezier(0.28, 1.25, 0.3, 1);
+            --m3-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+            --m3-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
             --m3-shape-ease: cubic-bezier(0.22, 1, 0.36, 1);
             --m3-effects-standard: cubic-bezier(0.2, 0, 0, 1);
 
@@ -87,7 +89,7 @@
         }
 
         /* --- M3 Color Accents (Light) --- */
-        [data-accent="ocean"] {
+        :root[data-accent="ocean"] {
             --md-surface: #f3f6fc;
             --md-surface-container-low: #f7f9fe;
             --md-surface-container: #ebeef6;
@@ -113,7 +115,7 @@
             --md-inline-code-border: #dbe0ec;
         }
 
-        [data-accent="violet"] {
+        :root[data-accent="violet"] {
             --md-surface: #f7f4fc;
             --md-surface-container-low: #faf8fe;
             --md-surface-container: #f0ecf7;
@@ -139,7 +141,7 @@
             --md-inline-code-border: #e2dbef;
         }
 
-        [data-accent="rose"] {
+        :root[data-accent="rose"] {
             --md-surface: #fcf4f6;
             --md-surface-container-low: #fef8f9;
             --md-surface-container: #f7ecf0;
@@ -165,7 +167,7 @@
             --md-inline-code-border: #ecdbe1;
         }
 
-        [data-accent="amber"] {
+        :root[data-accent="amber"] {
             --md-surface: #fbf6f1;
             --md-surface-container-low: #fefaf6;
             --md-surface-container: #f5ede5;
@@ -192,7 +194,7 @@
         }
 
         /* --- Dark Mode Base & Tonal Accents --- */
-        [data-theme="dark"] {
+        :root[data-theme="dark"] {
             --md-surface: #0f1411;
             --md-surface-container-lowest: #161c18;
             --md-surface-container-low: #1a211d;
@@ -238,7 +240,7 @@
             --m3-shadow-3: 0 18px 40px -6px rgba(0, 0, 0, 0.52), 0 6px 14px -2px rgba(0, 0, 0, 0.34);
         }
 
-        [data-theme="dark"][data-accent="ocean"] {
+        :root[data-theme="dark"][data-accent="ocean"] {
             --md-surface: #0f131a;
             --md-surface-container-lowest: #161b24;
             --md-surface-container-low: #1a202b;
@@ -267,7 +269,7 @@
             --md-inverse-surface: #e3e8f2;
         }
 
-        [data-theme="dark"][data-accent="violet"] {
+        :root[data-theme="dark"][data-accent="violet"] {
             --md-surface: #13111a;
             --md-surface-container-lowest: #1a1724;
             --md-surface-container-low: #1f1c2b;
@@ -296,7 +298,7 @@
             --md-inverse-surface: #eae5f4;
         }
 
-        [data-theme="dark"][data-accent="rose"] {
+        :root[data-theme="dark"][data-accent="rose"] {
             --md-surface: #181114;
             --md-surface-container-lowest: #20171b;
             --md-surface-container-low: #261b20;
@@ -325,7 +327,7 @@
             --md-inverse-surface: #f3e4e9;
         }
 
-        [data-theme="dark"][data-accent="amber"] {
+        :root[data-theme="dark"][data-accent="amber"] {
             --md-surface: #16120e;
             --md-surface-container-lowest: #1e1813;
             --md-surface-container-low: #241d17;
@@ -1140,18 +1142,20 @@
             font-size: 12.5px;
             font-family: 'Consolas', 'Monaco', monospace;
             gap: 8px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .code-header-title {
             flex: 1 1 56px;
             min-width: 0;
-            word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             line-height: 1.35;
         }
         .file-name { color: #fcd34d; font-weight: 700; }
-        .lang-label { opacity: 0.72; font-size: 0.9em; margin-left: 6px; white-space: nowrap; }
+        .lang-label { opacity: 0.72; font-size: 0.9em; margin-left: 6px; }
         
         .button-group {
             display: flex;
@@ -1186,10 +1190,7 @@
         .action-btn .material-symbols-rounded { font-size: 15px; }
         .action-btn:focus-visible { outline-color: #93c5fd; }
 
-        /* Fixed min-width on Copy button prevents layout jump & row wrapping when morphing Copy <-> Copied! */
-        .action-btn.copy-btn {
-            min-width: 86px;
-        }
+        .action-btn.copy-btn { min-width: 86px; }
 
         @media (hover: hover) {
             .action-btn:hover {
@@ -1263,7 +1264,7 @@
             padding: 20px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.25s var(--m3-effects-standard);
+            transition: opacity 0.24s var(--m3-effects-standard);
         }
 
         .m3-dialog-backdrop.open {
@@ -1279,8 +1280,8 @@
             padding: 24px;
             border: 1px solid var(--md-pane-border);
             box-shadow: var(--m3-shadow-3);
-            transform: scale(0.86) translateY(16px);
-            transition: transform 0.38s var(--m3-spring-spatial), background-color 0.25s;
+            transform: scale(0.9) translateY(16px);
+            transition: transform 0.34s var(--m3-emphasized-decelerate), background-color 0.25s;
         }
 
         .m3-dialog-backdrop.open .m3-dialog {
@@ -1413,7 +1414,7 @@
             transition: opacity 0.2s, transform 0.32s var(--m3-spring-spatial);
         }
         .swatch-btn.active .swatch-circle {
-            border-radius: 14px; /* Expressive circle -> squircle morph */
+            border-radius: 14px;
             border-color: var(--md-on-surface);
             transform: scale(1.06);
         }
@@ -1558,7 +1559,7 @@
                 font-size: 13px !important;
             }
 
-            /* Mobile bottom-sheet style dialog */
+            /* Mobile bottom-sheet style dialog (M3 Emphasized curves with zero bottom-edge bounce gap) */
             .m3-dialog-backdrop.mobile-sheet {
                 align-items: flex-end;
                 padding: 0;
@@ -1568,9 +1569,11 @@
                 border-radius: 28px 28px 0 0;
                 padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
                 transform: translateY(100%);
+                transition: transform 0.24s var(--m3-emphasized-accelerate), background-color 0.25s;
             }
             .m3-dialog-backdrop.mobile-sheet.open .m3-dialog {
                 transform: translateY(0);
+                transition: transform 0.36s var(--m3-emphasized-decelerate), background-color 0.25s;
             }
         }
 
@@ -1715,15 +1718,15 @@
 
             <div class="theme-section-label">Theme Mode</div>
             <div class="mode-segmented" id="mode-segmented">
-                <button class="mode-opt-btn m3-ripple" data-mode="system">
+                <button class="mode-opt-btn m3-ripple" data-pick-mode="system">
                     <span class="material-symbols-rounded">brightness_auto</span>
                     <span>Auto</span>
                 </button>
-                <button class="mode-opt-btn m3-ripple" data-mode="light">
+                <button class="mode-opt-btn m3-ripple" data-pick-mode="light">
                     <span class="material-symbols-rounded">light_mode</span>
                     <span>Light</span>
                 </button>
-                <button class="mode-opt-btn m3-ripple" data-mode="dark">
+                <button class="mode-opt-btn m3-ripple" data-pick-mode="dark">
                     <span class="material-symbols-rounded">dark_mode</span>
                     <span>Dark</span>
                 </button>
@@ -1731,31 +1734,31 @@
 
             <div class="theme-section-label">M3 Color Theme</div>
             <div class="swatch-grid" id="swatch-grid">
-                <button class="swatch-btn" data-accent="emerald">
+                <button class="swatch-btn" data-pick-accent="emerald">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #0b875b, #34d399);">
                         <span class="material-symbols-rounded">check</span>
                     </span>
                     <span>Emerald</span>
                 </button>
-                <button class="swatch-btn" data-accent="ocean">
+                <button class="swatch-btn" data-pick-accent="ocean">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #1d5fe6, #60a5fa);">
                         <span class="material-symbols-rounded">check</span>
                     </span>
                     <span>Ocean</span>
                 </button>
-                <button class="swatch-btn" data-accent="violet">
+                <button class="swatch-btn" data-pick-accent="violet">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #6d4aff, #a78bfa);">
                         <span class="material-symbols-rounded">check</span>
                     </span>
                     <span>Violet</span>
                 </button>
-                <button class="swatch-btn" data-accent="rose">
+                <button class="swatch-btn" data-pick-accent="rose">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #c83264, #fb7185);">
                         <span class="material-symbols-rounded">check</span>
                     </span>
                     <span>Rose</span>
                 </button>
-                <button class="swatch-btn" data-accent="amber">
+                <button class="swatch-btn" data-pick-accent="amber">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #b85d00, #fbbf24);">
                         <span class="material-symbols-rounded">check</span>
                     </span>
@@ -1807,7 +1810,6 @@
             document.documentElement.setAttribute('data-theme', resolvedTheme);
             document.documentElement.setAttribute('data-accent', themePrefs.accent);
 
-            // Sync browser address bar color with M3 surface
             requestAnimationFrame(() => {
                 const surfaceColor = getComputedStyle(document.documentElement).getPropertyValue('--md-surface').trim();
                 if (surfaceColor && metaThemeColor) {
@@ -1816,10 +1818,10 @@
             });
 
             document.querySelectorAll('.mode-opt-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.mode === themePrefs.mode);
+                btn.classList.toggle('active', btn.dataset.pickMode === themePrefs.mode);
             });
             document.querySelectorAll('.swatch-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.accent === themePrefs.accent);
+                btn.classList.toggle('active', btn.dataset.pickAccent === themePrefs.accent);
             });
 
             localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(themePrefs));
@@ -1859,7 +1861,6 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
         }
 
-        // Helper for creating Material Symbol icon spans
         function createIcon(name) {
             const span = document.createElement('span');
             span.className = 'material-symbols-rounded';
@@ -1900,7 +1901,7 @@
         const themeModal = document.getElementById('theme-modal');
         const themeDoneBtn = document.getElementById('btn-theme-done');
 
-        // --- M3 Expressive Pointer Ripple (isolated .m3-ripple-layer prevents border-radius clip bugs) ---
+        // --- M3 Expressive Pointer Ripple ---
         document.addEventListener('pointerdown', (e) => {
             const target = e.target.closest('.m3-ripple');
             if (!target) return;
@@ -1957,14 +1958,14 @@
 
         document.querySelectorAll('.mode-opt-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                themePrefs.mode = btn.dataset.mode;
+                themePrefs.mode = btn.dataset.pickMode;
                 applyTheme();
             });
         });
 
         document.querySelectorAll('.swatch-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                themePrefs.accent = btn.dataset.accent;
+                themePrefs.accent = btn.dataset.pickAccent;
                 applyTheme();
             });
         });
@@ -2208,7 +2209,8 @@
         addTabBtn.addEventListener('click', () => addTab());
 
         // --- Code Extraction & Markdown Rendering ---
-        const tokenRegex = /(?:```([^\n]*)\n([\s\S]*?)(?:```|$))|(?:(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
+        // Line-anchored variable-fence regex prevents inline ``` inside code/regexes from breaking fenced blocks
+        const tokenRegex = /(?:(?:^|\r?\n)[ \t]*(`{3,})([^\r\n]*)(?:\r?\n([\s\S]*?))?(?:\r?\n[ \t]*\1[ \t]*(?=\r?\n|$)|$))|(?:(?:^|\r?\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
 
         let activeBlockTogglers = [];
 
@@ -2279,8 +2281,8 @@
                 let codeContent = '';
 
                 if (match[1] !== undefined) {
-                    language = match[1].trim() || 'plaintext';
-                    codeContent = match[2];
+                    language = (match[2] || '').trim() || 'plaintext';
+                    codeContent = match[3] || '';
                     
                     const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
                     const startMatch = codeContent.match(startRegex);
@@ -2289,9 +2291,9 @@
                         codeContent = codeContent.replace(startRegex, '');
                     }
                     codeContent = cleanCodeBlockContent(codeContent);
-                } else if (match[3] !== undefined) {
-                    fileName = match[3].trim();
-                    codeContent = match[4];
+                } else if (match[4] !== undefined) {
+                    fileName = match[4].trim();
+                    codeContent = match[5] || '';
                     language = getLanguageFromFilename(fileName);
 
                     const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
@@ -2488,20 +2490,23 @@
                 Prism.highlightAllUnder(outputArea);
             }
 
+            // Scope KaTeX strictly to markdown prose nodes so code headers/blocks are never altered
             if (window.renderMathInElement) {
-                try {
-                    renderMathInElement(outputArea, {
-                        delimiters: [
-                            { left: "$$", right: "$$", display: true },
-                            { left: "$", right: "$", display: false },
-                            { left: "\\(", right: "\\)", display: false },
-                            { left: "\\[", right: "\\]", display: true }
-                        ],
-                        throwOnError: false
-                    });
-                } catch (e) {
-                    console.warn("Math rendering error:", e);
-                }
+                outputArea.querySelectorAll('.markdown-text').forEach((el) => {
+                    try {
+                        renderMathInElement(el, {
+                            delimiters: [
+                                { left: "$$", right: "$$", display: true },
+                                { left: "$", right: "$", display: false },
+                                { left: "\\(", right: "\\)", display: false },
+                                { left: "\\[", right: "\\]", display: true }
+                            ],
+                            throwOnError: false
+                        });
+                    } catch (e) {
+                        console.warn("Math rendering error:", e);
+                    }
+                });
             }
 
             if (!triggerTransition) {
@@ -2538,7 +2543,7 @@
                 let codeContent = '';
 
                 if (match[1] !== undefined) {
-                    codeContent = match[2];
+                    codeContent = match[3] || '';
                     const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
                     const startMatch = codeContent.match(startRegex);
                     if (startMatch) {
@@ -2546,9 +2551,9 @@
                         codeContent = codeContent.replace(startRegex, '');
                     }
                     codeContent = cleanCodeBlockContent(codeContent);
-                } else if (match[3] !== undefined) {
-                    fileName = match[3].trim();
-                    codeContent = match[4];
+                } else if (match[4] !== undefined) {
+                    fileName = match[4].trim();
+                    codeContent = match[5] || '';
                     const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
                     if (cleanCodeMatch) {
                         codeContent = cleanCodeMatch[1];
