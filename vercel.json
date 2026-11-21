@@ -1,12 +1,10 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/api/proxy",
       "destination": "https://parents.chsmelaka.com/api/proxy"
-    },
-    {
-      "source": "/canvas",
-      "destination": "/canvas.html"
     },
     {
       "source": "/api/canvas",
