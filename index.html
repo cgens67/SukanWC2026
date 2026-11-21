@@ -4,34 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#f4f7f5" id="meta-theme-color">
-    <title>Markdown Code Extractor & Reader</title>
+    <title>Site Directory — Choose Destination</title>
 
     <!-- Material Symbols Rounded -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..600,0..1,-50..200&display=block" />
-    
-    <!-- KaTeX for LaTeX Math Rendering -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-
-    <!-- Marked.js for Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Marked-KaTeX Extension -->
-    <script src="https://cdn.jsdelivr.net/npm/marked-katex-extension/lib/index.umd.js"></script>
-
-    <!-- JSZip for exporting extracted files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-    <!-- Prism.js Syntax Highlighting -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-kotlin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
     <style>
         :root {
             /* Default: Light + Emerald */
-            --md-surface-dim: #e8edea;
             --md-surface: #f4f7f5;
             --md-surface-container-lowest: #ffffff;
             --md-surface-container-low: #f8fbf9;
@@ -41,10 +21,9 @@
 
             --md-on-surface: #181d1a;
             --md-on-surface-variant: #4f5b54;
-            --md-prose-text: #2b342f;
             --md-outline: #79867e;
             --md-outline-variant: #c4cec8;
-            --md-pane-border: rgba(196, 206, 200, 0.5);
+            --md-pane-border: rgba(196, 206, 200, 0.55);
 
             --md-primary: #0b875b;
             --md-primary-hover: #086f4b;
@@ -52,31 +31,15 @@
             --md-primary-container: #bff4dc;
             --md-on-primary-container: #003824;
 
-            --md-secondary: #2563eb;
-            --md-secondary-hover: #1d4ed8;
-            --md-on-secondary: #ffffff;
             --md-secondary-container: #dbeafe;
             --md-on-secondary-container: #172554;
-
-            --md-tertiary-container: #e8def8;
-            --md-on-tertiary-container: #21005d;
-
-            --md-inline-code-bg: #edf2ef;
-            --md-inline-code-text: #b91c4a;
-            --md-inline-code-border: #dce4df;
 
             --md-inverse-surface: #242b27;
             --md-inverse-on-surface: #f4f7f5;
 
-            --code-bg: #181a1f;
-            --code-header-bg: #22252c;
-            --code-border: #2a2e39;
-            --code-text: #c5c8c6;
-
             /* M3 Expressive Motion Tokens */
             --m3-spring-spatial-fast: cubic-bezier(0.38, 1.4, 0.42, 1);
             --m3-spring-spatial: cubic-bezier(0.34, 1.45, 0.36, 1);
-            --m3-spring-spatial-slow: cubic-bezier(0.28, 1.25, 0.3, 1);
             --m3-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
             --m3-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
             --m3-shape-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -97,7 +60,6 @@
             --md-surface-container-highest: #d5dce9;
             --md-on-surface: #181c23;
             --md-on-surface-variant: #4c5566;
-            --md-prose-text: #272e3a;
             --md-outline-variant: #c4cad8;
             --md-pane-border: rgba(196, 202, 216, 0.55);
 
@@ -105,14 +67,6 @@
             --md-primary-hover: #154cc2;
             --md-primary-container: #d8e4ff;
             --md-on-primary-container: #001a4d;
-
-            --md-secondary: #0f766e;
-            --md-secondary-hover: #0d5e58;
-            --md-secondary-container: #ccfbf1;
-            --md-on-secondary-container: #042f2e;
-
-            --md-inline-code-bg: #ebeef6;
-            --md-inline-code-border: #dbe0ec;
         }
 
         :root[data-accent="violet"] {
@@ -123,7 +77,6 @@
             --md-surface-container-highest: #dbd3e9;
             --md-on-surface: #1d1924;
             --md-on-surface-variant: #564e64;
-            --md-prose-text: #2e2938;
             --md-outline-variant: #ccc4d8;
             --md-pane-border: rgba(204, 196, 216, 0.55);
 
@@ -131,14 +84,6 @@
             --md-primary-hover: #5634e6;
             --md-primary-container: #e6deff;
             --md-on-primary-container: #21005d;
-
-            --md-secondary: #0284c7;
-            --md-secondary-hover: #0369a1;
-            --md-secondary-container: #e0f2fe;
-            --md-on-secondary-container: #082f49;
-
-            --md-inline-code-bg: #f0ecf7;
-            --md-inline-code-border: #e2dbef;
         }
 
         :root[data-accent="rose"] {
@@ -149,7 +94,6 @@
             --md-surface-container-highest: #e7d4db;
             --md-on-surface: #23181c;
             --md-on-surface-variant: #634d54;
-            --md-prose-text: #38282d;
             --md-outline-variant: #d8c3ca;
             --md-pane-border: rgba(216, 195, 202, 0.55);
 
@@ -157,14 +101,6 @@
             --md-primary-hover: #a7234f;
             --md-primary-container: #ffd9e2;
             --md-on-primary-container: #3e0019;
-
-            --md-secondary: #4f46e5;
-            --md-secondary-hover: #4338ca;
-            --md-secondary-container: #e0e7ff;
-            --md-on-secondary-container: #1e1b4b;
-
-            --md-inline-code-bg: #f7ecf0;
-            --md-inline-code-border: #ecdbe1;
         }
 
         :root[data-accent="amber"] {
@@ -175,7 +111,6 @@
             --md-surface-container-highest: #e2d4c7;
             --md-on-surface: #221b15;
             --md-on-surface-variant: #615346;
-            --md-prose-text: #362c24;
             --md-outline-variant: #d6c8ba;
             --md-pane-border: rgba(214, 200, 186, 0.55);
 
@@ -183,14 +118,6 @@
             --md-primary-hover: #964b00;
             --md-primary-container: #ffdfc2;
             --md-on-primary-container: #381800;
-
-            --md-secondary: #0d9488;
-            --md-secondary-hover: #0f766e;
-            --md-secondary-container: #ccfbf1;
-            --md-on-secondary-container: #042f2e;
-
-            --md-inline-code-bg: #f5ede5;
-            --md-inline-code-border: #e8dccf;
         }
 
         /* --- Dark Mode Base & Tonal Accents --- */
@@ -204,7 +131,6 @@
 
             --md-on-surface: #e4ebe6;
             --md-on-surface-variant: #a8b5ad;
-            --md-prose-text: #d7e0da;
             --md-outline: #79867e;
             --md-outline-variant: #3c4740;
             --md-pane-border: rgba(255, 255, 255, 0.08);
@@ -215,25 +141,8 @@
             --md-primary-container: #0a5237;
             --md-on-primary-container: #bff4dc;
 
-            --md-secondary: #60a5fa;
-            --md-secondary-hover: #93c5fd;
-            --md-on-secondary: #0a254d;
-            --md-secondary-container: #1e3a5f;
-            --md-on-secondary-container: #dbeafe;
-
-            --md-tertiary-container: #4a396b;
-            --md-on-tertiary-container: #eaddff;
-
-            --md-inline-code-bg: #232b26;
-            --md-inline-code-text: #fda4af;
-            --md-inline-code-border: #333e37;
-
             --md-inverse-surface: #e4ebe6;
             --md-inverse-on-surface: #181d1a;
-
-            --code-bg: #0c0e12;
-            --code-header-bg: #151920;
-            --code-border: rgba(255, 255, 255, 0.09);
 
             --m3-shadow-1: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
             --m3-shadow-2: 0 8px 24px -4px rgba(0, 0, 0, 0.36), 0 2px 8px -1px rgba(0, 0, 0, 0.24);
@@ -249,7 +158,6 @@
             --md-surface-container-highest: #343e50;
             --md-on-surface: #e3e8f2;
             --md-on-surface-variant: #a6b1c4;
-            --md-prose-text: #d6deec;
             --md-outline-variant: #3b4559;
 
             --md-primary: #7aa7ff;
@@ -257,15 +165,6 @@
             --md-on-primary: #002366;
             --md-primary-container: #183d8a;
             --md-on-primary-container: #d8e4ff;
-
-            --md-secondary: #5eead4;
-            --md-secondary-hover: #99f6e4;
-            --md-on-secondary: #042f2e;
-            --md-secondary-container: #134e4a;
-            --md-on-secondary-container: #ccfbf1;
-
-            --md-inline-code-bg: #222936;
-            --md-inline-code-border: #343e50;
             --md-inverse-surface: #e3e8f2;
         }
 
@@ -278,7 +177,6 @@
             --md-surface-container-highest: #3b3550;
             --md-on-surface: #eae5f4;
             --md-on-surface-variant: #b3abc4;
-            --md-prose-text: #ded7ec;
             --md-outline-variant: #443d59;
 
             --md-primary: #b5a0ff;
@@ -286,15 +184,6 @@
             --md-on-primary: #29007a;
             --md-primary-container: #4527a0;
             --md-on-primary-container: #e6deff;
-
-            --md-secondary: #38bdf8;
-            --md-secondary-hover: #7dd3fc;
-            --md-on-secondary: #082f49;
-            --md-secondary-container: #0c4a6e;
-            --md-on-secondary-container: #e0f2fe;
-
-            --md-inline-code-bg: #272336;
-            --md-inline-code-border: #3b3550;
             --md-inverse-surface: #eae5f4;
         }
 
@@ -307,7 +196,6 @@
             --md-surface-container-highest: #45333c;
             --md-on-surface: #f3e4e9;
             --md-on-surface-variant: #c2aab2;
-            --md-prose-text: #ead7de;
             --md-outline-variant: #533e47;
 
             --md-primary: #ff80a8;
@@ -315,15 +203,6 @@
             --md-on-primary: #4d001e;
             --md-primary-container: #7c173b;
             --md-on-primary-container: #ffd9e2;
-
-            --md-secondary: #818cf8;
-            --md-secondary-hover: #a5b4fc;
-            --md-on-secondary: #1e1b4b;
-            --md-secondary-container: #312e81;
-            --md-on-secondary-container: #e0e7ff;
-
-            --md-inline-code-bg: #2f2228;
-            --md-inline-code-border: #45333c;
             --md-inverse-surface: #f3e4e9;
         }
 
@@ -336,7 +215,6 @@
             --md-surface-container-highest: #42362b;
             --md-on-surface: #f0e6dc;
             --md-on-surface-variant: #bfb0a1;
-            --md-prose-text: #e5d9cd;
             --md-outline-variant: #4f4134;
 
             --md-primary: #ffb76b;
@@ -344,15 +222,6 @@
             --md-on-primary: #452100;
             --md-primary-container: #703900;
             --md-on-primary-container: #ffdfc2;
-
-            --md-secondary: #5eead4;
-            --md-secondary-hover: #99f6e4;
-            --md-on-secondary: #042f2e;
-            --md-secondary-container: #134e4a;
-            --md-on-secondary-container: #ccfbf1;
-
-            --md-inline-code-bg: #2d241d;
-            --md-inline-code-border: #42362b;
             --md-inverse-surface: #f0e6dc;
         }
 
@@ -368,14 +237,13 @@
 
         button:focus-visible {
             outline: 2px solid var(--md-primary);
-            outline-offset: 2px;
+            outline-offset: 3px;
         }
 
         html, body {
-            height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            min-height: 100%;
         }
 
         body {
@@ -385,10 +253,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100dvh;
-            padding: 14px 20px calc(16px + env(safe-area-inset-bottom));
+            min-height: 100dvh;
+            padding: 18px 20px calc(28px + env(safe-area-inset-bottom));
             -webkit-font-smoothing: antialiased;
-            overscroll-behavior-y: contain;
             transition: background-color 0.3s var(--m3-effects-standard), color 0.25s var(--m3-effects-standard);
         }
 
@@ -397,32 +264,27 @@
             font-family: 'Material Symbols Rounded';
             font-weight: normal;
             font-style: normal;
-            font-size: 18px;
+            font-size: 20px;
             line-height: 1;
             width: 1em;
             height: 1em;
             overflow: hidden;
-            letter-spacing: normal;
-            text-transform: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
             -webkit-font-smoothing: antialiased;
-            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
             user-select: none;
             flex-shrink: 0;
         }
 
-        /* --- M3 Expressive Ripple Effect --- */
+        /* --- M3 Expressive Pointer Ripple --- */
         .m3-ripple {
             position: relative;
             touch-action: manipulation;
         }
 
-        /* Keep hidden <input> out of relative flow so it doesn't shift flex children */
         .m3-ripple > :not(.m3-ripple-layer):not(input) {
             position: relative;
             z-index: 1;
@@ -453,497 +315,61 @@
             100% { transform: scale(2.6); opacity: 0; }
         }
 
-        /* --- Drag & Drop Overlay --- */
-        #drop-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 135, 91, 0.14);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 3px dashed var(--md-primary);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.25s var(--m3-effects-standard);
-        }
-        #drop-overlay.active { opacity: 1; }
-        #drop-overlay .drop-card {
-            background: var(--md-surface-container-lowest);
-            padding: 20px 32px;
-            border-radius: 28px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--md-on-primary-container);
-            box-shadow: var(--m3-shadow-3);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transform: scale(0.88);
-            transition: transform 0.35s var(--m3-spring-spatial);
-        }
-        #drop-overlay .drop-card .material-symbols-rounded { font-size: 24px; }
-        #drop-overlay.active .drop-card { transform: scale(1); }
-
-        /* --- Top App Header --- */
+        /* --- Top App Bar --- */
         .app-top-bar {
             width: 100%;
-            max-width: 1440px;
+            max-width: 960px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            margin-bottom: 12px;
-            flex-shrink: 0;
+            margin-bottom: 24px;
         }
 
-        .brand-group { min-width: 0; flex: 1; }
-
-        .brand-group h1 {
-            margin: 0;
-            font-size: 1.45rem;
-            font-weight: 750;
-            letter-spacing: -0.025em;
-            color: var(--md-on-surface);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .brand-group p.subtitle {
-            margin: 2px 0 0;
-            color: var(--md-on-surface-variant);
-            font-size: 0.86rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .top-bar-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        /* Theme Icon Button */
-        .theme-trigger-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 14px;
-            border: none;
-            background: var(--md-surface-container-high);
-            color: var(--md-on-surface);
-            cursor: pointer;
+        .brand-pill {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            transform: scale(1);
-            box-shadow: var(--m3-shadow-1);
-            transition:
-                background-color 0.22s var(--m3-effects-standard),
-                color 0.22s var(--m3-effects-standard),
-                border-radius 0.3s var(--m3-shape-ease),
-                transform 0.28s var(--m3-spring-spatial-fast);
-        }
-        .theme-trigger-btn .material-symbols-rounded { font-size: 20px; }
-
-        @media (hover: hover) {
-            .theme-trigger-btn:hover {
-                background: var(--md-primary-container);
-                color: var(--md-on-primary-container);
-                border-radius: 20px;
-            }
-        }
-        .theme-trigger-btn:active {
-            transform: scale(0.92);
-            border-radius: 10px;
-        }
-        .theme-trigger-btn.is-open {
-            background: var(--md-primary-container);
-            color: var(--md-on-primary-container);
-            border-radius: 20px;
-        }
-
-        /* --- M3 Expressive Segmented View Switcher --- */
-        .view-switcher {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            background: var(--md-surface-container-high);
-            padding: 4px;
-            border-radius: 24px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
-            flex-shrink: 0;
-            transition: background-color 0.3s var(--m3-effects-standard);
-        }
-
-        .switcher-pill {
-            position: absolute;
-            top: 4px;
-            bottom: 4px;
-            left: 0;
-            background: var(--md-primary-container);
-            border-radius: 20px;
-            box-shadow: var(--m3-shadow-1);
-            transition:
-                transform 0.42s var(--m3-spring-spatial),
-                width 0.42s var(--m3-spring-spatial),
-                background-color 0.25s var(--m3-effects-standard);
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .switcher-btn {
-            position: relative;
-            z-index: 1;
-            background: transparent;
-            border: none;
-            color: var(--md-on-surface-variant);
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            transform: scale(1);
-            transition: color 0.25s var(--m3-effects-standard), transform 0.22s var(--m3-spring-spatial-fast);
-            user-select: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .switcher-btn .material-symbols-rounded { font-size: 16px; }
-        .switcher-btn:active { transform: scale(0.94); }
-        .switcher-btn.active { color: var(--md-on-primary-container); }
-
-        /* --- Expressive Tab Bar --- */
-        .tab-bar-wrapper {
-            width: 100%;
-            max-width: 1440px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            flex-shrink: 0;
-        }
-
-        .tab-list {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            overflow-x: auto;
-            padding: 4px 2px;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-        .tab-list::-webkit-scrollbar { display: none; }
-
-        .tab-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--md-surface-container);
-            color: var(--md-on-surface-variant);
-            padding: 7px 10px 7px 14px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            user-select: none;
-            max-width: 240px;
-            min-height: 38px;
-            flex-shrink: 0;
-            border: 1px solid transparent;
-            transform: scale(1);
-            transform-origin: center bottom;
-            animation: m3TabEnter 0.42s var(--m3-spring-spatial) forwards;
-            transition:
-                background-color 0.25s var(--m3-effects-standard),
-                color 0.25s var(--m3-effects-standard),
-                border-radius 0.32s var(--m3-shape-ease),
-                transform 0.25s var(--m3-spring-spatial-fast),
-                box-shadow 0.25s var(--m3-effects-standard);
-        }
-
-        @keyframes m3TabEnter {
-            0% { opacity: 0; transform: scale(0.75) translateY(8px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .tab-item.closing {
-            animation: m3TabExit 0.22s var(--m3-effects-standard) forwards;
-            pointer-events: none;
-        }
-
-        @keyframes m3TabExit {
-            to { opacity: 0; transform: scale(0.75); }
-        }
-
-        @media (hover: hover) {
-            .tab-item:hover {
-                background: var(--md-surface-container-high);
-                color: var(--md-on-surface);
-            }
-        }
-
-        .tab-item:active {
-            transform: scale(0.95);
-            border-radius: 10px;
-        }
-
-        .tab-item.active {
-            background: var(--md-primary-container);
-            color: var(--md-on-primary-container);
-            font-weight: 700;
-            border-radius: 20px;
-            box-shadow: var(--m3-shadow-1);
-        }
-
-        .tab-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            outline: none;
-            max-width: 130px;
-        }
-
-        .tab-icon-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            border: none;
-            background: transparent;
-            color: inherit;
-            opacity: 0.7;
-            cursor: pointer;
-            padding: 0;
-            transition: background-color 0.2s, opacity 0.2s, transform 0.28s var(--m3-spring-spatial-fast);
-        }
-        .tab-icon-btn .material-symbols-rounded { font-size: 16px; }
-
-        @media (hover: hover) {
-            .tab-icon-btn:hover {
-                opacity: 1;
-                background: rgba(128, 128, 128, 0.16);
-                transform: scale(1.12);
-            }
-            .tab-icon-btn.tab-close:hover {
-                transform: rotate(90deg) scale(1.12);
-            }
-        }
-
-        .tab-edit-btn { display: none; }
-        .tab-item.active .tab-edit-btn { display: inline-flex; }
-
-        .tab-add-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 14px;
-            border: none;
-            background: var(--md-surface-container-high);
-            color: var(--md-on-surface);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transform: scale(1);
-            box-shadow: var(--m3-shadow-1);
-            transition:
-                background-color 0.22s var(--m3-effects-standard),
-                border-radius 0.32s var(--m3-shape-ease),
-                transform 0.35s var(--m3-spring-spatial);
-        }
-        .tab-add-btn .material-symbols-rounded { font-size: 22px; }
-
-        @media (hover: hover) {
-            .tab-add-btn:hover {
-                background: var(--md-primary-container);
-                color: var(--md-on-primary-container);
-                border-radius: 20px;
-                transform: rotate(90deg) scale(1.06);
-            }
-        }
-        .tab-add-btn:active {
-            border-radius: 10px;
-            transform: rotate(90deg) scale(0.92);
-        }
-
-        /* --- Main Workspace Container --- */
-        .container {
-            display: flex;
-            gap: 16px;
-            width: 100%;
-            max-width: 1440px;
-            flex: 1;
-            min-height: 0;
-            position: relative;
-        }
-
-        .pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--md-surface-container-lowest);
-            border-radius: 24px;
-            box-shadow: var(--m3-shadow-2);
-            overflow: hidden;
-            min-width: 0;
-            min-height: 0;
-            border: 1px solid var(--md-pane-border);
-            transition:
-                background-color 0.3s var(--m3-effects-standard),
-                border-color 0.3s var(--m3-effects-standard),
-                transform 0.38s var(--m3-spring-spatial),
-                opacity 0.25s var(--m3-effects-standard);
-        }
-
-        .pane.hidden-pane { display: none; }
-
-        .pane.mobile-slide-in-right {
-            animation: paneSlideRight 0.38s var(--m3-spring-spatial) forwards;
-        }
-        .pane.mobile-slide-in-left {
-            animation: paneSlideLeft 0.38s var(--m3-spring-spatial) forwards;
-        }
-
-        @keyframes paneSlideRight {
-            from { opacity: 0; transform: translateX(26px) scale(0.985); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
-        }
-        @keyframes paneSlideLeft {
-            from { opacity: 0; transform: translateX(-26px) scale(0.985); }
-            to { opacity: 1; transform: translateX(0) scale(1); }
-        }
-
-        .pane-header {
+            gap: 10px;
             background: var(--md-surface-container-low);
-            padding: 10px 14px;
-            font-weight: 600;
-            border-bottom: 1px solid var(--md-surface-container-high);
+            border: 1px solid var(--md-pane-border);
+            padding: 8px 16px 8px 10px;
+            border-radius: 24px;
+            box-shadow: var(--m3-shadow-1);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            min-height: 54px;
-            transition: background-color 0.3s var(--m3-effects-standard), border-color 0.3s var(--m3-effects-standard);
-        }
-
-        .pane-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--md-on-surface);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-
-        .header-btn-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding: 2px 0;
-        }
-        .header-btn-group::-webkit-scrollbar { display: none; }
-
-        /* --- M3 Expressive Buttons & Connected Groups --- */
-        .m3-connected-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .header-btn {
-            color: var(--md-on-primary);
-            border: none;
-            border-radius: 18px;
-            padding: 7px 13px;
-            cursor: pointer;
-            font-size: 12.5px;
-            font-weight: 600;
-            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-            white-space: nowrap;
-            min-height: 34px;
-            transform: scale(1);
-            box-shadow: var(--m3-shadow-1);
-            transition:
-                border-radius 0.28s var(--m3-shape-ease),
-                transform 0.26s var(--m3-spring-spatial-fast),
-                background-color 0.2s var(--m3-effects-standard),
-                color 0.2s var(--m3-effects-standard),
-                box-shadow 0.2s var(--m3-effects-standard);
-        }
-        .header-btn .material-symbols-rounded { font-size: 16px; }
-
-        .m3-connected-group .header-btn:first-child:not(:last-child) {
-            border-radius: 18px 8px 8px 18px;
-        }
-        .m3-connected-group .header-btn:last-child:not(:first-child) {
-            border-radius: 8px 18px 18px 8px;
-        }
-        .m3-connected-group .header-btn:not(:first-child):not(:last-child) {
-            border-radius: 8px;
         }
 
-        @media (hover: hover) {
-            .header-btn:hover {
-                transform: translateY(-1.5px) scale(1);
-                box-shadow: var(--m3-shadow-2);
-            }
+        .brand-name {
+            font-weight: 750;
+            font-size: 0.96rem;
+            letter-spacing: -0.02em;
+            color: var(--md-on-surface);
         }
 
-        .header-btn:active,
-        .m3-connected-group .header-btn:active {
-            transform: scale(0.93);
-            border-radius: 10px;
-            box-shadow: none;
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .paste-btn { background-color: var(--md-primary); color: var(--md-on-primary); }
-        @media (hover: hover) { .paste-btn:hover { background-color: var(--md-primary-hover); } }
-
-        .import-btn { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
-        @media (hover: hover) { .import-btn:hover { filter: brightness(0.95); } }
-
-        .clear-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        @media (hover: hover) { .clear-btn:hover { background-color: var(--md-surface-container-highest); } }
-
-        .export-btn { background-color: var(--md-secondary); color: var(--md-on-secondary); }
-        @media (hover: hover) { .export-btn:hover { background-color: var(--md-secondary-hover); } }
-
-        .toggle-all-btn { background-color: var(--md-surface-container-high); color: var(--md-on-surface); }
-        @media (hover: hover) { .toggle-all-btn:hover { background-color: var(--md-surface-container-highest); } }
-        .toggle-all-btn.is-collapsed {
-            background-color: var(--md-tertiary-container);
-            color: var(--md-on-tertiary-container);
-        }
-
-        /* --- M3 Expressive Filter Chips (Syntax & Sync) --- */
+        /* M3 Filter Chip (Instant Redirect Toggle) */
         .m3-chip {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0;
-            padding: 6px 14px;
-            min-height: 34px;
+            padding: 7px 14px;
+            min-height: 40px;
             border-radius: 14px;
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             user-select: none;
@@ -952,6 +378,7 @@
             border: 1px solid var(--md-outline-variant);
             background: var(--md-surface-container-lowest);
             color: var(--md-on-surface-variant);
+            box-shadow: var(--m3-shadow-1);
             transition:
                 background-color 0.24s var(--m3-effects-standard),
                 color 0.24s var(--m3-effects-standard),
@@ -989,13 +416,13 @@
             background: var(--md-primary-container);
             color: var(--md-on-primary-container);
             border-color: transparent;
-            border-radius: 18px;
-            padding: 6px 14px 6px 11px;
+            border-radius: 20px;
+            padding: 7px 14px 7px 11px;
         }
 
         .m3-chip:has(input:checked) .chip-check {
             width: 16px;
-            margin-right: 5px;
+            margin-right: 6px;
             opacity: 1;
             transform: scale(1) rotate(0deg);
         }
@@ -1005,265 +432,357 @@
             border-radius: 11px;
         }
 
-        /* --- Textarea & Output --- */
-        textarea {
-            flex: 1;
+        .theme-trigger-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
             border: none;
-            padding: 18px;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.65;
-            resize: none;
-            outline: none;
+            background: var(--md-surface-container-high);
             color: var(--md-on-surface);
-            background: var(--md-surface-container-lowest);
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            transition: background-color 0.3s var(--m3-effects-standard), color 0.25s var(--m3-effects-standard);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--m3-shadow-1);
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                color 0.22s var(--m3-effects-standard),
+                border-radius 0.3s var(--m3-shape-ease),
+                transform 0.28s var(--m3-spring-spatial-fast);
         }
 
-        textarea::placeholder {
-            color: var(--md-on-surface-variant);
-            opacity: 0.7;
+        @media (hover: hover) {
+            .theme-trigger-btn:hover {
+                background: var(--md-primary-container);
+                color: var(--md-on-primary-container);
+                border-radius: 20px;
+            }
+        }
+        .theme-trigger-btn:active {
+            transform: scale(0.92);
+            border-radius: 10px;
+        }
+        .theme-trigger-btn.is-open {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+            border-radius: 20px;
         }
 
-        #output {
+        /* --- Main Portal Shell --- */
+        .hub-main {
+            width: 100%;
+            max-width: 960px;
             flex: 1;
-            padding: 22px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: var(--md-surface-container-lowest);
-            min-width: 0;
-            width: 100%;
-            -webkit-overflow-scrolling: touch;
-            transition: background-color 0.3s var(--m3-effects-standard);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 24px;
+            padding: 8px 0 16px;
         }
 
-        .content-fade {
-            animation: viewFadeSlide 0.35s var(--m3-spring-spatial) forwards;
-        }
-        @keyframes viewFadeSlide {
-            0% { opacity: 0; transform: translateY(10px) scale(0.99); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        .hero-header {
+            text-align: center;
+            padding: 0 8px;
+            animation: heroEnter 0.45s var(--m3-spring-spatial) backwards;
         }
 
-        /* --- Markdown Elements & Math Styling --- */
-        .markdown-text {
-            line-height: 1.72;
-            font-size: 15.5px;
-            color: var(--md-prose-text);
-            word-break: break-word;
-            overflow-wrap: break-word;
+        @keyframes heroEnter {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4 {
+
+        .hero-header h1 {
+            margin: 0;
+            font-size: clamp(1.65rem, 4vw, 2.35rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
             color: var(--md-on-surface);
-            letter-spacing: -0.02em;
-            margin-top: 1.3em;
-            margin-bottom: 0.45em;
         }
-        .markdown-text h1:first-child, .markdown-text h2:first-child { margin-top: 0.2em; }
-        .markdown-text p { margin: 10px 0; }
-        .markdown-text a { color: var(--md-primary); font-weight: 500; }
-        .markdown-text blockquote {
-            margin: 14px 0;
-            padding: 10px 16px;
-            border-left: 4px solid var(--md-primary);
-            background: var(--md-surface-container-low);
-            border-radius: 0 12px 12px 0;
+
+        .hero-header p {
+            margin: 8px auto 0;
+            max-width: 520px;
+            font-size: 0.98rem;
+            line-height: 1.5;
             color: var(--md-on-surface-variant);
         }
-        .markdown-text table {
-            display: block;
+
+        /* --- Selectable Destination Grid --- */
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+            gap: 14px;
             width: 100%;
-            overflow-x: auto;
-            border-collapse: collapse;
-            margin: 14px 0;
-            -webkit-overflow-scrolling: touch;
         }
-        .markdown-text th, .markdown-text td {
-            border: 1px solid var(--md-outline-variant);
-            padding: 8px 12px;
+
+        .dest-card {
+            position: relative;
             text-align: left;
-            font-size: 0.92em;
-        }
-        .markdown-text th { background: var(--md-surface-container); font-weight: 700; color: var(--md-on-surface); }
-        .markdown-text img { max-width: 100%; height: auto; border-radius: 14px; }
-        .markdown-text hr {
-            border: 0;
-            height: 1px;
-            background: var(--md-outline-variant);
-            margin: 22px 0;
-        }
-        .markdown-text ul, .markdown-text ol {
-            padding-left: 22px;
-            margin: 10px 0;
-        }
-        .markdown-text li { margin-bottom: 6px; }
-        .markdown-text code {
-            background-color: var(--md-inline-code-bg);
-            color: var(--md-inline-code-text);
-            padding: 2px 6px;
-            border-radius: 6px;
-            font-family: Consolas, Monaco, monospace;
-            font-size: 0.87em;
-            border: 1px solid var(--md-inline-code-border);
+            background: var(--md-surface-container-lowest);
+            border: 2px solid var(--md-pane-border);
+            border-radius: 24px;
+            padding: 18px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            color: var(--md-on-surface);
+            box-shadow: var(--m3-shadow-1);
+            transform: scale(1);
+            animation: cardPop 0.48s var(--m3-spring-spatial) backwards;
+            transition:
+                background-color 0.25s var(--m3-effects-standard),
+                border-color 0.25s var(--m3-effects-standard),
+                border-radius 0.34s var(--m3-shape-ease),
+                transform 0.28s var(--m3-spring-spatial-fast),
+                box-shadow 0.25s var(--m3-effects-standard);
         }
 
-        /* LaTeX KaTeX container tweaks */
-        .katex-display {
-            overflow-x: auto;
-            overflow-y: hidden;
-            padding: 8px 4px;
-            margin: 14px 0 !important;
-            -webkit-overflow-scrolling: touch;
-        }
-        .katex { font-size: 1.05em; color: var(--md-on-surface); }
+        .dest-card:nth-child(1) { animation-delay: 40ms; }
+        .dest-card:nth-child(2) { animation-delay: 85ms; }
+        .dest-card:nth-child(3) { animation-delay: 130ms; }
+        .dest-card:nth-child(4) { animation-delay: 175ms; }
+        .dest-card:nth-child(5) { animation-delay: 220ms; }
 
-        /* --- M3 Expressive Code Containers --- */
-        .code-container {
-            margin: 18px 0;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: var(--m3-shadow-2);
-            border: 1px solid var(--code-border);
-            background: var(--code-bg);
-            transition: box-shadow 0.3s var(--m3-effects-standard), transform 0.35s var(--m3-spring-spatial);
-        }
-
-        .code-container.stagger-in {
-            animation: codeCardPop 0.44s var(--m3-spring-spatial) backwards;
-        }
-
-        @keyframes codeCardPop {
-            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+        @keyframes cardPop {
+            from { opacity: 0; transform: translateY(16px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @media (hover: hover) {
-            .code-container:hover {
-                box-shadow: var(--m3-shadow-3);
+            .dest-card:hover {
+                background: var(--md-surface-container-low);
+                border-color: var(--md-outline-variant);
+                transform: translateY(-2px);
+                box-shadow: var(--m3-shadow-2);
             }
         }
 
-        .code-header {
+        .dest-card:active {
+            transform: scale(0.97);
+            border-radius: 16px;
+        }
+
+        .dest-card.selected {
+            background: var(--md-primary-container);
+            border-color: var(--md-primary);
+            color: var(--md-on-primary-container);
+            border-radius: 28px;
+            box-shadow: var(--m3-shadow-2);
+        }
+
+        .dest-card-top {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background-color: var(--code-header-bg);
-            padding: 10px 14px;
-            color: #93c5fd;
-            font-size: 12.5px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            gap: 8px;
-            flex-wrap: nowrap;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
         }
 
-        .code-header-title {
-            flex: 1 1 56px;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            line-height: 1.35;
-        }
-        .file-name { color: #fcd34d; font-weight: 700; }
-        .lang-label { opacity: 0.72; font-size: 0.9em; margin-left: 6px; }
-        
-        .button-group {
+        .dest-icon-badge {
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            background: var(--md-surface-container);
+            color: var(--md-primary);
             display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-            margin-left: auto;
+            align-items: center;
+            justify-content: center;
+            transition:
+                background-color 0.25s var(--m3-effects-standard),
+                color 0.25s var(--m3-effects-standard),
+                border-radius 0.34s var(--m3-shape-ease),
+                transform 0.34s var(--m3-spring-spatial);
         }
 
-        .action-btn {
-            background-color: rgba(255, 255, 255, 0.09);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 10px;
-            padding: 6px 11px;
-            min-height: 32px;
-            cursor: pointer;
+        .dest-icon-badge .material-symbols-rounded {
+            font-size: 24px;
+        }
+
+        .dest-card.selected .dest-icon-badge {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            border-radius: 23px;
+            transform: scale(1.06);
+        }
+
+        .dest-check-indicator {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid var(--md-outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--md-on-primary);
+            background: transparent;
+            transition:
+                background-color 0.22s var(--m3-effects-standard),
+                border-color 0.22s var(--m3-effects-standard),
+                transform 0.34s var(--m3-spring-spatial);
+        }
+
+        .dest-check-indicator .material-symbols-rounded {
+            font-size: 16px;
+            opacity: 0;
+            transform: scale(0.4);
+            font-variation-settings: 'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 20;
+            transition: opacity 0.2s, transform 0.3s var(--m3-spring-spatial);
+        }
+
+        .dest-card.selected .dest-check-indicator {
+            background: var(--md-primary);
+            border-color: var(--md-primary);
+            transform: scale(1.08);
+        }
+
+        .dest-card.selected .dest-check-indicator .material-symbols-rounded {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .dest-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dest-title {
+            font-size: 1.08rem;
+            font-weight: 750;
+            letter-spacing: -0.015em;
+        }
+
+        .dest-desc {
+            font-size: 0.87rem;
+            line-height: 1.45;
+            color: var(--md-on-surface-variant);
+            transition: color 0.25s;
+        }
+
+        .dest-card.selected .dest-desc {
+            color: var(--md-on-primary-container);
+            opacity: 0.86;
+        }
+
+        .dest-path {
+            margin-top: auto;
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            font-family: 'Consolas', 'Monaco', monospace;
             font-size: 12px;
             font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 10px;
+            background: var(--md-surface-container);
+            color: var(--md-on-surface-variant);
+            transition: background-color 0.25s, color 0.25s;
+        }
+
+        .dest-card.selected .dest-path {
+            background: rgba(255, 255, 255, 0.35);
+            color: var(--md-on-primary-container);
+        }
+
+        :root[data-theme="dark"] .dest-card.selected .dest-path {
+            background: rgba(0, 0, 0, 0.22);
+        }
+
+        /* --- Action Dock (Redirect CTA) --- */
+        .action-dock {
+            background: var(--md-surface-container-low);
+            border: 1px solid var(--md-pane-border);
+            border-radius: 28px;
+            padding: 12px 14px 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            box-shadow: var(--m3-shadow-2);
+            animation: dockEnter 0.5s var(--m3-spring-spatial) 120ms backwards;
+        }
+
+        @keyframes dockEnter {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dock-status {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .dock-label {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--md-on-surface-variant);
+        }
+
+        .dock-target {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .go-btn {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            border: none;
+            border-radius: 22px;
+            padding: 13px 24px;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 8px;
             white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: var(--m3-shadow-1);
             transform: scale(1);
             transition:
-                background-color 0.2s var(--m3-effects-standard),
-                border-color 0.2s var(--m3-effects-standard),
-                color 0.2s var(--m3-effects-standard),
-                border-radius 0.28s var(--m3-shape-ease),
-                transform 0.26s var(--m3-spring-spatial-fast);
+                background-color 0.22s var(--m3-effects-standard),
+                border-radius 0.3s var(--m3-shape-ease),
+                transform 0.26s var(--m3-spring-spatial-fast),
+                box-shadow 0.22s var(--m3-effects-standard),
+                opacity 0.2s;
         }
-        .action-btn .material-symbols-rounded { font-size: 15px; }
-        .action-btn:focus-visible { outline-color: #93c5fd; }
 
-        .action-btn.copy-btn { min-width: 86px; }
+        .go-btn:disabled {
+            opacity: 0.48;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
         @media (hover: hover) {
-            .action-btn:hover {
-                background-color: rgba(255, 255, 255, 0.17);
-                color: #ffffff;
-                border-radius: 17px;
+            .go-btn:not(:disabled):hover {
+                background: var(--md-primary-hover);
+                box-shadow: var(--m3-shadow-2);
+                transform: translateY(-1.5px);
+            }
+            .go-btn:not(:disabled):hover .arrow-icon {
+                transform: translateX(3px);
             }
         }
 
-        .action-btn:active {
-            transform: scale(0.92);
-            border-radius: 7px;
+        .go-btn:not(:disabled):active {
+            transform: scale(0.94);
+            border-radius: 14px;
         }
 
-        .action-btn.is-active {
-            background-color: rgba(147, 197, 253, 0.16);
-            border-color: rgba(147, 197, 253, 0.32);
-            color: #dbeafe;
-            border-radius: 17px;
+        .go-btn .arrow-icon {
+            transition: transform 0.28s var(--m3-spring-spatial);
         }
 
-        .action-btn.copied {
-            background-color: var(--md-primary);
-            border-color: var(--md-primary);
-            color: var(--md-on-primary);
-            border-radius: 17px;
-        }
-
-        /* ZERO-LAG EXPRESSIVE ACCORDION */
-        .code-collapse-wrapper {
-            position: relative;
-            overflow: hidden;
-            transition: height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard);
-            will-change: height, opacity;
-            opacity: 1;
-        }
-
-        .code-collapse-wrapper.minimized { opacity: 0.2; }
-        .code-collapse-inner { width: 100%; }
-
-        .code-collapse-inner pre {
-            margin: 0 !important;
-            padding: 16px !important;
-            border-radius: 0 !important;
-            background-color: var(--code-bg) !important;
-            font-size: 13.5px !important;
-            line-height: 1.58 !important;
-            box-shadow: none !important;
-            overflow: auto !important;
-            -webkit-overflow-scrolling: touch;
-        }
-        .code-collapse-inner code { 
-            font-family: 'Consolas', 'Monaco', monospace !important;
-            text-shadow: none !important; 
-        }
-        .code-collapse-inner pre.language-none code.language-none {
-            color: var(--code-text);
-        }
-
-        /* --- M3 Expressive Dialogs (Rename & Theme Picker) --- */
+        /* --- M3 Expressive Theme Dialog / Mobile Sheet --- */
         .m3-dialog-backdrop {
             position: fixed;
             inset: 0;
@@ -1310,30 +829,6 @@
             gap: 8px;
         }
 
-        .m3-text-field {
-            width: 100%;
-            padding: 13px 16px;
-            font-size: 16px;
-            border: 2px solid var(--md-outline-variant);
-            border-radius: 16px;
-            background: var(--md-surface-container-lowest);
-            color: var(--md-on-surface);
-            outline: none;
-            transition: border-color 0.2s, border-radius 0.28s var(--m3-shape-ease);
-        }
-        .m3-text-field:focus {
-            border-color: var(--md-primary);
-            border-radius: 12px;
-        }
-
-        .m3-dialog-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        /* Theme Sheet Controls */
         .theme-section-label {
             font-size: 12px;
             font-weight: 700;
@@ -1436,146 +931,62 @@
             transform: scale(1);
         }
 
-        /* --- M3 Expressive Snackbar --- */
-        #m3-snackbar {
-            position: fixed;
-            bottom: calc(20px + env(safe-area-inset-bottom));
-            left: 50%;
-            transform: translateX(-50%) translateY(28px) scale(0.9);
-            background: var(--md-inverse-surface);
-            color: var(--md-inverse-on-surface);
-            padding: 12px 20px;
-            border-radius: 16px;
+        .m3-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .dialog-done-btn {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            border: none;
+            border-radius: 18px;
+            padding: 9px 18px;
             font-size: 13.5px;
-            font-weight: 500;
-            box-shadow: var(--m3-shadow-3);
-            z-index: 9800;
-            opacity: 0;
-            pointer-events: none;
-            max-width: calc(100vw - 32px);
-            text-align: center;
-            transition:
-                transform 0.4s var(--m3-spring-spatial),
-                opacity 0.22s var(--m3-effects-standard);
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.24s var(--m3-spring-spatial-fast), border-radius 0.25s;
+        }
+        .dialog-done-btn:active {
+            transform: scale(0.93);
+            border-radius: 10px;
         }
 
-        #m3-snackbar.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0) scale(1);
-        }
-
-        /* Scrollbars */
-        ::-webkit-scrollbar { width: 7px; height: 7px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(128, 138, 132, 0.32); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(128, 138, 132, 0.5); }
-
-        .empty-state {
-            text-align: center;
-            color: var(--md-on-surface-variant);
-            margin-top: 64px;
-            font-size: 0.95rem;
-            padding: 0 16px;
-        }
-        .empty-state strong { display: block; font-size: 1.08rem; margin-bottom: 6px; color: var(--md-on-surface); }
-
-        /* --- Responsive Mobile Optimization (<= 840px) --- */
-        @media (max-width: 840px) {
+        /* --- Mobile Responsive --- */
+        @media (max-width: 640px) {
             body {
-                padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+                padding: 12px 14px calc(20px + env(safe-area-inset-bottom));
             }
-
             .app-top-bar {
-                margin-bottom: 8px;
-                gap: 8px;
+                margin-bottom: 18px;
             }
-
-            .brand-group h1 { font-size: 1.08rem; }
-            .brand-group p.subtitle { display: none; }
-
-            .theme-trigger-btn {
-                width: 38px;
-                height: 38px;
+            .destinations-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
-
-            .switcher-btn[data-view="split"] { display: none; }
-            .switcher-btn {
-                padding: 7px 11px;
-                font-size: 12.5px;
+            .dest-card {
+                padding: 15px 16px;
+                border-radius: 20px;
+                gap: 10px;
             }
-
-            .tab-bar-wrapper { margin-bottom: 8px; }
-
-            .tab-item {
-                min-height: 40px;
-                padding: 8px 10px 8px 14px;
+            .dest-card.selected {
+                border-radius: 24px;
             }
-
-            .tab-icon-btn {
-                width: 28px;
-                height: 28px;
-            }
-
-            .pane { border-radius: 20px; }
-
-            .pane-header {
-                padding: 8px 12px;
-                min-height: 50px;
-            }
-
-            .pane-title { display: none; }
-
-            .header-btn-group {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .header-btn {
-                min-height: 36px;
-                padding: 7px 11px;
-                font-size: 12.5px;
-            }
-
-            .m3-chip {
-                min-height: 36px;
-                padding: 6px 14px;
-            }
-            .m3-chip:has(input:checked) {
-                padding: 6px 14px 6px 11px;
-            }
-
-            .sync-chip { display: none; }
-
-            /* 16px prevents iOS Safari automatic zoom on textarea focus */
-            textarea {
-                font-size: 16px;
+            .action-dock {
+                flex-direction: column;
+                align-items: stretch;
                 padding: 14px;
-                line-height: 1.55;
+                border-radius: 24px;
+                gap: 12px;
             }
-
-            #output { padding: 14px; }
-
-            .code-container {
-                border-radius: 16px;
-                margin: 14px 0;
+            .dock-status {
+                text-align: center;
             }
-
-            .code-header { padding: 9px 12px; }
-
-            .action-btn {
-                min-height: 34px;
-                padding: 6px 10px;
+            .go-btn {
+                width: 100%;
+                padding: 14px 20px;
             }
-            .action-btn.copy-btn {
-                min-width: 82px;
-            }
-
-            .code-collapse-inner pre {
-                padding: 12px !important;
-                font-size: 13px !important;
-            }
-
-            /* Mobile bottom-sheet style dialog (M3 Emphasized curves with zero bottom-edge bounce gap) */
             .m3-dialog-backdrop.mobile-sheet {
                 align-items: flex-end;
                 padding: 0;
@@ -1592,139 +1003,51 @@
                 transition: transform 0.36s var(--m3-emphasized-decelerate), background-color 0.25s;
             }
         }
-
-        @media (max-width: 400px) {
-            .brand-group h1 { font-size: 0.98rem; }
-            .switcher-btn { padding: 6px 9px; font-size: 12px; }
-            .switcher-btn .material-symbols-rounded { font-size: 15px; }
-        }
     </style>
 </head>
 <body>
 
-    <div id="drop-overlay">
-        <div class="drop-card">
-            <span class="material-symbols-rounded">upload_file</span>
-            <span>Drop Markdown / Code File Here</span>
-        </div>
-    </div>
-
-    <input type="file" id="file-upload-input" multiple hidden>
-
-    <!-- Top App Bar -->
     <header class="app-top-bar">
-        <div class="brand-group">
-            <h1>Markdown Extractor & Reader</h1>
-            <p class="subtitle">Organize docs in tabs, collapse codeblocks, render LaTeX math & export ZIPs.</p>
+        <div class="brand-pill">
+            <span class="brand-icon">
+                <span class="material-symbols-rounded">explore</span>
+            </span>
+            <span class="brand-name">Page Selector</span>
         </div>
 
-        <div class="top-bar-controls">
+        <div class="top-actions">
+            <label class="m3-chip m3-ripple" title="Open immediately when you tap a page">
+                <input type="checkbox" id="instant-redirect-chk">
+                <span class="chip-check material-symbols-rounded">check</span>
+                <span>1-Tap Go</span>
+            </label>
             <button class="theme-trigger-btn m3-ripple" id="btn-theme" title="Appearance & Color Theme" aria-label="Appearance & Color Theme">
-                <span class="material-symbols-rounded" id="theme-trigger-icon">palette</span>
+                <span class="material-symbols-rounded">palette</span>
             </button>
-
-            <div class="view-switcher" id="view-switcher" role="tablist" aria-label="Workspace View">
-                <div class="switcher-pill" id="switcher-pill"></div>
-                <button class="switcher-btn m3-ripple" data-view="editor" role="tab">
-                    <span class="material-symbols-rounded">edit_note</span>
-                    <span>Editor</span>
-                </button>
-                <button class="switcher-btn m3-ripple" data-view="split" role="tab">
-                    <span class="material-symbols-rounded">vertical_split</span>
-                    <span>Split</span>
-                </button>
-                <button class="switcher-btn m3-ripple" data-view="preview" role="tab">
-                    <span class="material-symbols-rounded">visibility</span>
-                    <span>Preview</span>
-                </button>
-            </div>
         </div>
     </header>
 
-    <!-- Tab Bar -->
-    <div class="tab-bar-wrapper">
-        <div class="tab-list" id="tab-list"></div>
-        <button class="tab-add-btn m3-ripple" id="btn-add-tab" title="New Tab" aria-label="New Tab">
-            <span class="material-symbols-rounded">add</span>
-        </button>
-    </div>
-
-    <!-- Main Panes -->
-    <main class="container" id="workspace-container">
-        <section class="pane" id="pane-editor">
-            <div class="pane-header">
-                <span class="pane-title" id="editor-tab-indicator">Raw Text / Markdown</span>
-                <div class="header-btn-group">
-                    <button id="btn-import" class="header-btn import-btn m3-ripple" title="Upload or import files">
-                        <span class="material-symbols-rounded">upload_file</span>
-                        <span>Import</span>
-                    </button>
-                    <div class="m3-connected-group">
-                        <button id="btn-clear" class="header-btn clear-btn m3-ripple">
-                            <span class="material-symbols-rounded">delete_sweep</span>
-                            <span>Clear</span>
-                        </button>
-                        <button id="btn-paste" class="header-btn paste-btn m3-ripple">
-                            <span class="material-symbols-rounded" id="paste-btn-icon">content_paste</span>
-                            <span id="paste-btn-label">Paste</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <textarea id="markdown-input" placeholder="Paste your markdown here, tap Import, or drop files..."></textarea>
+    <main class="hub-main">
+        <section class="hero-header">
+            <h1>Where would you like to go?</h1>
+            <p>Select a destination below to open it, or enable <strong>1-Tap Go</strong> to jump straight in.</p>
         </section>
 
-        <section class="pane" id="pane-preview">
-            <div class="pane-header">
-                <span class="pane-title">Formatted View</span>
-                <div class="header-btn-group">
-                    <label class="m3-chip m3-ripple" title="Toggle Syntax Highlighting (Disable for huge files)">
-                        <input type="checkbox" id="syntax-highlight-chk" checked>
-                        <span class="chip-check material-symbols-rounded">check</span>
-                        <span>Syntax</span>
-                    </label>
-                    <label class="m3-chip sync-chip m3-ripple" title="Synchronize editor & preview scrolling">
-                        <input type="checkbox" id="sync-scroll-chk" checked>
-                        <span class="chip-check material-symbols-rounded">check</span>
-                        <span>Sync</span>
-                    </label>
-                    <div class="m3-connected-group">
-                        <button id="btn-toggle-all" class="header-btn toggle-all-btn m3-ripple">
-                            <span class="material-symbols-rounded" id="toggle-all-icon">unfold_less</span>
-                            <span id="toggle-all-label">Collapse All</span>
-                        </button>
-                        <button id="btn-export" class="header-btn export-btn m3-ripple">
-                            <span class="material-symbols-rounded">download</span>
-                            <span>Export</span>
-                        </button>
-                    </div>
-                </div>
+        <section class="destinations-grid" id="destinations-grid" role="radiogroup" aria-label="Available Pages"></section>
+
+        <footer class="action-dock">
+            <div class="dock-status">
+                <span class="dock-label">Selected Destination</span>
+                <span class="dock-target" id="dock-target">None selected</span>
             </div>
-            <div id="output">
-                <div class="empty-state">
-                    <strong>Nothing rendered yet</strong>
-                    Paste Markdown or import a code file to preview it here.
-                </div>
-            </div>
-        </section>
+            <button class="go-btn m3-ripple" id="btn-redirect" disabled>
+                <span id="btn-redirect-label">Select a page</span>
+                <span class="material-symbols-rounded arrow-icon">arrow_forward</span>
+            </button>
+        </footer>
     </main>
 
-    <!-- M3 Rename Tab Dialog -->
-    <div class="m3-dialog-backdrop" id="rename-modal" role="dialog" aria-modal="true" aria-labelledby="rename-dialog-title">
-        <div class="m3-dialog">
-            <h3 id="rename-dialog-title">
-                <span class="material-symbols-rounded">edit</span>
-                <span>Rename Document</span>
-            </h3>
-            <input type="text" id="rename-input" class="m3-text-field" placeholder="Document title" maxlength="60">
-            <div class="m3-dialog-actions">
-                <button id="btn-rename-cancel" class="header-btn clear-btn m3-ripple">Cancel</button>
-                <button id="btn-rename-save" class="header-btn paste-btn m3-ripple">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- M3 Expressive Theme & Color Picker Sheet/Dialog -->
+    <!-- M3 Expressive Theme Picker -->
     <div class="m3-dialog-backdrop mobile-sheet" id="theme-modal" role="dialog" aria-modal="true" aria-labelledby="theme-dialog-title">
         <div class="m3-dialog">
             <h3 id="theme-dialog-title">
@@ -1733,7 +1056,7 @@
             </h3>
 
             <div class="theme-section-label">Theme Mode</div>
-            <div class="mode-segmented" id="mode-segmented">
+            <div class="mode-segmented">
                 <button class="mode-opt-btn m3-ripple" data-pick-mode="system">
                     <span class="material-symbols-rounded">brightness_auto</span>
                     <span>Auto</span>
@@ -1749,7 +1072,7 @@
             </div>
 
             <div class="theme-section-label">M3 Color Theme</div>
-            <div class="swatch-grid" id="swatch-grid">
+            <div class="swatch-grid">
                 <button class="swatch-btn" data-pick-accent="emerald">
                     <span class="swatch-circle m3-ripple" style="background: linear-gradient(135deg, #0b875b, #34d399);">
                         <span class="material-symbols-rounded">check</span>
@@ -1783,35 +1106,67 @@
             </div>
 
             <div class="m3-dialog-actions">
-                <button id="btn-theme-done" class="header-btn paste-btn m3-ripple">Done</button>
+                <button id="btn-theme-done" class="dialog-done-btn m3-ripple">Done</button>
             </div>
         </div>
     </div>
 
-    <!-- M3 Expressive Snackbar -->
-    <div id="m3-snackbar" role="status" aria-live="polite"></div>
-
     <script>
-        // Configure marked with KaTeX support
-        if (typeof markedKatex !== 'undefined') {
-            marked.use(markedKatex({
-                throwOnError: false,
-                nonStandard: true
-            }));
-        }
+        // --- Destinations List ---
+        const PAGES = [
+            {
+                id: 'canvas',
+                title: 'Canvas',
+                desc: 'Open the Canvas workspace and viewer.',
+                path: '/canvas',
+                file: 'canvas.html',
+                icon: 'brush'
+            },
+            {
+                id: 'markdown',
+                title: 'Markdown Reader',
+                desc: 'Extract codeblocks, render LaTeX math & export ZIPs.',
+                path: '/markdown',
+                file: 'markdown.html',
+                icon: 'code'
+            },
+            {
+                id: 'poster',
+                title: 'Poster Editor',
+                desc: 'Create, customize, and export posters.',
+                path: '/poster',
+                file: 'poster.html',
+                icon: 'design_services'
+            },
+            {
+                id: 'school',
+                title: 'School',
+                desc: 'Access school tools and resources.',
+                path: '/school',
+                file: 'school.html',
+                icon: 'school'
+            },
+            {
+                id: 'sejarah',
+                title: 'Sejarah',
+                desc: 'Open Sejarah notes and study materials.',
+                path: '/sejarah',
+                file: 'sejarah.html',
+                icon: 'history_edu'
+            }
+        ];
 
-        const STORAGE_KEY = 'markdown_tabs_workspace_data';
+        // --- Theme System (Shared key with markdown.html) ---
         const THEME_STORAGE_KEY = 'markdown_reader_theme_prefs';
-        const MOBILE_BREAKPOINT = 840;
-
-        // --- Theme & M3 Palette System ---
+        const INSTANT_KEY = 'portal_instant_redirect';
         let themePrefs = { mode: 'system', accent: 'emerald' };
+
         try {
             const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
             if (savedTheme) {
-                const parsedTheme = JSON.parse(savedTheme);
-                if (['system', 'light', 'dark'].includes(parsedTheme.mode)) themePrefs.mode = parsedTheme.mode;
-                if (['emerald', 'ocean', 'violet', 'rose', 'amber'].includes(parsedTheme.accent)) themePrefs.accent = parsedTheme.accent;
+                const parsed = JSON.parse(savedTheme);
+                if (['system', 'light', 'dark'].includes(parsed.mode)) themePrefs.mode = parsed.mode;
+                if (['emerald', 'ocean', 'violet', 'rose', 'amber'].includes(parsed.accent)) themePrefs.accent = parsed.accent;
             }
         } catch (e) {}
 
@@ -1819,11 +1174,11 @@
         const metaThemeColor = document.getElementById('meta-theme-color');
 
         function applyTheme() {
-            const resolvedTheme = themePrefs.mode === 'system'
+            const resolved = themePrefs.mode === 'system'
                 ? (systemDarkMedia.matches ? 'dark' : 'light')
                 : themePrefs.mode;
 
-            document.documentElement.setAttribute('data-theme', resolvedTheme);
+            document.documentElement.setAttribute('data-theme', resolved);
             document.documentElement.setAttribute('data-accent', themePrefs.accent);
 
             requestAnimationFrame(() => {
@@ -1846,78 +1201,9 @@
         systemDarkMedia.addEventListener('change', () => {
             if (themePrefs.mode === 'system') applyTheme();
         });
-
         applyTheme();
 
-        // --- Workspace Tabs State ---
-        let tabs = [];
-        let activeTabId = null;
-        let allCollapsedState = false;
-        let currentView = window.innerWidth <= MOBILE_BREAKPOINT ? 'editor' : 'split';
-        let lastMobileView = 'editor';
-
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData) {
-            try {
-                const parsed = JSON.parse(savedData);
-                tabs = parsed.tabs || [];
-                activeTabId = parsed.activeTabId || (tabs[0] && tabs[0].id);
-            } catch (e) {
-                console.error("Could not parse saved tabs", e);
-            }
-        }
-
-        if (!tabs.length) {
-            const initialId = Date.now().toString();
-            tabs = [{ id: initialId, title: 'Document 1', content: '' }];
-            activeTabId = initialId;
-        }
-
-        function saveState() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ tabs, activeTabId }));
-        }
-
-        function createIcon(name) {
-            const span = document.createElement('span');
-            span.className = 'material-symbols-rounded';
-            span.textContent = name;
-            span.setAttribute('aria-hidden', 'true');
-            return span;
-        }
-
-        // DOM Elements
-        const tabListEl = document.getElementById('tab-list');
-        const addTabBtn = document.getElementById('btn-add-tab');
-        const inputArea = document.getElementById('markdown-input');
-        const outputArea = document.getElementById('output');
-        const pasteBtn = document.getElementById('btn-paste');
-        const pasteBtnIcon = document.getElementById('paste-btn-icon');
-        const pasteBtnLabel = document.getElementById('paste-btn-label');
-        const clearBtn = document.getElementById('btn-clear');
-        const importBtn = document.getElementById('btn-import');
-        const fileUploadInput = document.getElementById('file-upload-input');
-        const exportBtn = document.getElementById('btn-export');
-        const toggleAllBtn = document.getElementById('btn-toggle-all');
-        const toggleAllIcon = document.getElementById('toggle-all-icon');
-        const toggleAllLabel = document.getElementById('toggle-all-label');
-        const syncScrollChk = document.getElementById('sync-scroll-chk');
-        const syntaxHighlightChk = document.getElementById('syntax-highlight-chk');
-        const editorTabIndicator = document.getElementById('editor-tab-indicator');
-        const dropOverlay = document.getElementById('drop-overlay');
-        const paneEditor = document.getElementById('pane-editor');
-        const panePreview = document.getElementById('pane-preview');
-        const switcherPill = document.getElementById('switcher-pill');
-        const switcherBtns = Array.from(document.querySelectorAll('.switcher-btn'));
-        const snackbarEl = document.getElementById('m3-snackbar');
-        const renameModal = document.getElementById('rename-modal');
-        const renameInput = document.getElementById('rename-input');
-        const renameCancelBtn = document.getElementById('btn-rename-cancel');
-        const renameSaveBtn = document.getElementById('btn-rename-save');
-        const themeBtn = document.getElementById('btn-theme');
-        const themeModal = document.getElementById('theme-modal');
-        const themeDoneBtn = document.getElementById('btn-theme-done');
-
-        // --- M3 Expressive Pointer Ripple ---
+        // --- M3 Pointer Ripple ---
         document.addEventListener('pointerdown', (e) => {
             const target = e.target.closest('.m3-ripple');
             if (!target) return;
@@ -1941,22 +1227,14 @@
             wave.style.left = `${x}px`;
             wave.style.top = `${y}px`;
             layer.appendChild(wave);
-
             wave.addEventListener('animationend', () => wave.remove());
         });
 
-        // --- M3 Snackbar ---
-        let snackbarTimer;
-        function showSnackbar(message) {
-            snackbarEl.textContent = message;
-            snackbarEl.classList.add('show');
-            clearTimeout(snackbarTimer);
-            snackbarTimer = setTimeout(() => {
-                snackbarEl.classList.remove('show');
-            }, 2400);
-        }
+        // --- Theme Modal ---
+        const themeBtn = document.getElementById('btn-theme');
+        const themeModal = document.getElementById('theme-modal');
+        const themeDoneBtn = document.getElementById('btn-theme-done');
 
-        // --- Theme Picker Dialog ---
         function openThemeModal() {
             themeModal.classList.add('open');
             themeBtn.classList.add('is-open');
@@ -1978,7 +1256,6 @@
                 applyTheme();
             });
         });
-
         document.querySelectorAll('.swatch-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 themePrefs.accent = btn.dataset.pickAccent;
@@ -1986,766 +1263,114 @@
             });
         });
 
-        // --- View Mode Switcher & Sliding Pill ---
-        function updateSwitcherPill() {
-            const activeBtn = switcherBtns.find(btn => btn.dataset.view === currentView);
-            if (!activeBtn || activeBtn.offsetParent === null) return;
-            switcherPill.style.width = `${activeBtn.offsetWidth}px`;
-            switcherPill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+        // --- Destination Selection & Redirect Logic ---
+        const gridEl = document.getElementById('destinations-grid');
+        const dockTargetEl = document.getElementById('dock-target');
+        const redirectBtn = document.getElementById('btn-redirect');
+        const redirectBtnLabel = document.getElementById('btn-redirect-label');
+        const instantChk = document.getElementById('instant-redirect-chk');
+
+        let selectedPageId = null;
+
+        try {
+            instantChk.checked = localStorage.getItem(INSTANT_KEY) === 'true';
+        } catch (e) {}
+
+        instantChk.addEventListener('change', () => {
+            localStorage.setItem(INSTANT_KEY, instantChk.checked ? 'true' : 'false');
+        });
+
+        function getTargetUrl(page) {
+            // Works seamlessly on Vercel clean URLs AND when previewing locally via file://
+            return window.location.protocol === 'file:' ? page.file : page.path;
         }
 
-        function setViewMode(mode, animate = true) {
-            const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-            if (isMobile && mode === 'split') {
-                mode = lastMobileView;
-            }
-            const prevView = currentView;
-            currentView = mode;
-            if (mode !== 'split') lastMobileView = mode;
+        function redirectTo(page) {
+            if (!page) return;
+            window.location.href = getTargetUrl(page);
+        }
 
-            switcherBtns.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.view === mode);
+        function selectPage(id) {
+            selectedPageId = id;
+            const page = PAGES.find(p => p.id === id);
+
+            document.querySelectorAll('.dest-card').forEach(card => {
+                const isSelected = card.dataset.pageId === id;
+                card.classList.toggle('selected', isSelected);
+                card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
             });
 
-            paneEditor.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
-            panePreview.classList.remove('hidden-pane', 'mobile-slide-in-left', 'mobile-slide-in-right');
-
-            if (mode === 'editor') {
-                panePreview.classList.add('hidden-pane');
-                if (animate && prevView !== 'editor') {
-                    paneEditor.classList.add('mobile-slide-in-left');
-                }
-            } else if (mode === 'preview') {
-                paneEditor.classList.add('hidden-pane');
-                if (animate && prevView !== 'preview') {
-                    panePreview.classList.add('mobile-slide-in-right');
-                }
+            if (page) {
+                dockTargetEl.textContent = `${page.title} (${page.path})`;
+                redirectBtnLabel.textContent = `Go to ${page.title}`;
+                redirectBtn.disabled = false;
             }
-
-            requestAnimationFrame(updateSwitcherPill);
         }
 
-        switcherBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.dataset.view !== currentView) {
-                    setViewMode(btn.dataset.view, true);
-                }
-            });
-        });
+        PAGES.forEach((page) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'dest-card m3-ripple';
+            card.dataset.pageId = page.id;
+            card.setAttribute('role', 'radio');
+            card.setAttribute('aria-checked', 'false');
 
-        window.addEventListener('resize', () => {
-            const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-            if (isMobile && currentView === 'split') {
-                setViewMode(lastMobileView, false);
-            } else {
-                updateSwitcherPill();
-            }
-        });
+            card.innerHTML = `
+                <div class="dest-card-top">
+                    <span class="dest-icon-badge">
+                        <span class="material-symbols-rounded">${page.icon}</span>
+                    </span>
+                    <span class="dest-check-indicator">
+                        <span class="material-symbols-rounded">check</span>
+                    </span>
+                </div>
+                <div class="dest-info">
+                    <span class="dest-title">${page.title}</span>
+                    <span class="dest-desc">${page.desc}</span>
+                </div>
+                <span class="dest-path">${page.path}</span>
+            `;
 
-        // --- M3 Rename Modal ---
-        let renamingTabId = null;
-
-        function openRenameModal(tabId) {
-            const tab = tabs.find(t => t.id === tabId);
-            if (!tab) return;
-            renamingTabId = tabId;
-            renameInput.value = tab.title;
-            renameModal.classList.add('open');
-            setTimeout(() => {
-                renameInput.focus();
-                renameInput.select();
-            }, 80);
-        }
-
-        function closeRenameModal() {
-            renameModal.classList.remove('open');
-            renamingTabId = null;
-        }
-
-        function confirmRenameModal() {
-            if (!renamingTabId) return;
-            const tab = tabs.find(t => t.id === renamingTabId);
-            if (tab) {
-                tab.title = renameInput.value.trim() || 'Untitled';
-                saveState();
-                renderTabs();
-                showSnackbar(`Renamed to "${tab.title}"`);
-            }
-            closeRenameModal();
-        }
-
-        renameCancelBtn.addEventListener('click', closeRenameModal);
-        renameSaveBtn.addEventListener('click', confirmRenameModal);
-        renameModal.addEventListener('click', (e) => {
-            if (e.target === renameModal) closeRenameModal();
-        });
-        renameInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); confirmRenameModal(); }
-            if (e.key === 'Escape') { closeRenameModal(); }
-        });
-
-        // Update syntax highlighting in-place after chip animation completes so it never janks or resets collapsed blocks
-        let syntaxToggleTimer;
-        syntaxHighlightChk.addEventListener('change', () => {
-            clearTimeout(syntaxToggleTimer);
-            const enableSyntax = syntaxHighlightChk.checked;
-            syntaxToggleTimer = setTimeout(() => {
-                outputArea.querySelectorAll('.code-collapse-inner pre').forEach(pre => {
-                    const code = pre.querySelector('code');
-                    if (!code) return;
-                    const lang = code.dataset.lang || 'plaintext';
-                    if (enableSyntax) {
-                        pre.className = `language-${lang}`;
-                        code.className = `language-${lang}`;
-                        code.textContent = code.dataset.rawCode ?? code.textContent;
-                    } else {
-                        pre.className = 'language-none';
-                        code.className = 'language-none';
-                        code.textContent = code.dataset.rawCode ?? code.textContent;
-                    }
-                });
-                if (enableSyntax) {
-                    Prism.highlightAllUnder(outputArea);
-                }
-            }, 180);
-        });
-
-        function updateToggleAllUI() {
-            toggleAllIcon.textContent = allCollapsedState ? 'unfold_more' : 'unfold_less';
-            toggleAllLabel.textContent = allCollapsedState ? 'Expand All' : 'Collapse All';
-            toggleAllBtn.classList.toggle('is-collapsed', allCollapsedState);
-        }
-
-        // --- Tab Management ---
-        function renderTabs() {
-            tabListEl.innerHTML = '';
-            tabs.forEach(tab => {
-                const tabEl = document.createElement('div');
-                tabEl.className = `tab-item m3-ripple ${tab.id === activeTabId ? 'active' : ''}`;
-                
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'tab-title';
-                titleSpan.textContent = tab.title;
-                titleSpan.title = "Double-click or tap edit to rename";
-
-                titleSpan.addEventListener('dblclick', (e) => {
-                    e.stopPropagation();
-                    titleSpan.contentEditable = 'true';
-                    titleSpan.focus();
-                    document.execCommand('selectAll', false, null);
-                });
-
-                const saveInlineTitle = () => {
-                    titleSpan.contentEditable = 'false';
-                    tab.title = titleSpan.textContent.trim() || 'Untitled';
-                    titleSpan.textContent = tab.title;
-                    if (tab.id === activeTabId) editorTabIndicator.textContent = tab.title;
-                    saveState();
-                };
-
-                titleSpan.addEventListener('blur', saveInlineTitle);
-                titleSpan.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') { e.preventDefault(); titleSpan.blur(); }
-                });
-
-                let pressTimer;
-                tabEl.addEventListener('touchstart', () => {
-                    pressTimer = setTimeout(() => openRenameModal(tab.id), 550);
-                }, { passive: true });
-                tabEl.addEventListener('touchend', () => clearTimeout(pressTimer));
-                tabEl.addEventListener('touchmove', () => clearTimeout(pressTimer));
-
-                tabEl.addEventListener('click', () => {
-                    if (activeTabId !== tab.id) switchTab(tab.id);
-                });
-
-                const editBtn = document.createElement('button');
-                editBtn.className = 'tab-icon-btn tab-edit-btn';
-                editBtn.title = 'Rename tab';
-                editBtn.setAttribute('aria-label', 'Rename tab');
-                editBtn.appendChild(createIcon('edit'));
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openRenameModal(tab.id);
-                });
-
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'tab-icon-btn tab-close';
-                closeBtn.title = 'Close tab';
-                closeBtn.setAttribute('aria-label', 'Close tab');
-                closeBtn.appendChild(createIcon('close'));
-                closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    tabEl.classList.add('closing');
-                    setTimeout(() => closeTab(tab.id), 180);
-                });
-
-                tabEl.appendChild(titleSpan);
-                tabEl.appendChild(editBtn);
-                if (tabs.length > 1) tabEl.appendChild(closeBtn);
-                tabListEl.appendChild(tabEl);
-
-                if (tab.id === activeTabId) {
-                    requestAnimationFrame(() => {
-                        tabEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                    });
+            card.addEventListener('click', () => {
+                selectPage(page.id);
+                if (instantChk.checked) {
+                    setTimeout(() => redirectTo(page), 120);
                 }
             });
 
-            const activeTab = tabs.find(t => t.id === activeTabId);
-            if (activeTab) {
-                editorTabIndicator.textContent = activeTab.title;
-                inputArea.value = activeTab.content;
-            }
-        }
-
-        function switchTab(id) {
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            if (currentTab) currentTab.content = inputArea.value;
-
-            activeTabId = id;
-            allCollapsedState = false;
-            updateToggleAllUI();
-            saveState();
-            renderTabs();
-            renderMarkdown(inputArea.value, true);
-        }
-
-        function addTab(initialTitle, initialContent = '') {
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            if (currentTab) currentTab.content = inputArea.value;
-
-            const newId = Date.now().toString();
-            const newTab = { id: newId, title: initialTitle || `Document ${tabs.length + 1}`, content: initialContent };
-
-            tabs.push(newTab);
-            activeTabId = newId;
-            allCollapsedState = false;
-            updateToggleAllUI();
-            saveState();
-            renderTabs();
-            renderMarkdown(initialContent, true);
-            if (currentView !== 'preview') inputArea.focus();
-        }
-
-        function closeTab(id) {
-            if (tabs.length <= 1) return;
-            const indexToRemove = tabs.findIndex(t => t.id === id);
-            tabs = tabs.filter(t => t.id !== id);
-
-            if (activeTabId === id) {
-                const nextTab = tabs[indexToRemove] || tabs[indexToRemove - 1] || tabs[0];
-                activeTabId = nextTab.id;
-            }
-
-            saveState();
-            renderTabs();
-            const activeTab = tabs.find(t => t.id === activeTabId);
-            renderMarkdown(activeTab ? activeTab.content : '', true);
-        }
-
-        addTabBtn.addEventListener('click', () => addTab());
-
-        // --- Code Extraction & Markdown Rendering ---
-        const tokenRegex = /(?:(?:^|\r?\n)[ \t]*(`{3,})([^\r\n]*)(?:\r?\n([\s\S]*?))?(?:\r?\n[ \t]*\1[ \t]*(?=\r?\n|$)|$))|(?:(?:^|\r?\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*\r?\n([\s\S]*?)(?:\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*END OF FILE.*?(?=\r?\n|$)|(?=\r?\n[ \t]*(?:\/\/+|#|\/\*+|<!--)?\s*-{2,}\s*START OF FILE)|$))/gi;
-
-        let activeBlockTogglers = [];
-
-        function getLanguageFromFilename(filename) {
-            const extMatch = filename.match(/\.([a-zA-Z0-9]+)$/);
-            if (!extMatch) return 'plaintext';
-            const ext = extMatch[1].toLowerCase();
-            const map = {
-                'js': 'javascript', 'jsx': 'javascript', 'ts': 'typescript', 'tsx': 'typescript',
-                'html': 'html', 'css': 'css', 'json': 'json', 'md': 'markdown', 'py': 'python', 
-                'java': 'java', 'kt': 'kotlin', 'cpp': 'cpp', 'c': 'c', 'cs': 'csharp', 
-                'go': 'go', 'rs': 'rust', 'rb': 'ruby', 'php': 'php', 'sh': 'bash', 
-                'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml', 'sql': 'sql', 'vue': 'vue'
-            };
-            return map[ext] || ext;
-        }
-
-        function cleanCodeBlockContent(content) {
-            const endRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*END OF FILE.*$/gim;
-            return content
-                .replace(endRegex, '')
-                .replace(/^\s*[\r\n]+/, '')
-                .trimEnd();
-        }
-
-        function renderMarkdown(text, triggerTransition = false) {
-            const prevScroll = outputArea.scrollTop;
-            const isAtBottom = Math.abs(inputArea.scrollHeight - inputArea.scrollTop - inputArea.clientHeight) < 15;
-
-            outputArea.innerHTML = ''; 
-            activeBlockTogglers = [];
-            
-            if (triggerTransition) {
-                outputArea.classList.remove('content-fade');
-                void outputArea.offsetWidth;
-                outputArea.classList.add('content-fade');
-            }
-
-            if (!text.trim()) {
-                outputArea.innerHTML = `
-                    <div class="empty-state">
-                        <strong>Nothing rendered yet</strong>
-                        Paste Markdown or import a code file to preview it here.
-                    </div>`;
-                return;
-            }
-
-            let match;
-            let lastIndex = 0;
-            let blockIndex = 0;
-            tokenRegex.lastIndex = 0;
-
-            const markerCleanupRegex = /(?:\r?\n|^)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*(?:START OF FILE|END OF FILE).*?(?:\r?\n|$)/gim;
-
-            while ((match = tokenRegex.exec(text)) !== null) {
-                let beforeText = text.substring(lastIndex, match.index);
-                beforeText = beforeText.replace(markerCleanupRegex, '\n');
-
-                if (beforeText.trim() !== '') {
-                    const textNode = document.createElement('div');
-                    textNode.className = 'markdown-text';
-                    textNode.innerHTML = marked.parse(beforeText); 
-                    outputArea.appendChild(textNode);
-                }
-
-                let language = 'plaintext';
-                let fileName = '';
-                let codeContent = '';
-
-                if (match[1] !== undefined) {
-                    language = (match[2] || '').trim() || 'plaintext';
-                    codeContent = match[3] || '';
-                    
-                    const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
-                    const startMatch = codeContent.match(startRegex);
-                    if (startMatch) {
-                        fileName = startMatch[1].trim();
-                        codeContent = codeContent.replace(startRegex, '');
-                    }
-                    codeContent = cleanCodeBlockContent(codeContent);
-                } else if (match[4] !== undefined) {
-                    fileName = match[4].trim();
-                    codeContent = match[5] || '';
-                    language = getLanguageFromFilename(fileName);
-
-                    const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
-                    if (cleanCodeMatch) {
-                        codeContent = cleanCodeMatch[1];
-                    }
-                    codeContent = cleanCodeBlockContent(codeContent);
-                }
-
-                if (!codeContent.trim() && !fileName.toLowerCase().includes('.')) {
-                    if (!codeContent.trim()) {
-                        lastIndex = match.index + match[0].length;
-                        continue;
-                    }
-                }
-
-                const container = document.createElement('div');
-                container.className = 'code-container';
-                if (triggerTransition && blockIndex < 8) {
-                    container.classList.add('stagger-in');
-                    container.style.animationDelay = `${blockIndex * 45}ms`;
-                }
-                blockIndex++;
-
-                const header = document.createElement('div');
-                header.className = 'code-header';
-
-                const langSpan = document.createElement('div');
-                langSpan.className = 'code-header-title';
-                if (fileName) {
-                    const fnEl = document.createElement('span');
-                    fnEl.className = 'file-name';
-                    fnEl.textContent = fileName;
-                    const lgEl = document.createElement('span');
-                    lgEl.className = 'lang-label';
-                    lgEl.textContent = `(${language})`;
-                    langSpan.appendChild(fnEl);
-                    langSpan.appendChild(lgEl);
-                } else {
-                    const lgEl = document.createElement('span');
-                    lgEl.className = 'lang-label';
-                    lgEl.style.marginLeft = '0';
-                    lgEl.textContent = language;
-                    langSpan.appendChild(lgEl);
-                }
-
-                const btnGroup = document.createElement('div');
-                btnGroup.className = 'button-group';
-
-                const minimizeBtn = document.createElement('button');
-                minimizeBtn.className = 'action-btn m3-ripple';
-                const minIcon = createIcon('unfold_less');
-                const minLabel = document.createElement('span');
-                minLabel.textContent = 'Minimize';
-                minimizeBtn.appendChild(minIcon);
-                minimizeBtn.appendChild(minLabel);
-                
-                const collapseWrapper = document.createElement('div');
-                collapseWrapper.className = 'code-collapse-wrapper';
-                
-                const collapseInner = document.createElement('div');
-                collapseInner.className = 'code-collapse-inner';
-
-                const pre = document.createElement('pre');
-                const code = document.createElement('code');
-                code.dataset.lang = language;
-                code.dataset.rawCode = codeContent;
-
-                if (syntaxHighlightChk.checked) {
-                    pre.className = `language-${language}`;
-                    code.className = `language-${language}`;
-                } else {
-                    pre.className = `language-none`;
-                    code.className = `language-none`;
-                }
-                
-                code.textContent = codeContent;
-
-                pre.appendChild(code);
-                collapseInner.appendChild(pre);
-                collapseWrapper.appendChild(collapseInner);
-
-                let isMinimized = false;
-                let transitionTimeout;
-                collapseWrapper.style.height = 'auto';
-                collapseInner.style.position = 'relative';
-
-                const toggleBlock = (forceState, instant = false) => {
-                    const nextState = typeof forceState === 'boolean' ? forceState : !isMinimized;
-                    if (nextState === isMinimized) return;
-                    isMinimized = nextState;
-
-                    clearTimeout(transitionTimeout);
-                    collapseWrapper.style.transition = instant
-                        ? 'none'
-                        : 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
-
-                    if (isMinimized) {
-                        const currentHeight = collapseWrapper.scrollHeight;
-                        collapseWrapper.style.height = currentHeight + 'px';
-                        collapseInner.style.position = 'absolute';
-                        collapseInner.style.top = '0';
-                        collapseInner.style.left = '0';
-                        collapseInner.style.right = '0';
-                        
-                        if (instant) {
-                            collapseWrapper.style.height = '0px';
-                            collapseWrapper.classList.add('minimized');
-                            requestAnimationFrame(() => {
-                                collapseWrapper.style.transition = 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
-                            });
-                        } else {
-                            void collapseWrapper.offsetHeight; 
-                            collapseWrapper.style.height = '0px';
-                            collapseWrapper.classList.add('minimized');
-                        }
-                    } else {
-                        collapseWrapper.classList.remove('minimized');
-                        const targetHeight = collapseInner.scrollHeight;
-                        collapseWrapper.style.height = targetHeight + 'px';
-                        
-                        if (instant) {
-                            collapseInner.style.position = 'relative';
-                            collapseWrapper.style.height = 'auto';
-                            requestAnimationFrame(() => {
-                                collapseWrapper.style.transition = 'height 0.44s var(--m3-spring-spatial), opacity 0.28s var(--m3-effects-standard)';
-                            });
-                        } else {
-                            transitionTimeout = setTimeout(() => {
-                                if (!isMinimized) {
-                                    collapseInner.style.position = 'relative';
-                                    collapseWrapper.style.height = 'auto';
-                                }
-                            }, 440); 
-                        }
-                    }
-                    minIcon.textContent = isMinimized ? 'unfold_more' : 'unfold_less';
-                    minLabel.textContent = isMinimized ? 'Expand' : 'Minimize';
-                    minimizeBtn.classList.toggle('is-active', isMinimized);
-                };
-
-                minimizeBtn.addEventListener('click', () => toggleBlock(null, false));
-                activeBlockTogglers.push(toggleBlock);
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'action-btn copy-btn m3-ripple';
-                const copyIcon = createIcon('content_copy');
-                const copyLabel = document.createElement('span');
-                copyLabel.textContent = 'Copy';
-                copyBtn.appendChild(copyIcon);
-                copyBtn.appendChild(copyLabel);
-
-                let copyTimer;
-                copyBtn.addEventListener('click', () => {
-                    navigator.clipboard.writeText(codeContent).then(() => {
-                        clearTimeout(copyTimer);
-                        copyIcon.textContent = 'check';
-                        copyLabel.textContent = 'Copied!';
-                        copyBtn.classList.add('copied');
-                        copyTimer = setTimeout(() => {
-                            copyIcon.textContent = 'content_copy';
-                            copyLabel.textContent = 'Copy';
-                            copyBtn.classList.remove('copied');
-                        }, 1800);
-                    }).catch(() => {
-                        showSnackbar('Unable to access clipboard');
-                    });
-                });
-
-                btnGroup.appendChild(minimizeBtn);
-                btnGroup.appendChild(copyBtn);
-                header.appendChild(langSpan);
-                header.appendChild(btnGroup); 
-                container.appendChild(header);
-                container.appendChild(collapseWrapper);
-                outputArea.appendChild(container);
-
-                lastIndex = match.index + match[0].length;
-            }
-
-            let remainingText = text.substring(lastIndex);
-            remainingText = remainingText.replace(markerCleanupRegex, '\n');
-            
-            if (remainingText.trim() !== '') {
-                const textNode = document.createElement('div');
-                textNode.className = 'markdown-text';
-                textNode.innerHTML = marked.parse(remainingText);
-                outputArea.appendChild(textNode);
-            }
-
-            if (allCollapsedState) {
-                activeBlockTogglers.forEach(fn => fn(true, true));
-            }
-
-            if (syntaxHighlightChk.checked) {
-                Prism.highlightAllUnder(outputArea);
-            }
-
-            if (window.renderMathInElement) {
-                outputArea.querySelectorAll('.markdown-text').forEach((el) => {
-                    try {
-                        renderMathInElement(el, {
-                            delimiters: [
-                                { left: "$$", right: "$$", display: true },
-                                { left: "$", right: "$", display: false },
-                                { left: "\\(", right: "\\)", display: false },
-                                { left: "\\[", right: "\\]", display: true }
-                            ],
-                            throwOnError: false
-                        });
-                    } catch (e) {
-                        console.warn("Math rendering error:", e);
-                    }
-                });
-            }
-
-            if (!triggerTransition) {
-                if (isAtBottom && syncScrollChk.checked && currentView === 'split') {
-                    outputArea.scrollTop = outputArea.scrollHeight;
-                } else {
-                    outputArea.scrollTop = prevScroll;
-                }
-            }
-        }
-
-        toggleAllBtn.addEventListener('click', () => {
-            allCollapsedState = !allCollapsedState;
-            activeBlockTogglers.forEach(fn => fn(allCollapsedState, false));
-            updateToggleAllUI();
-        });
-
-        exportBtn.addEventListener('click', async () => {
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            const text = inputArea.value;
-
-            if (!text.trim()) {
-                showSnackbar('Document is empty!');
-                return;
-            }
-
-            const zip = new JSZip();
-            let extractedCount = 0;
-            let match;
-            tokenRegex.lastIndex = 0;
-
-            while ((match = tokenRegex.exec(text)) !== null) {
-                let fileName = '';
-                let codeContent = '';
-
-                if (match[1] !== undefined) {
-                    codeContent = match[3] || '';
-                    const startRegex = /(?:^|\n)[ \t]*(?:\/\/+|#|\/\*+|<!--)?[ \t]*-{2,}\s*START OF FILE\s+(.*?)\s*-{2,}[ \t]*(?:\*\/|-->)?[ \t]*(?:\r?\n|$)/i;
-                    const startMatch = codeContent.match(startRegex);
-                    if (startMatch) {
-                        fileName = startMatch[1].trim();
-                        codeContent = codeContent.replace(startRegex, '');
-                    }
-                    codeContent = cleanCodeBlockContent(codeContent);
-                } else if (match[4] !== undefined) {
-                    fileName = match[4].trim();
-                    codeContent = match[5] || '';
-                    const cleanCodeMatch = codeContent.match(/^\s*```[^\n]*\n([\s\S]*?)\n```\s*$/);
-                    if (cleanCodeMatch) {
-                        codeContent = cleanCodeMatch[1];
-                    }
-                    codeContent = cleanCodeBlockContent(codeContent);
-                }
-
-                if (fileName && codeContent.trim()) {
-                    zip.file(fileName, codeContent);
-                    extractedCount++;
-                }
-            }
-
-            if (extractedCount > 0) {
-                const content = await zip.generateAsync({ type: 'blob' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(content);
-                a.download = `${(currentTab ? currentTab.title : 'workspace').replace(/[^a-z0-9_-]/gi, '_')}_files.zip`;
-                a.click();
-                URL.revokeObjectURL(a.href);
-                showSnackbar(`Exported ${extractedCount} file${extractedCount > 1 ? 's' : ''} as ZIP`);
-            } else {
-                const blob = new Blob([text], { type: 'text/markdown;charset=utf-8;' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `${(currentTab ? currentTab.title : 'document').replace(/[^a-z0-9_-]/gi, '_')}.md`;
-                a.click();
-                URL.revokeObjectURL(a.href);
-                showSnackbar('Exported as Markdown file');
-            }
-        });
-
-        // --- Synchronized Scrolling logic (Split Mode) ---
-        let isSyncingInput = false;
-        let isSyncingOutput = false;
-
-        inputArea.addEventListener('scroll', () => {
-            if (!syncScrollChk.checked || isSyncingInput || currentView !== 'split' || window.innerWidth <= MOBILE_BREAKPOINT) return;
-            const maxInput = inputArea.scrollHeight - inputArea.clientHeight;
-            const maxOutput = outputArea.scrollHeight - outputArea.clientHeight;
-            if (maxInput <= 0 || maxOutput <= 0) return;
-
-            isSyncingOutput = true;
-            outputArea.scrollTop = (inputArea.scrollTop / maxInput) * maxOutput;
-            requestAnimationFrame(() => { isSyncingOutput = false; });
-        });
-
-        outputArea.addEventListener('scroll', () => {
-            if (!syncScrollChk.checked || isSyncingOutput || currentView !== 'split' || window.innerWidth <= MOBILE_BREAKPOINT) return;
-            const maxInput = inputArea.scrollHeight - inputArea.clientHeight;
-            const maxOutput = outputArea.scrollHeight - outputArea.clientHeight;
-            if (maxInput <= 0 || maxOutput <= 0) return;
-
-            isSyncingInput = true;
-            inputArea.scrollTop = (outputArea.scrollTop / maxOutput) * maxInput;
-            requestAnimationFrame(() => { isSyncingInput = false; });
-        });
-
-        // --- Shared File Ingestion (Drag & Drop + Mobile Import) ---
-        function loadFiles(fileList) {
-            const files = Array.from(fileList);
-            if (!files.length) return;
-
-            files.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const content = event.target.result;
-                    const currentTab = tabs.find(t => t.id === activeTabId);
-                    if (currentTab && !currentTab.content.trim()) {
-                        currentTab.title = file.name;
-                        currentTab.content = content;
-                        saveState();
-                        renderTabs();
-                        renderMarkdown(content, true);
-                    } else {
-                        addTab(file.name, content);
-                    }
-                    showSnackbar(`Loaded "${file.name}"`);
-                    if (window.innerWidth <= MOBILE_BREAKPOINT) {
-                        setViewMode('preview', true);
-                    }
-                };
-                reader.readAsText(file);
+            card.addEventListener('dblclick', () => {
+                selectPage(page.id);
+                redirectTo(page);
             });
-        }
 
-        importBtn.addEventListener('click', () => fileUploadInput.click());
-        fileUploadInput.addEventListener('change', (e) => {
-            loadFiles(e.target.files);
-            fileUploadInput.value = '';
+            gridEl.appendChild(card);
         });
 
-        window.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropOverlay.classList.add('active');
+        redirectBtn.addEventListener('click', () => {
+            const page = PAGES.find(p => p.id === selectedPageId);
+            redirectTo(page);
         });
 
-        window.addEventListener('dragleave', (e) => {
-            if (e.relatedTarget === null) dropOverlay.classList.remove('active');
-        });
+        // Keyboard navigation (Arrow keys + Enter)
+        gridEl.addEventListener('keydown', (e) => {
+            const cards = Array.from(gridEl.querySelectorAll('.dest-card'));
+            const currentIdx = cards.findIndex(c => c.dataset.pageId === selectedPageId);
 
-        window.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropOverlay.classList.remove('active');
-            loadFiles(e.dataTransfer.files);
-        });
-
-        // --- Paste & Clear ---
-        let pasteTimer;
-        pasteBtn.addEventListener('click', async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                inputArea.value = text;
-                inputArea.dispatchEvent(new Event('input'));
-                
-                clearTimeout(pasteTimer);
-                pasteBtnIcon.textContent = 'check';
-                pasteBtnLabel.textContent = 'Pasted!';
-                showSnackbar('Pasted from clipboard');
-                pasteTimer = setTimeout(() => {
-                    pasteBtnIcon.textContent = 'content_paste';
-                    pasteBtnLabel.textContent = 'Paste';
-                }, 1400);
-            } catch (err) {
-                showSnackbar('Allow clipboard access or paste directly');
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                const next = cards[(currentIdx + 1) % cards.length];
+                selectPage(next.dataset.pageId);
+                next.focus();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prev = cards[(currentIdx - 1 + cards.length) % cards.length];
+                selectPage(prev.dataset.pageId);
+                prev.focus();
+            } else if (e.key === 'Enter' && selectedPageId) {
+                e.preventDefault();
+                redirectTo(PAGES.find(p => p.id === selectedPageId));
             }
         });
-
-        clearBtn.addEventListener('click', () => {
-            if (!inputArea.value) return;
-            inputArea.value = '';
-            inputArea.dispatchEvent(new Event('input')); 
-            showSnackbar('Editor cleared');
-        });
-
-        let renderTimeout;
-        inputArea.addEventListener('input', () => {
-            const currentTab = tabs.find(t => t.id === activeTabId);
-            if (currentTab) {
-                currentTab.content = inputArea.value;
-                saveState();
-            }
-            
-            clearTimeout(renderTimeout);
-            renderTimeout = setTimeout(() => {
-                renderMarkdown(inputArea.value);
-            }, 220); 
-        });
-
-        // Initialize workspace
-        renderTabs();
-        renderMarkdown(inputArea.value, true);
-        setViewMode(currentView, false);
-        window.addEventListener('load', updateSwitcherPill);
     </script>
 </body>
 </html>
